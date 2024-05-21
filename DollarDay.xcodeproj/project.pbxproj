@@ -1,0 +1,587 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AB2D2B952BFC4E5200F03DFD /* DollarDayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B942BFC4E5200F03DFD /* DollarDayApp.swift */; };
+		AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B962BFC4E5200F03DFD /* ContentView.swift */; };
+		AB2D2B992BFC4E5300F03DFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */; };
+		AB2D2B9C2BFC4E5300F03DFD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB2D2B9B2BFC4E5300F03DFD /* Preview Assets.xcassets */; };
+		AB2D2BA62BFC4E5400F03DFD /* DollarDayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BA52BFC4E5400F03DFD /* DollarDayTests.swift */; };
+		AB2D2BB02BFC4E5400F03DFD /* DollarDayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BAF2BFC4E5400F03DFD /* DollarDayUITests.swift */; };
+		AB2D2BB22BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BB12BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AB2D2BA22BFC4E5400F03DFD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB2D2B892BFC4E5200F03DFD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB2D2B902BFC4E5200F03DFD;
+			remoteInfo = DollarDay;
+		};
+		AB2D2BAC2BFC4E5400F03DFD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB2D2B892BFC4E5200F03DFD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB2D2B902BFC4E5200F03DFD;
+			remoteInfo = DollarDay;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		AB2D2B912BFC4E5200F03DFD /* DollarDay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DollarDay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB2D2B942BFC4E5200F03DFD /* DollarDayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DollarDayApp.swift; sourceTree = "<group>"; };
+		AB2D2B962BFC4E5200F03DFD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AB2D2B9B2BFC4E5300F03DFD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		AB2D2BA12BFC4E5400F03DFD /* DollarDayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DollarDayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB2D2BA52BFC4E5400F03DFD /* DollarDayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DollarDayTests.swift; sourceTree = "<group>"; };
+		AB2D2BAB2BFC4E5400F03DFD /* DollarDayUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DollarDayUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB2D2BAF2BFC4E5400F03DFD /* DollarDayUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DollarDayUITests.swift; sourceTree = "<group>"; };
+		AB2D2BB12BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DollarDayUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AB2D2B8E2BFC4E5200F03DFD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB2D2B9E2BFC4E5400F03DFD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB2D2BA82BFC4E5400F03DFD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AB2D2B882BFC4E5200F03DFD = {
+			isa = PBXGroup;
+			children = (
+				AB2D2B932BFC4E5200F03DFD /* DollarDay */,
+				AB2D2BA42BFC4E5400F03DFD /* DollarDayTests */,
+				AB2D2BAE2BFC4E5400F03DFD /* DollarDayUITests */,
+				AB2D2B922BFC4E5200F03DFD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AB2D2B922BFC4E5200F03DFD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AB2D2B912BFC4E5200F03DFD /* DollarDay.app */,
+				AB2D2BA12BFC4E5400F03DFD /* DollarDayTests.xctest */,
+				AB2D2BAB2BFC4E5400F03DFD /* DollarDayUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AB2D2B932BFC4E5200F03DFD /* DollarDay */ = {
+			isa = PBXGroup;
+			children = (
+				AB2D2B942BFC4E5200F03DFD /* DollarDayApp.swift */,
+				AB2D2B962BFC4E5200F03DFD /* ContentView.swift */,
+				AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */,
+				AB2D2B9A2BFC4E5300F03DFD /* Preview Content */,
+			);
+			path = DollarDay;
+			sourceTree = "<group>";
+		};
+		AB2D2B9A2BFC4E5300F03DFD /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				AB2D2B9B2BFC4E5300F03DFD /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		AB2D2BA42BFC4E5400F03DFD /* DollarDayTests */ = {
+			isa = PBXGroup;
+			children = (
+				AB2D2BA52BFC4E5400F03DFD /* DollarDayTests.swift */,
+			);
+			path = DollarDayTests;
+			sourceTree = "<group>";
+		};
+		AB2D2BAE2BFC4E5400F03DFD /* DollarDayUITests */ = {
+			isa = PBXGroup;
+			children = (
+				AB2D2BAF2BFC4E5400F03DFD /* DollarDayUITests.swift */,
+				AB2D2BB12BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift */,
+			);
+			path = DollarDayUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AB2D2B902BFC4E5200F03DFD /* DollarDay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB2D2BB52BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDay" */;
+			buildPhases = (
+				AB2D2B8D2BFC4E5200F03DFD /* Sources */,
+				AB2D2B8E2BFC4E5200F03DFD /* Frameworks */,
+				AB2D2B8F2BFC4E5200F03DFD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DollarDay;
+			productName = DollarDay;
+			productReference = AB2D2B912BFC4E5200F03DFD /* DollarDay.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AB2D2BA02BFC4E5400F03DFD /* DollarDayTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB2D2BB82BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDayTests" */;
+			buildPhases = (
+				AB2D2B9D2BFC4E5400F03DFD /* Sources */,
+				AB2D2B9E2BFC4E5400F03DFD /* Frameworks */,
+				AB2D2B9F2BFC4E5400F03DFD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AB2D2BA32BFC4E5400F03DFD /* PBXTargetDependency */,
+			);
+			name = DollarDayTests;
+			productName = DollarDayTests;
+			productReference = AB2D2BA12BFC4E5400F03DFD /* DollarDayTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AB2D2BAA2BFC4E5400F03DFD /* DollarDayUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB2D2BBB2BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDayUITests" */;
+			buildPhases = (
+				AB2D2BA72BFC4E5400F03DFD /* Sources */,
+				AB2D2BA82BFC4E5400F03DFD /* Frameworks */,
+				AB2D2BA92BFC4E5400F03DFD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AB2D2BAD2BFC4E5400F03DFD /* PBXTargetDependency */,
+			);
+			name = DollarDayUITests;
+			productName = DollarDayUITests;
+			productReference = AB2D2BAB2BFC4E5400F03DFD /* DollarDayUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AB2D2B892BFC4E5200F03DFD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					AB2D2B902BFC4E5200F03DFD = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					AB2D2BA02BFC4E5400F03DFD = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = AB2D2B902BFC4E5200F03DFD;
+					};
+					AB2D2BAA2BFC4E5400F03DFD = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = AB2D2B902BFC4E5200F03DFD;
+					};
+				};
+			};
+			buildConfigurationList = AB2D2B8C2BFC4E5200F03DFD /* Build configuration list for PBXProject "DollarDay" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AB2D2B882BFC4E5200F03DFD;
+			productRefGroup = AB2D2B922BFC4E5200F03DFD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AB2D2B902BFC4E5200F03DFD /* DollarDay */,
+				AB2D2BA02BFC4E5400F03DFD /* DollarDayTests */,
+				AB2D2BAA2BFC4E5400F03DFD /* DollarDayUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AB2D2B8F2BFC4E5200F03DFD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB2D2B9C2BFC4E5300F03DFD /* Preview Assets.xcassets in Resources */,
+				AB2D2B992BFC4E5300F03DFD /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB2D2B9F2BFC4E5400F03DFD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB2D2BA92BFC4E5400F03DFD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AB2D2B8D2BFC4E5200F03DFD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */,
+				AB2D2B952BFC4E5200F03DFD /* DollarDayApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB2D2B9D2BFC4E5400F03DFD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB2D2BA62BFC4E5400F03DFD /* DollarDayTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB2D2BA72BFC4E5400F03DFD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB2D2BB02BFC4E5400F03DFD /* DollarDayUITests.swift in Sources */,
+				AB2D2BB22BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AB2D2BA32BFC4E5400F03DFD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB2D2B902BFC4E5200F03DFD /* DollarDay */;
+			targetProxy = AB2D2BA22BFC4E5400F03DFD /* PBXContainerItemProxy */;
+		};
+		AB2D2BAD2BFC4E5400F03DFD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB2D2B902BFC4E5200F03DFD /* DollarDay */;
+			targetProxy = AB2D2BAC2BFC4E5400F03DFD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AB2D2BB32BFC4E5400F03DFD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AB2D2BB42BFC4E5400F03DFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AB2D2BB62BFC4E5400F03DFD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"DollarDay/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDay;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AB2D2BB72BFC4E5400F03DFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"DollarDay/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDay;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AB2D2BB92BFC4E5400F03DFD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDayTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DollarDay.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DollarDay";
+			};
+			name = Debug;
+		};
+		AB2D2BBA2BFC4E5400F03DFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDayTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DollarDay.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DollarDay";
+			};
+			name = Release;
+		};
+		AB2D2BBC2BFC4E5400F03DFD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDayUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DollarDay;
+			};
+			name = Debug;
+		};
+		AB2D2BBD2BFC4E5400F03DFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDayUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DollarDay;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AB2D2B8C2BFC4E5200F03DFD /* Build configuration list for PBXProject "DollarDay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB2D2BB32BFC4E5400F03DFD /* Debug */,
+				AB2D2BB42BFC4E5400F03DFD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AB2D2BB52BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB2D2BB62BFC4E5400F03DFD /* Debug */,
+				AB2D2BB72BFC4E5400F03DFD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AB2D2BB82BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDayTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB2D2BB92BFC4E5400F03DFD /* Debug */,
+				AB2D2BBA2BFC4E5400F03DFD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AB2D2BBB2BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDayUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB2D2BBC2BFC4E5400F03DFD /* Debug */,
+				AB2D2BBD2BFC4E5400F03DFD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AB2D2B892BFC4E5200F03DFD /* Project object */;
+}
