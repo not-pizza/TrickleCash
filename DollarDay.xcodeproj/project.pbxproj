@@ -14,6 +14,7 @@
 		AB2D2BA62BFC4E5400F03DFD /* DollarDayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BA52BFC4E5400F03DFD /* DollarDayTests.swift */; };
 		AB2D2BB02BFC4E5400F03DFD /* DollarDayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BAF2BFC4E5400F03DFD /* DollarDayUITests.swift */; };
 		AB2D2BB22BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BB12BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift */; };
+		AB2D2BC02BFD986E00F03DFD /* LinkKit in Frameworks */ = {isa = PBXBuildFile; productRef = AB2D2BBF2BFD986E00F03DFD /* LinkKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB2D2BC02BFD986E00F03DFD /* LinkKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +145,9 @@
 			dependencies = (
 			);
 			name = DollarDay;
+			packageProductDependencies = (
+				AB2D2BBF2BFD986E00F03DFD /* LinkKit */,
+			);
 			productName = DollarDay;
 			productReference = AB2D2B912BFC4E5200F03DFD /* DollarDay.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +220,9 @@
 				Base,
 			);
 			mainGroup = AB2D2B882BFC4E5200F03DFD;
+			packageReferences = (
+				AB2D2BBE2BFD986E00F03DFD /* XCRemoteSwiftPackageReference "plaid-link-ios" */,
+			);
 			productRefGroup = AB2D2B922BFC4E5200F03DFD /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -422,6 +430,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DollarDay/Preview Content\"";
+				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -450,6 +459,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DollarDay/Preview Content\"";
+				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -582,6 +592,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AB2D2BBE2BFD986E00F03DFD /* XCRemoteSwiftPackageReference "plaid-link-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/plaid/plaid-link-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AB2D2BBF2BFD986E00F03DFD /* LinkKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AB2D2BBE2BFD986E00F03DFD /* XCRemoteSwiftPackageReference "plaid-link-ios" */;
+			productName = LinkKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AB2D2B892BFC4E5200F03DFD /* Project object */;
 }
