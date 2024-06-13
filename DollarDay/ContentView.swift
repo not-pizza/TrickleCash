@@ -4,6 +4,7 @@ struct Deduction: Identifiable, Codable {
     var id: UUID = UUID()
     var name: String
     var amount: Double
+    var dateAdded: Date = Date()
 }
 
 struct DeductionView: View {
