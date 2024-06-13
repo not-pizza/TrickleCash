@@ -1,17 +1,18 @@
 import SwiftUI
 
-struct Deduction: Identifiable, Codable {
+struct Spend: Identifiable, Codable {
     var id: UUID = UUID()
     var name: String
     var amount: Double
     var dateAdded: Date = Date()
 }
-struct DeductionView: View {
-    @Binding var deduction: Deduction
+
+struct SpendView: View {
+    @Binding var deduction: Spend
     @State private var inputAmount: String
     var onSave: () -> Void  // Closure to trigger save in the parent view
 
-    init(deduction: Binding<Deduction>, onSave: @escaping () -> Void) {
+    init(deduction: Binding<Spend>, onSave: @escaping () -> Void) {
         self._deduction = deduction
 
         // if the input amount ends with .0, remove it
@@ -48,9 +49,9 @@ struct DeductionView: View {
 }
 
 struct ContentView: View {
-    @State private var deductions: [Deduction] = []
+    @State private var deductions: [Spend] = []
     let monthlyRate: Double = 1000.0
-    let updateInterval: TimeInterval = 1.0 
+    let updateInterval: TimeInterval = 1.0
     let startDate: Date = {
         var dateComponents = DateComponents()
         dateComponents.year = 2024
@@ -71,13 +72,13 @@ struct ContentView: View {
                 .padding()
             List {
                 ForEach($deductions) { $deduction in
-                    DeductionView(deduction: $deduction, onSave: saveDeductions)
+                    SpendView(deduction: $deduction, onSave: saveDeductions)
                 }
                 .onDelete(perform: deleteDeduction)
             }
             .listStyle(InsetGroupedListStyle())
-            Button("Add Deduction") {
-                let newDeduction = Deduction(name: "", amount: 0.0)
+            Button("Add Spending") {
+                let newDeduction = Spend(name: "", amount: 0.0)
                 deductions.append(newDeduction)
                 saveDeductions()
             }
@@ -108,7 +109,7 @@ struct ContentView: View {
 
     private func loadDeductions() {
         if let data = UserDefaults.standard.data(forKey: "Deductions") {
-            if let decoded = try? JSONDecoder().decode([Deduction].self, from: data) {
+            if let decoded = try? JSONDecoder().decode([Spend].self, from: data) {
                 self.deductions = decoded
             }
         }
@@ -124,3 +125,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
