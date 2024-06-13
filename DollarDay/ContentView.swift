@@ -6,44 +6,44 @@ struct Deduction: Identifiable, Codable {
     var amount: Double
     var dateAdded: Date = Date()
 }
-
 struct DeductionView: View {
     @Binding var deduction: Deduction
     @State private var inputAmount: String
+    var onSave: () -> Void  // Closure to trigger save in the parent view
 
-    init(deduction: Binding<Deduction>) {
+    init(deduction: Binding<Deduction>, onSave: @escaping () -> Void) {
         self._deduction = deduction
-        self._inputAmount = State(initialValue: String(deduction.wrappedValue.amount))
+
+        // if the input amount ends with .0, remove it
+        var amount = String(deduction.wrappedValue.amount);
+        if amount.hasSuffix(".0") {
+            amount = String(amount.dropLast(2))
+        }
+        self._inputAmount = State(initialValue: amount)
+
+        self.onSave = onSave
     }
 
     var body: some View {
         HStack {
-            TextField("Name", text: $deduction.name, onCommit: {
-                saveDeductions()
-            })
+            TextField("Name", text: $deduction.name)
             .textFieldStyle(RoundedBorderTextFieldStyle())
+            .onChange(of: deduction.name) { _ in
+                self.onSave()
+            }
             Spacer()
-            TextField("Amount", text: $inputAmount, onCommit: {
-                if let value = Double(inputAmount) {
-                    deduction.amount = value
-                } else if inputAmount.isEmpty {
-                    deduction.amount = 0
-                }
-                saveDeductions()
-            })
+            TextField("Amount", text: $inputAmount)
             .keyboardType(.decimalPad)
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .onChange(of: inputAmount) { newValue in
                 if let value = Double(newValue) {
                     deduction.amount = value
+                } else if inputAmount.isEmpty {
+                    deduction.amount = 0
                 }
+                self.onSave()
             }
         }
-    }
-
-    private func saveDeductions() {
-        // Save the deductions in the parent view's context
-        // This function should trigger the parent view's save functionality
     }
 }
 
@@ -71,7 +71,7 @@ struct ContentView: View {
                 .padding()
             List {
                 ForEach($deductions) { $deduction in
-                    DeductionView(deduction: $deduction)
+                    DeductionView(deduction: $deduction, onSave: saveDeductions)
                 }
                 .onDelete(perform: deleteDeduction)
             }
