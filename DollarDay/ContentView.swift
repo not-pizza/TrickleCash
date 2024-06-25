@@ -34,7 +34,7 @@ struct SpendView: View {
             }
             Spacer()
             TextField("Amount", text: $inputAmount)
-            .keyboardType(.decimalPad)
+            .keyboardType(.numbersAndPunctuation)
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .onChange(of: inputAmount) { newValue in
                 if let value = Double(newValue) {
@@ -50,22 +50,59 @@ struct SpendView: View {
 
 struct ContentView: View {
     @State private var deductions: [Spend] = []
-    let monthlyRate: Double = 1000.0
-    let updateInterval: TimeInterval = 1.0
-    let startDate: Date = {
-        var dateComponents = DateComponents()
-        dateComponents.year = 2024
-        dateComponents.month = 6
-        dateComponents.day = 11
-        dateComponents.hour = 0
-        dateComponents.minute = 0
-        dateComponents.second = 0
-        return Calendar.current.date(from: dateComponents) ?? Date()
-    }()
-    
+    @State private var monthlyRate: Double
+    @State private var startDate: Date
     @State private var currentTime: Date = Date()
+    @State private var tempMonthlyRate: String = ""
+    @State private var showingSettings = false // To toggle settings view
+
+    init() {
+        _monthlyRate = State(initialValue: UserDefaults.standard.double(forKey: "MonthlyRate"))
+        _startDate = State(initialValue: UserDefaults.standard.object(forKey: "StartDate") as? Date ?? Date())
+    }
 
     var body: some View {
+        VStack {
+            if showingSettings {
+                settingsView
+            } else {
+                mainContentView
+            }
+        }
+        .onAppear {
+            loadDeductions()
+            setupTimer()
+        }
+    }
+    
+    var settingsView: some View {
+        Form {
+            DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
+                .onChange(of: startDate) { newValue in
+                    UserDefaults.standard.set(newValue, forKey: "StartDate")
+                }
+            
+            TextField("Monthly Rate", text: $tempMonthlyRate)
+                .keyboardType(.decimalPad)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+            
+            Button("Save Changes") {
+                // Try to convert the temporary rate to a Double
+                if let rate = Double(tempMonthlyRate) {
+                    monthlyRate = rate
+                    UserDefaults.standard.set(rate, forKey: "MonthlyRate")
+                    // Feedback to the user that saving was successful
+                } else {
+                    // Handle invalid input, e.g., revert to the last saved rate or show an error
+                    tempMonthlyRate = "\(monthlyRate)" // Revert to the last valid rate
+                }
+                showingSettings = false // Optionally close settings after saving
+            }
+        }
+    }
+
+    
+    var mainContentView: some View {
         VStack {
             Text("$\((currentTrickleValue() - totalDeductions()), specifier: "%.2f")")
                 .monospacedDigit()
@@ -82,19 +119,23 @@ struct ContentView: View {
                 deductions.append(newDeduction)
                 saveDeductions()
             }
-        }
-        .padding()
-        .onAppear {
-            loadDeductions()
-            Timer.scheduledTimer(withTimeInterval: updateInterval, repeats: true) { _ in
-                self.currentTime = Date()
+            Button("Settings") {
+                showingSettings = true
+                tempMonthlyRate = "\(monthlyRate)"
             }
+            .padding()
+        }
+    }
+
+    private func setupTimer() {
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            currentTime = Date()
         }
     }
 
     private func currentTrickleValue() -> Double {
         let secondsElapsed = currentTime.timeIntervalSince(startDate)
-        let perSecondRate = monthlyRate / (30 * 24 * 60 * 60)
+        let perSecondRate = monthlyRate / (30.416 * 24 * 60 * 60)
         return perSecondRate * secondsElapsed
     }
 
@@ -110,7 +151,7 @@ struct ContentView: View {
     private func loadDeductions() {
         if let data = UserDefaults.standard.data(forKey: "Deductions") {
             if let decoded = try? JSONDecoder().decode([Spend].self, from: data) {
-                self.deductions = decoded
+                deductions = decoded
             }
         }
     }
@@ -125,4 +166,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
 
