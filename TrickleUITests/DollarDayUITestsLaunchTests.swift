@@ -1,13 +1,13 @@
 //
-//  DollarDayUITestsLaunchTests.swift
-//  DollarDayUITests
+//  TrickleUITestsLaunchTests.swift
+//  TrickleUITests
 //
 //  Created by Andre Popovitch on 5/20/24.
 //
 
 import XCTest
 
-final class DollarDayUITestsLaunchTests: XCTestCase {
+final class TrickleUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

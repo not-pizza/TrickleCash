@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AB2D2B952BFC4E5200F03DFD /* DollarDayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B942BFC4E5200F03DFD /* DollarDayApp.swift */; };
+		AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */; };
 		AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B962BFC4E5200F03DFD /* ContentView.swift */; };
 		AB2D2B992BFC4E5300F03DFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */; };
 		AB2D2B9C2BFC4E5300F03DFD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB2D2B9B2BFC4E5300F03DFD /* Preview Assets.xcassets */; };
-		AB2D2BA62BFC4E5400F03DFD /* DollarDayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BA52BFC4E5400F03DFD /* DollarDayTests.swift */; };
-		AB2D2BB02BFC4E5400F03DFD /* DollarDayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BAF2BFC4E5400F03DFD /* DollarDayUITests.swift */; };
-		AB2D2BB22BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BB12BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift */; };
+		AB2D2BA62BFC4E5400F03DFD /* TrickleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BA52BFC4E5400F03DFD /* TrickleTests.swift */; };
+		AB2D2BB02BFC4E5400F03DFD /* TrickleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BAF2BFC4E5400F03DFD /* TrickleUITests.swift */; };
+		AB2D2BB22BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BB12BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift */; };
 		AB2D2BC02BFD986E00F03DFD /* LinkKit in Frameworks */ = {isa = PBXBuildFile; productRef = AB2D2BBF2BFD986E00F03DFD /* LinkKit */; };
 /* End PBXBuildFile section */
 
@@ -23,28 +23,28 @@
 			containerPortal = AB2D2B892BFC4E5200F03DFD /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = AB2D2B902BFC4E5200F03DFD;
-			remoteInfo = DollarDay;
+			remoteInfo = Trickle;
 		};
 		AB2D2BAC2BFC4E5400F03DFD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AB2D2B892BFC4E5200F03DFD /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = AB2D2B902BFC4E5200F03DFD;
-			remoteInfo = DollarDay;
+			remoteInfo = Trickle;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		AB2D2B912BFC4E5200F03DFD /* DollarDay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DollarDay.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AB2D2B942BFC4E5200F03DFD /* DollarDayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DollarDayApp.swift; sourceTree = "<group>"; };
+		AB2D2B912BFC4E5200F03DFD /* Trickle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trickle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleApp.swift; sourceTree = "<group>"; };
 		AB2D2B962BFC4E5200F03DFD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AB2D2B9B2BFC4E5300F03DFD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		AB2D2BA12BFC4E5400F03DFD /* DollarDayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DollarDayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AB2D2BA52BFC4E5400F03DFD /* DollarDayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DollarDayTests.swift; sourceTree = "<group>"; };
-		AB2D2BAB2BFC4E5400F03DFD /* DollarDayUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DollarDayUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AB2D2BAF2BFC4E5400F03DFD /* DollarDayUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DollarDayUITests.swift; sourceTree = "<group>"; };
-		AB2D2BB12BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DollarDayUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		AB2D2BA12BFC4E5400F03DFD /* TrickleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrickleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB2D2BA52BFC4E5400F03DFD /* TrickleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleTests.swift; sourceTree = "<group>"; };
+		AB2D2BAB2BFC4E5400F03DFD /* TrickleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrickleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB2D2BAF2BFC4E5400F03DFD /* TrickleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleUITests.swift; sourceTree = "<group>"; };
+		AB2D2BB12BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,9 +76,9 @@
 		AB2D2B882BFC4E5200F03DFD = {
 			isa = PBXGroup;
 			children = (
-				AB2D2B932BFC4E5200F03DFD /* DollarDay */,
-				AB2D2BA42BFC4E5400F03DFD /* DollarDayTests */,
-				AB2D2BAE2BFC4E5400F03DFD /* DollarDayUITests */,
+				AB2D2B932BFC4E5200F03DFD /* Trickle */,
+				AB2D2BA42BFC4E5400F03DFD /* TrickleTests */,
+				AB2D2BAE2BFC4E5400F03DFD /* TrickleUITests */,
 				AB2D2B922BFC4E5200F03DFD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -86,22 +86,22 @@
 		AB2D2B922BFC4E5200F03DFD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AB2D2B912BFC4E5200F03DFD /* DollarDay.app */,
-				AB2D2BA12BFC4E5400F03DFD /* DollarDayTests.xctest */,
-				AB2D2BAB2BFC4E5400F03DFD /* DollarDayUITests.xctest */,
+				AB2D2B912BFC4E5200F03DFD /* Trickle.app */,
+				AB2D2BA12BFC4E5400F03DFD /* TrickleTests.xctest */,
+				AB2D2BAB2BFC4E5400F03DFD /* TrickleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AB2D2B932BFC4E5200F03DFD /* DollarDay */ = {
+		AB2D2B932BFC4E5200F03DFD /* Trickle */ = {
 			isa = PBXGroup;
 			children = (
-				AB2D2B942BFC4E5200F03DFD /* DollarDayApp.swift */,
+				AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */,
 				AB2D2B962BFC4E5200F03DFD /* ContentView.swift */,
 				AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */,
 				AB2D2B9A2BFC4E5300F03DFD /* Preview Content */,
 			);
-			path = DollarDay;
+			path = Trickle;
 			sourceTree = "<group>";
 		};
 		AB2D2B9A2BFC4E5300F03DFD /* Preview Content */ = {
@@ -112,29 +112,29 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		AB2D2BA42BFC4E5400F03DFD /* DollarDayTests */ = {
+		AB2D2BA42BFC4E5400F03DFD /* TrickleTests */ = {
 			isa = PBXGroup;
 			children = (
-				AB2D2BA52BFC4E5400F03DFD /* DollarDayTests.swift */,
+				AB2D2BA52BFC4E5400F03DFD /* TrickleTests.swift */,
 			);
-			path = DollarDayTests;
+			path = TrickleTests;
 			sourceTree = "<group>";
 		};
-		AB2D2BAE2BFC4E5400F03DFD /* DollarDayUITests */ = {
+		AB2D2BAE2BFC4E5400F03DFD /* TrickleUITests */ = {
 			isa = PBXGroup;
 			children = (
-				AB2D2BAF2BFC4E5400F03DFD /* DollarDayUITests.swift */,
-				AB2D2BB12BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift */,
+				AB2D2BAF2BFC4E5400F03DFD /* TrickleUITests.swift */,
+				AB2D2BB12BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift */,
 			);
-			path = DollarDayUITests;
+			path = TrickleUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AB2D2B902BFC4E5200F03DFD /* DollarDay */ = {
+		AB2D2B902BFC4E5200F03DFD /* Trickle */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AB2D2BB52BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDay" */;
+			buildConfigurationList = AB2D2BB52BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "Trickle" */;
 			buildPhases = (
 				AB2D2B8D2BFC4E5200F03DFD /* Sources */,
 				AB2D2B8E2BFC4E5200F03DFD /* Frameworks */,
@@ -144,17 +144,17 @@
 			);
 			dependencies = (
 			);
-			name = DollarDay;
+			name = Trickle;
 			packageProductDependencies = (
 				AB2D2BBF2BFD986E00F03DFD /* LinkKit */,
 			);
-			productName = DollarDay;
-			productReference = AB2D2B912BFC4E5200F03DFD /* DollarDay.app */;
+			productName = Trickle;
+			productReference = AB2D2B912BFC4E5200F03DFD /* Trickle.app */;
 			productType = "com.apple.product-type.application";
 		};
-		AB2D2BA02BFC4E5400F03DFD /* DollarDayTests */ = {
+		AB2D2BA02BFC4E5400F03DFD /* TrickleTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AB2D2BB82BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDayTests" */;
+			buildConfigurationList = AB2D2BB82BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "TrickleTests" */;
 			buildPhases = (
 				AB2D2B9D2BFC4E5400F03DFD /* Sources */,
 				AB2D2B9E2BFC4E5400F03DFD /* Frameworks */,
@@ -165,14 +165,14 @@
 			dependencies = (
 				AB2D2BA32BFC4E5400F03DFD /* PBXTargetDependency */,
 			);
-			name = DollarDayTests;
-			productName = DollarDayTests;
-			productReference = AB2D2BA12BFC4E5400F03DFD /* DollarDayTests.xctest */;
+			name = TrickleTests;
+			productName = TrickleTests;
+			productReference = AB2D2BA12BFC4E5400F03DFD /* TrickleTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		AB2D2BAA2BFC4E5400F03DFD /* DollarDayUITests */ = {
+		AB2D2BAA2BFC4E5400F03DFD /* TrickleUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AB2D2BBB2BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDayUITests" */;
+			buildConfigurationList = AB2D2BBB2BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "TrickleUITests" */;
 			buildPhases = (
 				AB2D2BA72BFC4E5400F03DFD /* Sources */,
 				AB2D2BA82BFC4E5400F03DFD /* Frameworks */,
@@ -183,9 +183,9 @@
 			dependencies = (
 				AB2D2BAD2BFC4E5400F03DFD /* PBXTargetDependency */,
 			);
-			name = DollarDayUITests;
-			productName = DollarDayUITests;
-			productReference = AB2D2BAB2BFC4E5400F03DFD /* DollarDayUITests.xctest */;
+			name = TrickleUITests;
+			productName = TrickleUITests;
+			productReference = AB2D2BAB2BFC4E5400F03DFD /* TrickleUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -211,7 +211,7 @@
 					};
 				};
 			};
-			buildConfigurationList = AB2D2B8C2BFC4E5200F03DFD /* Build configuration list for PBXProject "DollarDay" */;
+			buildConfigurationList = AB2D2B8C2BFC4E5200F03DFD /* Build configuration list for PBXProject "Trickle" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -227,9 +227,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				AB2D2B902BFC4E5200F03DFD /* DollarDay */,
-				AB2D2BA02BFC4E5400F03DFD /* DollarDayTests */,
-				AB2D2BAA2BFC4E5400F03DFD /* DollarDayUITests */,
+				AB2D2B902BFC4E5200F03DFD /* Trickle */,
+				AB2D2BA02BFC4E5400F03DFD /* TrickleTests */,
+				AB2D2BAA2BFC4E5400F03DFD /* TrickleUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -266,7 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */,
-				AB2D2B952BFC4E5200F03DFD /* DollarDayApp.swift in Sources */,
+				AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,7 +274,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB2D2BA62BFC4E5400F03DFD /* DollarDayTests.swift in Sources */,
+				AB2D2BA62BFC4E5400F03DFD /* TrickleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,8 +282,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB2D2BB02BFC4E5400F03DFD /* DollarDayUITests.swift in Sources */,
-				AB2D2BB22BFC4E5400F03DFD /* DollarDayUITestsLaunchTests.swift in Sources */,
+				AB2D2BB02BFC4E5400F03DFD /* TrickleUITests.swift in Sources */,
+				AB2D2BB22BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,12 +292,12 @@
 /* Begin PBXTargetDependency section */
 		AB2D2BA32BFC4E5400F03DFD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AB2D2B902BFC4E5200F03DFD /* DollarDay */;
+			target = AB2D2B902BFC4E5200F03DFD /* Trickle */;
 			targetProxy = AB2D2BA22BFC4E5400F03DFD /* PBXContainerItemProxy */;
 		};
 		AB2D2BAD2BFC4E5400F03DFD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AB2D2B902BFC4E5200F03DFD /* DollarDay */;
+			target = AB2D2B902BFC4E5200F03DFD /* Trickle */;
 			targetProxy = AB2D2BAC2BFC4E5400F03DFD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -355,7 +355,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -412,7 +412,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -429,7 +429,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"DollarDay/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Trickle/Preview Content\"";
 				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -443,8 +443,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDay;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.Trickle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -458,7 +461,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"DollarDay/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Trickle/Preview Content\"";
 				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -472,8 +475,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDay;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.Trickle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -490,12 +496,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDayTests;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.TrickleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DollarDay.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DollarDay";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Trickle.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Trickle";
 			};
 			name = Debug;
 		};
@@ -509,12 +515,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDayTests;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.TrickleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DollarDay.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DollarDay";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Trickle.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Trickle";
 			};
 			name = Release;
 		};
@@ -526,12 +532,12 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDayUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.TrickleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = DollarDay;
+				TEST_TARGET_NAME = Trickle;
 			};
 			name = Debug;
 		};
@@ -543,19 +549,19 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.DollarDayUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.TrickleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = DollarDay;
+				TEST_TARGET_NAME = Trickle;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AB2D2B8C2BFC4E5200F03DFD /* Build configuration list for PBXProject "DollarDay" */ = {
+		AB2D2B8C2BFC4E5200F03DFD /* Build configuration list for PBXProject "Trickle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AB2D2BB32BFC4E5400F03DFD /* Debug */,
@@ -564,7 +570,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AB2D2BB52BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDay" */ = {
+		AB2D2BB52BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "Trickle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AB2D2BB62BFC4E5400F03DFD /* Debug */,
@@ -573,7 +579,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AB2D2BB82BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDayTests" */ = {
+		AB2D2BB82BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "TrickleTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AB2D2BB92BFC4E5400F03DFD /* Debug */,
@@ -582,7 +588,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AB2D2BBB2BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "DollarDayUITests" */ = {
+		AB2D2BBB2BFC4E5400F03DFD /* Build configuration list for PBXNativeTarget "TrickleUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AB2D2BBC2BFC4E5400F03DFD /* Debug */,

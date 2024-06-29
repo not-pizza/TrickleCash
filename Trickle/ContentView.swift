@@ -54,10 +54,18 @@ struct ContentView: View {
     @State private var startDate: Date
     @State private var currentTime: Date = Date()
     @State private var tempMonthlyRate: String = ""
-    @State private var showingSettings = false // To toggle settings view
+    @State private var showingSettings = false 
 
     init() {
-        _monthlyRate = State(initialValue: UserDefaults.standard.double(forKey: "MonthlyRate"))
+        let defaults = UserDefaults.standard
+        let monthlyRate: Double
+        if let rate = defaults.object(forKey: "MonthlyRate") as? Double {
+            monthlyRate = rate
+        } else {
+            monthlyRate = 1000.0  // Default value when the key doesn't exist
+        }
+        _monthlyRate = State(initialValue: monthlyRate)
+
         _startDate = State(initialValue: UserDefaults.standard.object(forKey: "StartDate") as? Date ?? Date())
     }
 

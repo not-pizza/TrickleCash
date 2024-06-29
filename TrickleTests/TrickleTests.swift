@@ -1,14 +1,14 @@
 //
-//  DollarDayTests.swift
-//  DollarDayTests
+//  TrickleTests.swift
+//  TrickleTests
 //
 //  Created by Andre Popovitch on 5/20/24.
 //
 
 import XCTest
-@testable import DollarDay
+@testable import Trickle
 
-final class DollarDayTests: XCTestCase {
+final class TrickleTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
