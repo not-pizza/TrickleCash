@@ -103,18 +103,26 @@ struct ContentView: View {
                 }
             }
             .navigationBarItems(leading:
-                Button(action: {
-                    showingSettings = true
-                    tempMonthlyRate = "\(monthlyRate)"
-                }) {
-                    Image(systemName: "gear")
+                Group {
+                    if !showingSettings {
+                        Button(action: {
+                            showingSettings = true
+                            tempMonthlyRate = "\(monthlyRate)"
+                        }) {
+                            Image(systemName: "gear")
+                                .foregroundColor(.blue)
+                        }
+                    } else {
+                        Button(action: {
+                            showingSettings = false
+                        }) {
+                            Image(systemName: "xmark")
+                                .foregroundColor(.blue)
+                        }
+                    }
                 }
             )
-            .navigationBarTitle("Spending Tracker", displayMode: .inline)
-        }
-        .onAppear {
-            loadDeductions()
-            setupTimer()
+            .navigationBarTitle(showingSettings ? "Settings" : "Spending Tracker", displayMode: .inline)
         }
     }
     
