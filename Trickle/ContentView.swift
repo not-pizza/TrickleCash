@@ -76,30 +76,7 @@ struct ContentView: View {
                     settingsView
                 } else {
                     mainContentView
-                }
-                
-                if !showingSettings {
-                    // Floating add button
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            Button(action: {
-                                let newDeduction = Spend(name: "", amount: 0.0)
-                                deductions.append(newDeduction)
-                                saveDeductions()
-                            }) {
-                                Image(systemName: "plus.circle.fill")
-                                    .resizable()
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.blue)
-                                    .background(Color.white)
-                                    .clipShape(Circle())
-                                    .shadow(radius: 5)
-                            }
-                            .padding()
-                        }
-                    }
+                    addSpendingButton
                 }
             }
             .navigationBarItems(leading:
@@ -123,7 +100,7 @@ struct ContentView: View {
                     }
                 }
             )
-            .navigationBarTitle(showingSettings ? "Settings" : "Spending Tracker", displayMode: .inline)
+            .navigationBarTitle(showingSettings ? "Settings" : "Spending", displayMode: .inline)
         }
         .onAppear {
             loadDeductions()
@@ -161,6 +138,29 @@ struct ContentView: View {
                 .onDelete(perform: deleteDeduction)
             }
             .listStyle(InsetGroupedListStyle())
+        }
+    }
+
+    var addSpendingButton: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                Button(action: {
+                    let newDeduction = Spend(name: "", amount: 0.0)
+                    deductions.append(newDeduction)
+                    saveDeductions()
+                }) {
+                    Image(systemName: "plus.circle.fill")
+                        .resizable()
+                        .frame(width: 60, height: 60)
+                        .foregroundColor(.blue)
+                        .background(Color.white)
+                        .clipShape(Circle())
+                        .shadow(radius: 5)
+                }
+                .padding()
+            }
         }
     }
 
