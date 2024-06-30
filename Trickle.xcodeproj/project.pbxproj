@@ -14,7 +14,6 @@
 		AB2D2BA62BFC4E5400F03DFD /* TrickleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BA52BFC4E5400F03DFD /* TrickleTests.swift */; };
 		AB2D2BB02BFC4E5400F03DFD /* TrickleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BAF2BFC4E5400F03DFD /* TrickleUITests.swift */; };
 		AB2D2BB22BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BB12BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift */; };
-		AB2D2BC02BFD986E00F03DFD /* LinkKit in Frameworks */ = {isa = PBXBuildFile; productRef = AB2D2BBF2BFD986E00F03DFD /* LinkKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +51,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB2D2BC02BFD986E00F03DFD /* LinkKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,7 +144,6 @@
 			);
 			name = Trickle;
 			packageProductDependencies = (
-				AB2D2BBF2BFD986E00F03DFD /* LinkKit */,
 			);
 			productName = Trickle;
 			productReference = AB2D2B912BFC4E5200F03DFD /* Trickle.app */;
@@ -609,14 +606,6 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		AB2D2BBF2BFD986E00F03DFD /* LinkKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AB2D2BBE2BFD986E00F03DFD /* XCRemoteSwiftPackageReference "plaid-link-ios" */;
-			productName = LinkKit;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AB2D2B892BFC4E5200F03DFD /* Project object */;
 }
