@@ -16,7 +16,7 @@ struct SpendView: View {
         self._deduction = deduction
 
         // if the input amount ends with .0, remove it
-        var amount = String(deduction.wrappedValue.amount);
+        var amount = String(deduction.wrappedValue.amount)
         if amount.hasSuffix(".0") {
             amount = String(amount.dropLast(2))
         }
@@ -54,7 +54,7 @@ struct ContentView: View {
     @State private var startDate: Date
     @State private var currentTime: Date = Date()
     @State private var tempMonthlyRate: String = ""
-    @State private var showingSettings = false 
+    @State private var showingSettings = false
 
     init() {
         let defaults = UserDefaults.standard
@@ -70,12 +70,47 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack {
-            if showingSettings {
-                settingsView
-            } else {
-                mainContentView
+        NavigationView {
+            ZStack {
+                if showingSettings {
+                    settingsView
+                } else {
+                    mainContentView
+                }
+                
+                if !showingSettings {
+                    // Floating add button
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                let newDeduction = Spend(name: "", amount: 0.0)
+                                deductions.append(newDeduction)
+                                saveDeductions()
+                            }) {
+                                Image(systemName: "plus.circle.fill")
+                                    .resizable()
+                                    .frame(width: 60, height: 60)
+                                    .foregroundColor(.blue)
+                                    .background(Color.white)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
+                            }
+                            .padding()
+                        }
+                    }
+                }
             }
+            .navigationBarItems(leading:
+                Button(action: {
+                    showingSettings = true
+                    tempMonthlyRate = "\(monthlyRate)"
+                }) {
+                    Image(systemName: "gear")
+                }
+            )
+            .navigationBarTitle("Spending Tracker", displayMode: .inline)
         }
         .onAppear {
             loadDeductions()
@@ -109,7 +144,6 @@ struct ContentView: View {
         }
     }
 
-    
     var mainContentView: some View {
         VStack {
             Text("$\((currentTrickleValue() - totalDeductions()), specifier: "%.2f")")
@@ -122,16 +156,6 @@ struct ContentView: View {
                 .onDelete(perform: deleteDeduction)
             }
             .listStyle(InsetGroupedListStyle())
-            Button("Add Spending") {
-                let newDeduction = Spend(name: "", amount: 0.0)
-                deductions.append(newDeduction)
-                saveDeductions()
-            }
-            Button("Settings") {
-                showingSettings = true
-                tempMonthlyRate = "\(monthlyRate)"
-            }
-            .padding()
         }
     }
 
@@ -174,5 +198,3 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
-
-
