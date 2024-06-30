@@ -1,6 +1,6 @@
 # Privacy Policy of not.pizza
 
-not.pizza operates the https://github.com/not-pizza/TrickleCash website, which provides the SERVICE.
+not.pizza operates the Trickle Cash, which provides the SERVICE.
 
 This page is used to inform website visitors regarding our policies with the collection, use, and disclosure of Personal Information if anyone decided to use our Service, the Trickle Cash website.
 
