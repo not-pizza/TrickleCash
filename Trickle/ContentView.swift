@@ -114,6 +114,7 @@ struct ContentView: View {
                         }
                     } else {
                         Button(action: {
+                            saveSettings()
                             showingSettings = false
                         }) {
                             Image(systemName: "xmark")
@@ -123,6 +124,10 @@ struct ContentView: View {
                 }
             )
             .navigationBarTitle(showingSettings ? "Settings" : "Spending Tracker", displayMode: .inline)
+        }
+        .onAppear {
+            loadDeductions()
+            setupTimer()
         }
     }
     
@@ -138,16 +143,8 @@ struct ContentView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             Button("Save Changes") {
-                // Try to convert the temporary rate to a Double
-                if let rate = Double(tempMonthlyRate) {
-                    monthlyRate = rate
-                    UserDefaults.standard.set(rate, forKey: "MonthlyRate")
-                    // Feedback to the user that saving was successful
-                } else {
-                    // Handle invalid input, e.g., revert to the last saved rate or show an error
-                    tempMonthlyRate = "\(monthlyRate)" // Revert to the last valid rate
-                }
-                showingSettings = false // Optionally close settings after saving
+                saveSettings()
+                showingSettings = false
             }
         }
     }
@@ -164,6 +161,15 @@ struct ContentView: View {
                 .onDelete(perform: deleteDeduction)
             }
             .listStyle(InsetGroupedListStyle())
+        }
+    }
+
+    private func saveSettings() {
+        if let rate = Double(tempMonthlyRate) {
+            monthlyRate = rate
+            UserDefaults.standard.set(rate, forKey: "MonthlyRate")
+        } else {
+            tempMonthlyRate = "\(monthlyRate)" // Revert to the last valid rate
         }
     }
 
