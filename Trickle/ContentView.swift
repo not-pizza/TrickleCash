@@ -7,6 +7,18 @@ struct Spend: Identifiable, Codable {
     var dateAdded: Date = Date()
 }
 
+enum Event: Codable, Identifiable {
+    case spend(Spend)
+    
+    var id: UUID {
+        switch self {
+        case .spend(let spend):
+            return spend.id
+        }
+    }
+}
+
+
 struct SpendView: View {
     @Binding var deduction: Spend
     @State private var inputAmount: String
@@ -49,7 +61,7 @@ struct SpendView: View {
 }
 
 struct ContentView: View {
-    @State private var deductions: [Spend] = []
+    @State private var events: [Event] = []
     @State private var monthlyRate: Double
     @State private var startDate: Date
     @State private var currentTime: Date = Date()
@@ -103,7 +115,7 @@ struct ContentView: View {
             .navigationBarTitle(showingSettings ? "Settings" : "Cash", displayMode: .inline)
         }
         .onAppear {
-            loadDeductions()
+            loadEvents()
             setupTimer()
         }
     }
@@ -131,10 +143,18 @@ struct ContentView: View {
             Text("$\((currentTrickleValue() - totalDeductions()), specifier: "%.2f")")
                 .monospacedDigit()
             List {
-                ForEach($deductions) { $deduction in
-                    SpendView(deduction: $deduction, onSave: saveDeductions)
+                ForEach($events) { $event in
+                    if case .spend(var spend) = event {
+                        SpendView(deduction: Binding(
+                            get: { spend },
+                            set: { newValue in
+                                spend = newValue
+                                event = .spend(spend)
+                            }
+                        ), onSave: saveEvents)
+                    }
                 }
-                .onDelete(perform: deleteDeduction)
+                .onDelete(perform: deleteEvent)
             }
             .listStyle(InsetGroupedListStyle())
         }
@@ -146,9 +166,9 @@ struct ContentView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    let newDeduction = Spend(name: "", amount: 0.0)
-                    deductions.append(newDeduction)
-                    saveDeductions()
+                    let newSpend = Spend(name: "", amount: 0.0)
+                    events.append(.spend(newSpend))
+                    saveEvents()
                 }) {
                     Image(systemName: "plus.circle.fill")
                         .resizable()
@@ -184,26 +204,32 @@ struct ContentView: View {
         return perSecondRate * secondsElapsed
     }
 
+
     private func totalDeductions() -> Double {
-        deductions.reduce(0) { $0 + $1.amount }
+        events.reduce(0) { total, event in
+            if case .spend(let spend) = event {
+                return total + spend.amount
+            }
+            return total
+        }
     }
 
-    private func deleteDeduction(at offsets: IndexSet) {
-        deductions.remove(atOffsets: offsets)
-        saveDeductions()
+    private func deleteEvent(at offsets: IndexSet) {
+        events.remove(atOffsets: offsets)
+        saveEvents()
     }
 
-    private func loadDeductions() {
-        if let data = UserDefaults.standard.data(forKey: "Deductions") {
-            if let decoded = try? JSONDecoder().decode([Spend].self, from: data) {
-                deductions = decoded
+    private func loadEvents() {
+        if let data = UserDefaults.standard.data(forKey: "Events") {
+            if let decoded = try? JSONDecoder().decode([Event].self, from: data) {
+                events = decoded
             }
         }
     }
 
-    private func saveDeductions() {
-        if let encoded = try? JSONEncoder().encode(deductions) {
-            UserDefaults.standard.set(encoded, forKey: "Deductions")
+    private func saveEvents() {
+        if let encoded = try? JSONEncoder().encode(events) {
+            UserDefaults.standard.set(encoded, forKey: "Events")
         }
     }
 }
