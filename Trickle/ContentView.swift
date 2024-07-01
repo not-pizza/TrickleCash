@@ -100,7 +100,7 @@ struct ContentView: View {
                     }
                 }
             )
-            .navigationBarTitle(showingSettings ? "Settings" : "Spending", displayMode: .inline)
+            .navigationBarTitle(showingSettings ? "Settings" : "Cash", displayMode: .inline)
         }
         .onAppear {
             loadDeductions()
