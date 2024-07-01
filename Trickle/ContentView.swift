@@ -130,7 +130,6 @@ struct ContentView: View {
         VStack {
             Text("$\((currentTrickleValue() - totalDeductions()), specifier: "%.2f")")
                 .monospacedDigit()
-                .padding()
             List {
                 ForEach($deductions) { $deduction in
                     SpendView(deduction: $deduction, onSave: saveDeductions)
