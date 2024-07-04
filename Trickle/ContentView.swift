@@ -1,5 +1,11 @@
 import SwiftUI
 
+struct AppData: Codable {
+    var monthlyRate: Double
+    var startDate: Date
+    var events: [Event]
+}
+
 struct Spend: Identifiable, Codable {
     var id: UUID = UUID()
     var name: String
@@ -61,24 +67,30 @@ struct SpendView: View {
 }
 
 struct ContentView: View {
-    @State private var events: [Event] = []
-    @State private var monthlyRate: Double
-    @State private var startDate: Date
+    @State private var appData: AppData
     @State private var currentTime: Date = Date()
     @State private var tempMonthlyRate: String = ""
     @State private var showingSettings = false
 
     init() {
         let defaults = UserDefaults.standard
-        let monthlyRate: Double
-        if let rate = defaults.object(forKey: "MonthlyRate") as? Double {
-            monthlyRate = rate
+        
+        if let savedData = defaults.data(forKey: "AppData"),
+           let decodedData = try? JSONDecoder().decode(AppData.self, from: savedData) {
+            // If we have saved data, use it
+            _appData = State(initialValue: decodedData)
         } else {
-            monthlyRate = 1000.0  // Default value when the key doesn't exist
+            // If no saved data, initialize with default values
+            let defaultMonthlyRate: Double = 1000.0
+            let defaultStartDate: Date = Date()
+            let defaultEvents: [Event] = []
+            
+            _appData = State(initialValue: AppData(
+                monthlyRate: defaultMonthlyRate,
+                startDate: defaultStartDate,
+                events: defaultEvents
+            ))
         }
-        _monthlyRate = State(initialValue: monthlyRate)
-
-        _startDate = State(initialValue: UserDefaults.standard.object(forKey: "StartDate") as? Date ?? Date())
     }
 
     var body: some View {
@@ -96,14 +108,14 @@ struct ContentView: View {
                     if !showingSettings {
                         Button(action: {
                             showingSettings = true
-                            tempMonthlyRate = "\(monthlyRate)"
+                            tempMonthlyRate = "\(appData.monthlyRate)"
                         }) {
                             Image(systemName: "gear")
                                 .foregroundColor(.blue)
                         }
                     } else {
                         Button(action: {
-                            saveSettings()
+                            saveAppData()
                             showingSettings = false
                         }) {
                             Image(systemName: "xmark")
@@ -115,15 +127,15 @@ struct ContentView: View {
             .navigationBarTitle(showingSettings ? "Settings" : "Cash", displayMode: .inline)
         }
         .onAppear {
-            loadEvents()
+            loadAppData()
             setupTimer()
         }
     }
     
     var settingsView: some View {
         Form {
-            DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
-                .onChange(of: startDate) { newValue in
+            DatePicker("Start Date", selection: $appData.startDate, displayedComponents: .date)
+                .onChange(of: appData.startDate) { newValue in
                     UserDefaults.standard.set(newValue, forKey: "StartDate")
                 }
             
@@ -132,7 +144,7 @@ struct ContentView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             Button("Save Changes") {
-                saveSettings()
+                saveAppData()
                 showingSettings = false
             }
         }
@@ -143,7 +155,7 @@ struct ContentView: View {
             Text("$\((currentTrickleValue() - totalDeductions()), specifier: "%.2f")")
                 .monospacedDigit()
             List {
-                ForEach($events) { $event in
+                ForEach($appData.events) { $event in
                     if case .spend(var spend) = event {
                         SpendView(deduction: Binding(
                             get: { spend },
@@ -151,7 +163,7 @@ struct ContentView: View {
                                 spend = newValue
                                 event = .spend(spend)
                             }
-                        ), onSave: saveEvents)
+                        ), onSave: saveAppData)
                     }
                 }
                 .onDelete(perform: deleteEvent)
@@ -167,8 +179,8 @@ struct ContentView: View {
                 Spacer()
                 Button(action: {
                     let newSpend = Spend(name: "", amount: 0.0)
-                    events.append(.spend(newSpend))
-                    saveEvents()
+                    appData.events.append(.spend(newSpend))
+                    saveAppData()
                 }) {
                     Image(systemName: "plus.circle.fill")
                         .resizable()
@@ -183,15 +195,6 @@ struct ContentView: View {
         }
     }
 
-    private func saveSettings() {
-        if let rate = Double(tempMonthlyRate) {
-            monthlyRate = rate
-            UserDefaults.standard.set(rate, forKey: "MonthlyRate")
-        } else {
-            tempMonthlyRate = "\(monthlyRate)" // Revert to the last valid rate
-        }
-    }
-
     private func setupTimer() {
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             currentTime = Date()
@@ -199,37 +202,43 @@ struct ContentView: View {
     }
 
     private func currentTrickleValue() -> Double {
-        let secondsElapsed = currentTime.timeIntervalSince(startDate)
-        let perSecondRate = monthlyRate / (30.416 * 24 * 60 * 60)
+        let secondsElapsed = currentTime.timeIntervalSince(appData.startDate)
+        let perSecondRate = appData.monthlyRate / (30.416 * 24 * 60 * 60)
         return perSecondRate * secondsElapsed
     }
 
-
     private func totalDeductions() -> Double {
-        events.reduce(0) { total, event in
+        appData.events.reduce(0) { total, event in
             if case .spend(let spend) = event {
                 return total + spend.amount
             }
             return total
         }
     }
-
+    
     private func deleteEvent(at offsets: IndexSet) {
-        events.remove(atOffsets: offsets)
-        saveEvents()
+        appData.events.remove(atOffsets: offsets)
+        saveAppData()
     }
 
-    private func loadEvents() {
-        if let data = UserDefaults.standard.data(forKey: "Events") {
-            if let decoded = try? JSONDecoder().decode([Event].self, from: data) {
-                events = decoded
+    private func loadAppData() {
+        if let data = UserDefaults.standard.data(forKey: "AppData") {
+            if let decoded = try? JSONDecoder().decode(AppData.self, from: data) {
+                appData = decoded
             }
         }
     }
 
-    private func saveEvents() {
-        if let encoded = try? JSONEncoder().encode(events) {
-            UserDefaults.standard.set(encoded, forKey: "Events")
+    private func saveAppData() {
+        if let monthlyRate = Double(tempMonthlyRate) {
+            appData.monthlyRate = monthlyRate
+            UserDefaults.standard.set(monthlyRate, forKey: "MonthlyRate")
+        } else {
+            tempMonthlyRate = "\(appData.monthlyRate)" // Revert to the last valid rate
+        }
+
+        if let encoded = try? JSONEncoder().encode(appData) {
+            UserDefaults.standard.set(encoded, forKey: "AppData")
         }
     }
 }
