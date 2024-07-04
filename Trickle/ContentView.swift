@@ -24,6 +24,16 @@ enum Event: Codable, Identifiable {
     }
 }
 
+enum UpdatableAppData: Codable {
+    case v1(AppData)
+    
+    var appData: AppData {
+        switch self {
+        case .v1(let data):
+            return data
+        }
+    }
+}
 
 struct SpendView: View {
     @Binding var deduction: Spend
@@ -76,9 +86,9 @@ struct ContentView: View {
         let defaults = UserDefaults.standard
         
         if let savedData = defaults.data(forKey: "AppData"),
-           let decodedData = try? JSONDecoder().decode(AppData.self, from: savedData) {
+           let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
             // If we have saved data, use it
-            _appData = State(initialValue: decodedData)
+            _appData = State(initialValue: decodedData.appData)
         } else {
             // If no saved data, initialize with default values
             let defaultMonthlyRate: Double = 1000.0
@@ -223,8 +233,8 @@ struct ContentView: View {
 
     private func loadAppData() {
         if let data = UserDefaults.standard.data(forKey: "AppData") {
-            if let decoded = try? JSONDecoder().decode(AppData.self, from: data) {
-                appData = decoded
+            if let decoded = try? JSONDecoder().decode(UpdatableAppData.self, from: data) {
+                appData = decoded.appData
             }
         }
     }
@@ -237,7 +247,8 @@ struct ContentView: View {
             tempMonthlyRate = "\(appData.monthlyRate)" // Revert to the last valid rate
         }
 
-        if let encoded = try? JSONEncoder().encode(appData) {
+        let updatableAppData = UpdatableAppData.v1(appData)
+        if let encoded = try? JSONEncoder().encode(updatableAppData) {
             UserDefaults.standard.set(encoded, forKey: "AppData")
         }
     }
