@@ -42,28 +42,29 @@ struct Provider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), value: calculateValue())
+        let entry = SimpleEntry(date: Date(), value: calculateValue(time: Date()))
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
         var entries: [SimpleEntry] = []
-
         let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, value: calculateValue())
+        let endDate = Calendar.current.date(byAdding: .minute, value: 24, to: currentDate)! // Updates for the next 24 hours
+
+        var nextUpdateDate = currentDate
+        while nextUpdateDate <= endDate {
+            let entry = SimpleEntry(date: nextUpdateDate, value: calculateValue(time: nextUpdateDate))
             entries.append(entry)
+            nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: nextUpdateDate)!
         }
 
         let timeline = Timeline(entries: entries, policy: .atEnd)
         completion(timeline)
     }
     
-    private func calculateValue() -> Double {
+    private func calculateValue(time: Date) -> Double {
         let appData = loadAppData()
-        let currentTime = Date()
-        let secondsElapsed = currentTime.timeIntervalSince(appData.startDate)
+        let secondsElapsed = time.timeIntervalSince(appData.startDate)
         let perSecondRate = appData.monthlyRate / (30.416 * 24 * 60 * 60)
         let trickleValue = perSecondRate * secondsElapsed
         let totalDeductions = appData.events.reduce(0) { total, event in
@@ -120,7 +121,7 @@ struct TrickleWidgetEntryView: View {
     var body: some View {
         VStack {
             Text("Current Balance")
-            Text("$\(entry.value, specifier: "%.2f")")
+            Text("$\(entry.value, specifier: "%.0f")")
                 .font(.largeTitle)
                 .monospacedDigit()
         }

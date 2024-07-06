@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 struct AppData: Codable {
     var monthlyRate: Double
@@ -310,6 +311,7 @@ struct ContentView: View {
             if let encoded = try? JSONEncoder().encode(updatableAppData) {
                 defaults.set(encoded, forKey: "AppData")
                 print("saved app data")
+                WidgetCenter.shared.reloadAllTimelines()
                 return
             }
         }
