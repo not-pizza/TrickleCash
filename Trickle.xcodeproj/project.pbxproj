@@ -14,6 +14,14 @@
 		AB2D2BA62BFC4E5400F03DFD /* TrickleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BA52BFC4E5400F03DFD /* TrickleTests.swift */; };
 		AB2D2BB02BFC4E5400F03DFD /* TrickleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BAF2BFC4E5400F03DFD /* TrickleUITests.swift */; };
 		AB2D2BB22BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BB12BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift */; };
+		AB78A47C2C39CBC0007C4787 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47B2C39CBC0007C4787 /* WidgetKit.framework */; };
+		AB78A47E2C39CBC0007C4787 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47D2C39CBC0007C4787 /* SwiftUI.framework */; };
+		AB78A4812C39CBC0007C4787 /* TrickleWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4802C39CBC0007C4787 /* TrickleWidgetBundle.swift */; };
+		AB78A4832C39CBC0007C4787 /* TrickleWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4822C39CBC0007C4787 /* TrickleWidgetLiveActivity.swift */; };
+		AB78A4852C39CBC0007C4787 /* TrickleWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4842C39CBC0007C4787 /* TrickleWidget.swift */; };
+		AB78A4872C39CBC0007C4787 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4862C39CBC0007C4787 /* AppIntent.swift */; };
+		AB78A4892C39CBC2007C4787 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB78A4882C39CBC2007C4787 /* Assets.xcassets */; };
+		AB78A48D2C39CBC2007C4787 /* TrickleWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,7 +39,28 @@
 			remoteGlobalIDString = AB2D2B902BFC4E5200F03DFD;
 			remoteInfo = Trickle;
 		};
+		AB78A48B2C39CBC2007C4787 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB2D2B892BFC4E5200F03DFD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB78A4782C39CBC0007C4787;
+			remoteInfo = TrickleWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AB78A4912C39CBC2007C4787 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AB78A48D2C39CBC2007C4787 /* TrickleWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		AB2D2B912BFC4E5200F03DFD /* Trickle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trickle.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +73,17 @@
 		AB2D2BAB2BFC4E5400F03DFD /* TrickleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrickleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB2D2BAF2BFC4E5400F03DFD /* TrickleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleUITests.swift; sourceTree = "<group>"; };
 		AB2D2BB12BFC4E5400F03DFD /* TrickleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TrickleWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB78A47B2C39CBC0007C4787 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		AB78A47D2C39CBC0007C4787 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		AB78A4802C39CBC0007C4787 /* TrickleWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleWidgetBundle.swift; sourceTree = "<group>"; };
+		AB78A4822C39CBC0007C4787 /* TrickleWidgetLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleWidgetLiveActivity.swift; sourceTree = "<group>"; };
+		AB78A4842C39CBC0007C4787 /* TrickleWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleWidget.swift; sourceTree = "<group>"; };
+		AB78A4862C39CBC0007C4787 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		AB78A4882C39CBC2007C4787 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AB78A48A2C39CBC2007C4787 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB78A4922C39D66A007C4787 /* Trickle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Trickle.entitlements; sourceTree = "<group>"; };
+		AB78A4932C39D68D007C4787 /* TrickleWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TrickleWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,15 +108,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AB78A4762C39CBC0007C4787 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB78A47E2C39CBC0007C4787 /* SwiftUI.framework in Frameworks */,
+				AB78A47C2C39CBC0007C4787 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		AB2D2B882BFC4E5200F03DFD = {
 			isa = PBXGroup;
 			children = (
+				AB78A4932C39D68D007C4787 /* TrickleWidgetExtension.entitlements */,
 				AB2D2B932BFC4E5200F03DFD /* Trickle */,
 				AB2D2BA42BFC4E5400F03DFD /* TrickleTests */,
 				AB2D2BAE2BFC4E5400F03DFD /* TrickleUITests */,
+				AB78A47F2C39CBC0007C4787 /* TrickleWidget */,
+				AB78A47A2C39CBC0007C4787 /* Frameworks */,
 				AB2D2B922BFC4E5200F03DFD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -87,6 +139,7 @@
 				AB2D2B912BFC4E5200F03DFD /* Trickle.app */,
 				AB2D2BA12BFC4E5400F03DFD /* TrickleTests.xctest */,
 				AB2D2BAB2BFC4E5400F03DFD /* TrickleUITests.xctest */,
+				AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,6 +147,7 @@
 		AB2D2B932BFC4E5200F03DFD /* Trickle */ = {
 			isa = PBXGroup;
 			children = (
+				AB78A4922C39D66A007C4787 /* Trickle.entitlements */,
 				AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */,
 				AB2D2B962BFC4E5200F03DFD /* ContentView.swift */,
 				AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */,
@@ -127,6 +181,28 @@
 			path = TrickleUITests;
 			sourceTree = "<group>";
 		};
+		AB78A47A2C39CBC0007C4787 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AB78A47B2C39CBC0007C4787 /* WidgetKit.framework */,
+				AB78A47D2C39CBC0007C4787 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AB78A47F2C39CBC0007C4787 /* TrickleWidget */ = {
+			isa = PBXGroup;
+			children = (
+				AB78A4802C39CBC0007C4787 /* TrickleWidgetBundle.swift */,
+				AB78A4822C39CBC0007C4787 /* TrickleWidgetLiveActivity.swift */,
+				AB78A4842C39CBC0007C4787 /* TrickleWidget.swift */,
+				AB78A4862C39CBC0007C4787 /* AppIntent.swift */,
+				AB78A4882C39CBC2007C4787 /* Assets.xcassets */,
+				AB78A48A2C39CBC2007C4787 /* Info.plist */,
+			);
+			path = TrickleWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -137,10 +213,12 @@
 				AB2D2B8D2BFC4E5200F03DFD /* Sources */,
 				AB2D2B8E2BFC4E5200F03DFD /* Frameworks */,
 				AB2D2B8F2BFC4E5200F03DFD /* Resources */,
+				AB78A4912C39CBC2007C4787 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				AB78A48C2C39CBC2007C4787 /* PBXTargetDependency */,
 			);
 			name = Trickle;
 			packageProductDependencies = (
@@ -185,6 +263,23 @@
 			productReference = AB2D2BAB2BFC4E5400F03DFD /* TrickleUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		AB78A4782C39CBC0007C4787 /* TrickleWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB78A48E2C39CBC2007C4787 /* Build configuration list for PBXNativeTarget "TrickleWidgetExtension" */;
+			buildPhases = (
+				AB78A4752C39CBC0007C4787 /* Sources */,
+				AB78A4762C39CBC0007C4787 /* Frameworks */,
+				AB78A4772C39CBC0007C4787 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TrickleWidgetExtension;
+			productName = TrickleWidgetExtension;
+			productReference = AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -205,6 +300,9 @@
 					AB2D2BAA2BFC4E5400F03DFD = {
 						CreatedOnToolsVersion = 15.4;
 						TestTargetID = AB2D2B902BFC4E5200F03DFD;
+					};
+					AB78A4782C39CBC0007C4787 = {
+						CreatedOnToolsVersion = 15.4;
 					};
 				};
 			};
@@ -227,6 +325,7 @@
 				AB2D2B902BFC4E5200F03DFD /* Trickle */,
 				AB2D2BA02BFC4E5400F03DFD /* TrickleTests */,
 				AB2D2BAA2BFC4E5400F03DFD /* TrickleUITests */,
+				AB78A4782C39CBC0007C4787 /* TrickleWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -252,6 +351,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB78A4772C39CBC0007C4787 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB78A4892C39CBC2007C4787 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,6 +391,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AB78A4752C39CBC0007C4787 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB78A4852C39CBC0007C4787 /* TrickleWidget.swift in Sources */,
+				AB78A4872C39CBC0007C4787 /* AppIntent.swift in Sources */,
+				AB78A4812C39CBC0007C4787 /* TrickleWidgetBundle.swift in Sources */,
+				AB78A4832C39CBC0007C4787 /* TrickleWidgetLiveActivity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -296,6 +414,11 @@
 			isa = PBXTargetDependency;
 			target = AB2D2B902BFC4E5200F03DFD /* Trickle */;
 			targetProxy = AB2D2BAC2BFC4E5400F03DFD /* PBXContainerItemProxy */;
+		};
+		AB78A48C2C39CBC2007C4787 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB78A4782C39CBC0007C4787 /* TrickleWidgetExtension */;
+			targetProxy = AB78A48B2C39CBC2007C4787 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -422,8 +545,10 @@
 		AB2D2BB62BFC4E5400F03DFD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Trickle/Trickle.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Trickle/Preview Content\"";
@@ -454,8 +579,10 @@
 		AB2D2BB72BFC4E5400F03DFD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Trickle/Trickle.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Trickle/Preview Content\"";
@@ -555,6 +682,64 @@
 			};
 			name = Release;
 		};
+		AB78A48F2C39CBC2007C4787 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = TrickleWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TrickleWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TrickleWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.Trickle.TrickleWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AB78A4902C39CBC2007C4787 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = TrickleWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TrickleWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TrickleWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.Trickle.TrickleWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -590,6 +775,15 @@
 			buildConfigurations = (
 				AB2D2BBC2BFC4E5400F03DFD /* Debug */,
 				AB2D2BBD2BFC4E5400F03DFD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AB78A48E2C39CBC2007C4787 /* Build configuration list for PBXNativeTarget "TrickleWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB78A48F2C39CBC2007C4787 /* Debug */,
+				AB78A4902C39CBC2007C4787 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

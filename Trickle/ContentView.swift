@@ -276,33 +276,45 @@ struct ContentView: View {
     }
 
     private static func loadAppData() -> AppData {
-        let defaults = UserDefaults.standard
-        
-        if let savedData = defaults.data(forKey: "AppData"),
-           let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
-            return decodedData.appData
-        } else {
-            // Return default values
-            return AppData(
-                monthlyRate: 1000.0,
-                startDate: Date(),
-                events: []
-            )
+        if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
+            
+            if let savedData = defaults.data(forKey: "AppData"),
+               let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
+                return decodedData.appData
+            } else {
+                // Return default values
+                return AppData(
+                    monthlyRate: 1000.0,
+                    startDate: Date(),
+                    events: []
+                )
+            }
         }
+        return AppData(
+            monthlyRate: 1000.0,
+            startDate: Date(),
+            events: []
+        )
+
     }
 
     private func saveAppData() {
-        if let monthlyRate = Double(tempMonthlyRate) {
-            appData.monthlyRate = monthlyRate
-            UserDefaults.standard.set(monthlyRate, forKey: "MonthlyRate")
-        } else {
-            tempMonthlyRate = "\(appData.monthlyRate)" // Revert to the last valid rate
+        if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
+            if let monthlyRate = Double(tempMonthlyRate) {
+                appData.monthlyRate = monthlyRate
+                UserDefaults.standard.set(monthlyRate, forKey: "MonthlyRate")
+            } else {
+                tempMonthlyRate = "\(appData.monthlyRate)" // Revert to the last valid rate
+            }
+            
+            let updatableAppData = UpdatableAppData.v1(appData)
+            if let encoded = try? JSONEncoder().encode(updatableAppData) {
+                defaults.set(encoded, forKey: "AppData")
+                print("saved app data")
+                return
+            }
         }
-
-        let updatableAppData = UpdatableAppData.v1(appData)
-        if let encoded = try? JSONEncoder().encode(updatableAppData) {
-            UserDefaults.standard.set(encoded, forKey: "AppData")
-        }
+        print("couldn't save app data")
     }
 }
 
