@@ -277,7 +277,6 @@ struct ContentView: View {
 
     private static func loadAppData() -> AppData {
         if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
-            
             if let savedData = defaults.data(forKey: "AppData"),
                let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
                 return decodedData.appData

@@ -36,7 +36,7 @@ struct Provider: TimelineProvider {
         completion(entry)
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
         var entries: [SimpleEntry] = []
 
         let currentDate = Date()
@@ -87,7 +87,19 @@ struct SimpleEntry: TimelineEntry {
     let value: Double
 }
 
-struct TrickleWidgetEntryView : View {
+extension View {
+    func widgetBackground(backgroundView: some View) -> some View {
+        if #available(watchOS 10.0, iOSApplicationExtension 17.0, iOS 17.0, macOSApplicationExtension 14.0, *) {
+            return containerBackground(for: .widget) {
+                backgroundView
+            }
+        } else {
+            return background(backgroundView)
+        }
+    }
+}
+
+struct TrickleWidgetEntryView: View {
     var entry: Provider.Entry
 
     var body: some View {
@@ -97,6 +109,7 @@ struct TrickleWidgetEntryView : View {
                 .font(.largeTitle)
                 .monospacedDigit()
         }
+        .widgetBackground(backgroundView: Color.clear)
     }
 }
 
