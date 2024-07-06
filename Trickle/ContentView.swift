@@ -189,8 +189,8 @@ struct ContentView: View {
     
 
     var mainContentView: some View {
-        var spendEvents = appData.events.indices.compactMap { index in
-            if case .spend(var spend) = appData.events[index] {
+        let spendEvents = appData.events.indices.compactMap { index in
+            if case .spend(let spend) = appData.events[index] {
                 if Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate) {
                     return Binding(
                         get: { spend },
