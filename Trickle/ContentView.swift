@@ -49,7 +49,7 @@ struct CalendarStrip: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
-                ForEach(-3...3, id: \.self) { offset in
+                ForEach(-5...0, id: \.self) { offset in
                     let date = calendar.date(byAdding: .day, value: offset, to: Date())!
                     VStack {
                         Text(dateFormatter.string(from: date))
