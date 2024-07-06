@@ -35,6 +35,48 @@ enum UpdatableAppData: Codable {
     }
 }
 
+struct CalendarStrip: View {
+    @Binding var selectedDate: Date
+    let onDateSelected: (Date) -> Void
+    
+    private let calendar = Calendar.current
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE\nd"
+        return formatter
+    }()
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(-3...3, id: \.self) { offset in
+                    let date = calendar.date(byAdding: .day, value: offset, to: Date())!
+                    VStack {
+                        Text(dateFormatter.string(from: date))
+                            .font(.system(size: 14))
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(width: 50, height: 50)
+                    .background(date.startOfDay == selectedDate.startOfDay ? Color.blue : Color.gray.opacity(0.2))
+                    .foregroundColor(date.startOfDay == selectedDate.startOfDay ? Color.white : Color.primary)
+                    .cornerRadius(8)
+                    .onTapGesture {
+                        selectedDate = date
+                        onDateSelected(date)
+                    }
+                }
+            }
+            .padding()
+        }
+    }
+}
+
+extension Date {
+    var startOfDay: Date {
+        return Calendar.current.startOfDay(for: self)
+    }
+}
+
 struct SpendView: View {
     @Binding var deduction: Spend
     @State private var inputAmount: String
@@ -81,6 +123,7 @@ struct ContentView: View {
     @State private var currentTime: Date = Date()
     @State private var tempMonthlyRate: String = ""
     @State private var showingSettings = false
+    @State private var selectedDate: Date = Date()
 
     init() {
         let initialAppData = Self.loadAppData()
@@ -125,7 +168,7 @@ struct ContentView: View {
             setupTimer()
         }
     }
-    
+
     var settingsView: some View {
         Form {
             DatePicker("Start Date", selection: $appData.startDate, displayedComponents: .date)
@@ -148,8 +191,19 @@ struct ContentView: View {
         VStack {
             Text("$\((currentTrickleValue() - totalDeductions()), specifier: "%.2f")")
                 .monospacedDigit()
+            
+            CalendarStrip(selectedDate: $selectedDate) { date in
+                // This closure is called when a date is selected
+                selectedDate = date
+            }
+            
             List {
-                ForEach($appData.events) { $event in
+                ForEach($appData.events.filter { event in
+                    if case .spend(let spend) = event.wrappedValue {
+                        return Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate)
+                    }
+                    return false
+                }) { $event in
                     if case .spend(var spend) = event {
                         SpendView(deduction: Binding(
                             get: { spend },
@@ -165,6 +219,7 @@ struct ContentView: View {
             .listStyle(InsetGroupedListStyle())
         }
     }
+    
 
     var addSpendingButton: some View {
         VStack {
@@ -172,7 +227,7 @@ struct ContentView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    let newSpend = Spend(name: "", amount: 0.0)
+                    let newSpend = Spend(name: "", amount: 0.0, dateAdded: selectedDate)
                     appData.events.append(.spend(newSpend))
                     saveAppData()
                 }) {
@@ -211,7 +266,14 @@ struct ContentView: View {
     }
     
     private func deleteEvent(at offsets: IndexSet) {
-        appData.events.remove(atOffsets: offsets)
+        let filteredEvents = appData.events.filter { event in
+            if case .spend(let spend) = event {
+                return Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate)
+            }
+            return false
+        }
+        let toDelete = offsets.map { filteredEvents[$0] }
+        appData.events.removeAll(where: { event in toDelete.contains(where: { $0.id == event.id }) })
         saveAppData()
     }
 
