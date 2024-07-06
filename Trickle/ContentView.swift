@@ -186,9 +186,22 @@ struct ContentView: View {
             }
         }
     }
+    
 
     var mainContentView: some View {
-        VStack {
+        var spendEvents = appData.events.indices.compactMap { index in
+            if case .spend(var spend) = appData.events[index] {
+                if Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate) {
+                    return Binding(
+                        get: { spend },
+                        set: { appData.events[index] = Event.spend($0) }
+                    )
+                }
+            }
+            return nil
+        };
+        
+        return VStack {
             Text("$\((currentTrickleValue() - totalDeductions()), specifier: "%.2f")")
                 .monospacedDigit()
             
@@ -198,26 +211,18 @@ struct ContentView: View {
             }
             
             List {
-                ForEach($appData.events.filter { event in
-                    if case .spend(let spend) = event.wrappedValue {
-                        return Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate)
-                    }
-                    return false
-                }) { $event in
-                    if case .spend(var spend) = event {
-                        SpendView(deduction: Binding(
-                            get: { spend },
-                            set: { newValue in
-                                spend = newValue
-                                event = .spend(spend)
-                            }
-                        ), onSave: saveAppData)
-                    }
+                ForEach(spendEvents, id: \.wrappedValue.id) { spend in
+                    SpendView(deduction: spend, onSave: saveAppData)
                 }
-                .onDelete(perform: deleteEvent)
+                .onDelete(perform: { indexSet in
+                    for index in indexSet {
+                        let spend = spendEvents[index]
+                        deleteEvent(id: spend.id)
+                    }
+                })
             }
             .listStyle(InsetGroupedListStyle())
-        }
+        };
     }
     
 
@@ -265,15 +270,8 @@ struct ContentView: View {
         }
     }
     
-    private func deleteEvent(at offsets: IndexSet) {
-        let filteredEvents = appData.events.filter { event in
-            if case .spend(let spend) = event {
-                return Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate)
-            }
-            return false
-        }
-        let toDelete = offsets.map { filteredEvents[$0] }
-        appData.events.removeAll(where: { event in toDelete.contains(where: { $0.id == event.id }) })
+    private func deleteEvent(id: UUID) {
+        appData.events.removeAll { $0.id == id }
         saveAppData()
     }
 
