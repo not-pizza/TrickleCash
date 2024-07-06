@@ -1,7 +1,17 @@
 import WidgetKit
 import SwiftUI
 
-// Make sure these are in a shared location accessible by both the main app and the widget
+enum UpdatableAppData: Codable {
+    case v1(AppData)
+    
+    var appData: AppData {
+        switch self {
+        case .v1(let data):
+            return data
+        }
+    }
+}
+
 struct AppData: Codable {
     var monthlyRate: Double
     var startDate: Date
@@ -68,17 +78,22 @@ struct Provider: TimelineProvider {
     private func loadAppData() -> AppData {
         if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
             if let savedData = defaults.data(forKey: "AppData"),
-               let decodedData = try? JSONDecoder().decode(AppData.self, from: savedData) {
-                print("loaded decoded app data")
-                return decodedData
+               let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
+                return decodedData.appData
             } else {
-                print("loaded app data with default values")
                 // Return default values
-                return AppData(monthlyRate: 1000.0, startDate: Date(), events: [])
+                return AppData(
+                    monthlyRate: 1000.0,
+                    startDate: Date(),
+                    events: []
+                )
             }
         }
-        print("couldn't load app data")
-        return AppData(monthlyRate: 1000.0, startDate: Date(), events: [])
+        return AppData(
+            monthlyRate: 1000.0,
+            startDate: Date(),
+            events: []
+        )
     }
 }
 
