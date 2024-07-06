@@ -83,26 +83,10 @@ struct ContentView: View {
     @State private var showingSettings = false
 
     init() {
-        let defaults = UserDefaults.standard
-        
-        if let savedData = defaults.data(forKey: "AppData"),
-           let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
-            // If we have saved data, use it
-            _appData = State(initialValue: decodedData.appData)
-        } else {
-            // If no saved data, initialize with default values
-            let defaultMonthlyRate: Double = 1000.0
-            let defaultStartDate: Date = Date()
-            let defaultEvents: [Event] = []
-            
-            _appData = State(initialValue: AppData(
-                monthlyRate: defaultMonthlyRate,
-                startDate: defaultStartDate,
-                events: defaultEvents
-            ))
-        }
+        let initialAppData = Self.loadAppData()
+        _appData = State(initialValue: initialAppData)
     }
-
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -137,7 +121,7 @@ struct ContentView: View {
             .navigationBarTitle(showingSettings ? "Settings" : "Cash", displayMode: .inline)
         }
         .onAppear {
-            loadAppData()
+            appData = Self.loadAppData()
             setupTimer()
         }
     }
@@ -231,11 +215,19 @@ struct ContentView: View {
         saveAppData()
     }
 
-    private func loadAppData() {
-        if let data = UserDefaults.standard.data(forKey: "AppData") {
-            if let decoded = try? JSONDecoder().decode(UpdatableAppData.self, from: data) {
-                appData = decoded.appData
-            }
+    private static func loadAppData() -> AppData {
+        let defaults = UserDefaults.standard
+        
+        if let savedData = defaults.data(forKey: "AppData"),
+           let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
+            return decodedData.appData
+        } else {
+            // Return default values
+            return AppData(
+                monthlyRate: 1000.0,
+                startDate: Date(),
+                events: []
+            )
         }
     }
 
