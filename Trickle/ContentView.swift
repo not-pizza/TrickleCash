@@ -1,41 +1,6 @@
 import SwiftUI
 import WidgetKit
 
-struct AppData: Codable {
-    var monthlyRate: Double
-    var startDate: Date
-    var events: [Event]
-}
-
-struct Spend: Identifiable, Codable {
-    var id: UUID = UUID()
-    var name: String
-    var amount: Double
-    var dateAdded: Date = Date()
-}
-
-enum Event: Codable, Identifiable {
-    case spend(Spend)
-    
-    var id: UUID {
-        switch self {
-        case .spend(let spend):
-            return spend.id
-        }
-    }
-}
-
-enum UpdatableAppData: Codable {
-    case v1(AppData)
-    
-    var appData: AppData {
-        switch self {
-        case .v1(let data):
-            return data
-        }
-    }
-}
-
 struct CalendarStrip: View {
     @Binding var selectedDate: Date
     let onDateSelected: (Date) -> Void
@@ -127,7 +92,7 @@ struct ContentView: View {
     @State private var selectedDate: Date = Date()
 
     init() {
-        let initialAppData = Self.loadAppData()
+        let initialAppData = loadAppData()
         _appData = State(initialValue: initialAppData)
     }
     
@@ -165,7 +130,7 @@ struct ContentView: View {
             .navigationBarTitle(showingSettings ? "Settings" : "Cash", displayMode: .inline)
         }
         .onAppear {
-            appData = Self.loadAppData()
+            appData = loadAppData()
             setupTimer()
         }
     }
@@ -274,28 +239,6 @@ struct ContentView: View {
     private func deleteEvent(id: UUID) {
         appData.events.removeAll { $0.id == id }
         saveAppData()
-    }
-
-    private static func loadAppData() -> AppData {
-        if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
-            if let savedData = defaults.data(forKey: "AppData"),
-               let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
-                return decodedData.appData
-            } else {
-                // Return default values
-                return AppData(
-                    monthlyRate: 1000.0,
-                    startDate: Date(),
-                    events: []
-                )
-            }
-        }
-        return AppData(
-            monthlyRate: 1000.0,
-            startDate: Date(),
-            events: []
-        )
-
     }
 
     private func saveAppData() {

@@ -1,41 +1,6 @@
 import WidgetKit
 import SwiftUI
 
-enum UpdatableAppData: Codable {
-    case v1(AppData)
-    
-    var appData: AppData {
-        switch self {
-        case .v1(let data):
-            return data
-        }
-    }
-}
-
-struct AppData: Codable {
-    var monthlyRate: Double
-    var startDate: Date
-    var events: [Event]
-}
-
-enum Event: Codable, Identifiable {
-    case spend(Spend)
-    
-    var id: UUID {
-        switch self {
-        case .spend(let spend):
-            return spend.id
-        }
-    }
-}
-
-struct Spend: Identifiable, Codable {
-    var id: UUID = UUID()
-    var name: String
-    var amount: Double
-    var dateAdded: Date = Date()
-}
-
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(date: Date(), value: 0)
@@ -49,7 +14,7 @@ struct Provider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
         var entries: [SimpleEntry] = []
         let currentDate = Date()
-        let endDate = Calendar.current.date(byAdding: .minute, value: 24, to: currentDate)! // Updates for the next 24 hours
+        let endDate = Calendar.current.date(byAdding: .minute, value: 24, to: currentDate)!
 
         var nextUpdateDate = currentDate
         while nextUpdateDate <= endDate {
@@ -74,27 +39,6 @@ struct Provider: TimelineProvider {
             return total
         }
         return trickleValue - totalDeductions
-    }
-    
-    private func loadAppData() -> AppData {
-        if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
-            if let savedData = defaults.data(forKey: "AppData"),
-               let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
-                return decodedData.appData
-            } else {
-                // Return default values
-                return AppData(
-                    monthlyRate: 1000.0,
-                    startDate: Date(),
-                    events: []
-                )
-            }
-        }
-        return AppData(
-            monthlyRate: 1000.0,
-            startDate: Date(),
-            events: []
-        )
     }
 }
 
@@ -148,3 +92,4 @@ struct TrickleWidget_Previews: PreviewProvider {
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }
+

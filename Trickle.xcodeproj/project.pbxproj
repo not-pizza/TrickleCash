@@ -22,6 +22,8 @@
 		AB78A4872C39CBC0007C4787 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4862C39CBC0007C4787 /* AppIntent.swift */; };
 		AB78A4892C39CBC2007C4787 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB78A4882C39CBC2007C4787 /* Assets.xcassets */; };
 		AB78A48D2C39CBC2007C4787 /* TrickleWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AB78A4952C445787007C4787 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4942C445787007C4787 /* Models.swift */; };
+		AB78A4962C445888007C4787 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4942C445787007C4787 /* Models.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +86,7 @@
 		AB78A48A2C39CBC2007C4787 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB78A4922C39D66A007C4787 /* Trickle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Trickle.entitlements; sourceTree = "<group>"; };
 		AB78A4932C39D68D007C4787 /* TrickleWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TrickleWidgetExtension.entitlements; sourceTree = "<group>"; };
+		AB78A4942C445787007C4787 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +153,7 @@
 				AB78A4922C39D66A007C4787 /* Trickle.entitlements */,
 				AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */,
 				AB2D2B962BFC4E5200F03DFD /* ContentView.swift */,
+				AB78A4942C445787007C4787 /* Models.swift */,
 				AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */,
 				AB2D2B9A2BFC4E5300F03DFD /* Preview Content */,
 			);
@@ -369,6 +373,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB78A4952C445787007C4787 /* Models.swift in Sources */,
 				AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */,
 				AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */,
 			);
@@ -399,6 +404,7 @@
 				AB78A4872C39CBC0007C4787 /* AppIntent.swift in Sources */,
 				AB78A4812C39CBC0007C4787 /* TrickleWidgetBundle.swift in Sources */,
 				AB78A4832C39CBC0007C4787 /* TrickleWidgetLiveActivity.swift in Sources */,
+				AB78A4962C445888007C4787 /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
