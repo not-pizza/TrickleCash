@@ -1,6 +1,12 @@
 import SwiftUI
 import WidgetKit
 
+extension View {
+    func endEditing() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
 struct CalendarStrip: View {
     @Binding var selectedDate: Date
     let onDateSelected: (Date) -> Void
@@ -89,8 +95,8 @@ struct TrickleView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let forgroundHiddenOffset: CGFloat = geometry.size.height - 100
-            let forgroundShowingOffset: CGFloat = 200
+            let forgroundHiddenOffset: CGFloat = geometry.size.height - 50
+            let forgroundShowingOffset: CGFloat = geometry.size.height / 5
             
             ZStack {
                 BackgroundView(appData: $appData, onSettingsTapped: openSettings)
@@ -113,12 +119,26 @@ struct TrickleView: View {
                                 foregroundHidden = gesture.velocity.height > 0
                                 withAnimation(.spring()) {
                                     if foregroundHidden {
-                                        self.offset = forgroundHiddenOffset                                    } else {
+                                        endEditing()
+                                        self.offset = forgroundHiddenOffset
+                                    } else {
                                         self.offset = forgroundShowingOffset
                                     }
                                 }
                             }
                     )
+                    // Adjust it if the screen size changes (e.g. keyboard appears or disappears
+                    .onChange(of: geometry.size.height) {new_height in
+                        let forgroundHiddenOffset: CGFloat = new_height - 50
+                        let forgroundShowingOffset: CGFloat = new_height / 5
+                        withAnimation(.spring()) {
+                            if foregroundHidden {
+                                self.offset = forgroundHiddenOffset
+                            } else {
+                                self.offset = forgroundShowingOffset
+                            }
+                        }
+                    }
             }
         }
     }
