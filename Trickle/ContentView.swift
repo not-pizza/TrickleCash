@@ -88,57 +88,16 @@ struct TrickleView: View {
     
     @State private var currentTime: Date = Date()
     
-    @State private var startingOffset: CGFloat = 0
     @State private var offset: CGFloat = 200
-    @State private var isDragging = false
-    @State private var foregroundHidden = false
 
     var body: some View {
+        
         GeometryReader { geometry in
-            let forgroundHiddenOffset: CGFloat = geometry.size.height - 50
-            let forgroundShowingOffset: CGFloat = geometry.size.height / 5
-            
             ZStack {
                 BackgroundView(appData: $appData, onSettingsTapped: openSettings)
                 
-                ForegroundView(appData: $appData, hidden: foregroundHidden)
+                ForegroundView(appData: $appData, offset: $offset, geometry: geometry)
                     .offset(y: max(offset, 0))
-                    .gesture(
-                        DragGesture()
-                            .onChanged { gesture in
-                                if isDragging == false {
-                                    startingOffset = self.offset
-                                }
-                                isDragging = true
-
-                                let newOffset = startingOffset + gesture.translation.height
-                                self.offset = min(max(newOffset, forgroundShowingOffset), forgroundHiddenOffset)
-                            }
-                            .onEnded { gesture in
-                                isDragging = false
-                                foregroundHidden = gesture.velocity.height > 0
-                                withAnimation(.spring()) {
-                                    if foregroundHidden {
-                                        endEditing()
-                                        self.offset = forgroundHiddenOffset
-                                    } else {
-                                        self.offset = forgroundShowingOffset
-                                    }
-                                }
-                            }
-                    )
-                    // Adjust it if the screen size changes (e.g. keyboard appears or disappears
-                    .onChange(of: geometry.size.height) {new_height in
-                        let forgroundHiddenOffset: CGFloat = new_height - 50
-                        let forgroundShowingOffset: CGFloat = new_height / 5
-                        withAnimation(.spring()) {
-                            if foregroundHidden {
-                                self.offset = forgroundHiddenOffset
-                            } else {
-                                self.offset = forgroundShowingOffset
-                            }
-                        }
-                    }
             }
         }
     }
@@ -206,12 +165,16 @@ struct BackgroundView: View {
 
 struct ForegroundView: View {
     @Binding var appData: AppData
-    let hidden: Bool
+    @Binding var offset: CGFloat
+    var geometry: GeometryProxy
     
+    @State private var startingOffset: CGFloat = 0
     @State private var selectedDate: Date = Date()
+    @State private var isDragging = false
+    @State private var hidden = false
     
-    var body: some View {
-        let spendEvents = appData.events.indices.compactMap { index in
+    private func spendEventBindings() -> [Binding<Spend>] {
+        var spendEvents = appData.events.indices.compactMap { index in
             if case .spend(let spend) = appData.events[index] {
                 if Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate) {
                     return Binding(
@@ -221,19 +184,16 @@ struct ForegroundView: View {
                 }
             }
             return nil
-        };
+        }
+        spendEvents.reverse()
+        return spendEvents
+    }
+    
+    var body: some View {
+        let spendEvents = spendEventBindings()
         
         VStack {
-            hidden ?
-                Image(systemName: "chevron.up") :
-                Image(systemName: "chevron.down")
-            Spacer()
-                
-            
-            CalendarStrip(selectedDate: $selectedDate) { date in
-                // This closure is called when a date is selected
-                selectedDate = date
-            }
+            draggable
             
             List {
                 ForEach(spendEvents, id: \.wrappedValue.id) { spend in
@@ -251,6 +211,61 @@ struct ForegroundView: View {
         }
         .frame(maxHeight: .infinity, alignment: .bottom)
     }
+    
+    var draggable: some View {
+        let forgroundHiddenOffset: CGFloat = geometry.size.height - 50
+        let forgroundShowingOffset: CGFloat = geometry.size.height / 5
+        
+        return VStack(spacing: 10) {
+            Button(action: {
+                hidden = !hidden
+                // TODO: deduplicate
+                withAnimation(.spring()) {
+                    if hidden {
+                        endEditing()
+                        self.offset = forgroundHiddenOffset
+                    } else {
+                        self.offset = forgroundShowingOffset
+                    }
+                }
+            }) {
+                hidden ?
+                Image(systemName: "chevron.up") :
+                Image(systemName: "chevron.down")
+            }
+            
+            CalendarStrip(selectedDate: $selectedDate) { date in
+                selectedDate = date
+            }
+            
+            Button(action: {
+                let newSpend = Spend(name: "", amount: 0)
+                appData.events.append(.spend(newSpend))
+            }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Add spending")
+                }
+                .foregroundColor(.blue)
+                .padding(.vertical, 8)
+            }
+            .listRowBackground(Color.blue.opacity(0.1))
+        }
+        // Adjust it if the screen size changes (e.g. keyboard appears or disappears
+        .onChange(of: geometry.size.height) {new_height in
+            let forgroundHiddenOffset: CGFloat = new_height - 50
+            let forgroundShowingOffset: CGFloat = new_height / 5
+            withAnimation(.spring()) {
+                if hidden {
+                    self.offset = forgroundHiddenOffset
+                } else {
+                    self.offset = forgroundShowingOffset
+                }
+            }
+        }
+        
+    }
+    
 }
 
 struct ContentView: View {
