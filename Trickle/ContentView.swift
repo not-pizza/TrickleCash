@@ -93,7 +93,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
-        let initialAppData = loadAppData()
+        let initialAppData = AppData.load()
         _appData = State(initialValue: initialAppData)
     }
     
@@ -131,11 +131,11 @@ struct ContentView: View {
             .navigationBarTitle(showingSettings ? "Settings" : "Cash", displayMode: .inline)
         }
         .onAppear {
-            appData = loadAppData()
+            appData = AppData.load()
             setupTimer()
         }.onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
-                appData = loadAppData()
+                appData = AppData.load()
             }
         }
     }
@@ -220,8 +220,7 @@ struct ContentView: View {
     }
     
     func addSpend(spend: Spend) {
-        appData.events.append(.spend(spend))
-        save()
+        appData = appData.addSpend(spend: spend).save()
     }
 
     private func setupTimer() {
@@ -251,7 +250,7 @@ struct ContentView: View {
     }
 
     private func save() {
-        saveAppData(appData: appData)
+        let _ = appData.save()
     }
 }
 

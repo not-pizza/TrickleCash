@@ -18,6 +18,44 @@ struct AppData: Codable {
         }
         return trickleValue - totalDeductions
     }
+    
+    
+    func addSpend(spend: Spend) -> Self {
+        var events = events
+        events.append(.spend(spend))
+        return Self(monthlyRate: monthlyRate, startDate: startDate, events: events)
+    }
+    
+    
+    func save() -> Self {
+        if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
+            let updatableAppData = UpdatableAppData.v1(self)
+            if let encoded = try? JSONEncoder().encode(updatableAppData) {
+                defaults.set(encoded, forKey: "AppData")
+                print("saved app data")
+                WidgetCenter.shared.reloadAllTimelines()
+            }
+        }
+        else {
+            print("couldn't save app data")
+        }
+        return self
+    }
+    
+    static func load() -> Self {
+        if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
+            if let savedData = defaults.data(forKey: "AppData"),
+               let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
+                return decodedData.appData
+            }
+        }
+        // Return default values
+        return Self(
+            monthlyRate: 1000.0,
+            startDate: Date(),
+            events: []
+        )
+    }
 }
 
 struct Spend: Identifiable, Codable {
@@ -47,39 +85,4 @@ enum UpdatableAppData: Codable {
             return data
         }
     }
-}
-
-func addSpend(spend: Spend) -> AppData {
-    var appData = loadAppData();
-    appData.events.append(.spend(spend))
-    saveAppData(appData: appData)
-    return appData
-}
-
-func loadAppData() -> AppData {
-    if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
-        if let savedData = defaults.data(forKey: "AppData"),
-           let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
-            return decodedData.appData
-        }
-    }
-    // Return default values
-    return AppData(
-        monthlyRate: 1000.0,
-        startDate: Date(),
-        events: []
-    )
-}
-
-func saveAppData(appData: AppData) {
-    if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
-        let updatableAppData = UpdatableAppData.v1(appData)
-        if let encoded = try? JSONEncoder().encode(updatableAppData) {
-            defaults.set(encoded, forKey: "AppData")
-            print("saved app data")
-            WidgetCenter.shared.reloadAllTimelines()
-            return
-        }
-    }
-    print("couldn't save app data")
 }

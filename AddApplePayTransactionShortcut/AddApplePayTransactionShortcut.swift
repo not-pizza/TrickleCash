@@ -28,7 +28,7 @@ struct AddApplePayTransactionShortcut: AppIntent {
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let spend = Spend(name: merchantName, amount: amount, dateAdded: date)
         
-        let appData = addSpend(spend: spend)
+        let appData = AppData.load().addSpend(spend: spend).save()
         let remaining = appData.getTrickleBalance(time: Date())
 
         return .result(dialog: "Added $\(String(format: "%.2f", amount)) transaction from \(merchantName), $\(String(format: "%.2f", remaining)) left")
