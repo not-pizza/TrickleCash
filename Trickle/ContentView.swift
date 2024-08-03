@@ -119,8 +119,6 @@ struct TrickleView: View {
                                 }
                             }
                     )
-            }.onChange(of: appData) { newAppData in
-                let _ = newAppData.save()
             }
         }
     }
@@ -256,6 +254,13 @@ struct ContentView: View {
             TextField("Monthly Rate", text: $tempMonthlyRate)
                 .keyboardType(.decimalPad)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .onChange(of: tempMonthlyRate) { newTempMonthlyRate in
+                    if let monthlyRate = Double(newTempMonthlyRate) {
+                        appData.monthlyRate = monthlyRate
+                        print("Changed the monthly rate to \(appData.monthlyRate)")
+                        let _ = appData.save()
+                    }
+                }
             
             Button("Save Changes") {
                 showingSettings = false
@@ -268,14 +273,21 @@ struct ContentView: View {
             settingsView
         }
         else {
-            TrickleView(appData: $appData, openSettings: {showingSettings = true})
-                .onAppear {
+            TrickleView(appData: $appData, openSettings: {
+                showingSettings = true
+                tempMonthlyRate = "\(String(format: "%.2f", appData.monthlyRate))"
+            })
+            .onChange(of: appData) { newAppData in
+                let _ = newAppData.save()
+            }
+            .onAppear {
+                appData = AppData.load()
+            }.onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
                     appData = AppData.load()
-                }.onChange(of: scenePhase) { newPhase in
-                    if newPhase == .active {
-                        appData = AppData.load()
-                    }
                 }
+            }
+           
         }
     }
 }
