@@ -2,7 +2,7 @@ import Foundation
 import WidgetKit
 import SwiftUI
 
-struct AppData: Codable {
+struct AppData: Codable, Equatable {
     var monthlyRate: Double
     var startDate: Date
     var events: [Event]
@@ -24,6 +24,13 @@ struct AppData: Codable {
     func addSpend(spend: Spend) -> Self {
         var events = events
         events.append(.spend(spend))
+        return Self(monthlyRate: monthlyRate, startDate: startDate, events: events)
+    }
+    
+    
+    func deleteEvent(id: UUID) -> Self {
+        var events = self.events
+        events.removeAll { $0.id == id }
         return Self(monthlyRate: monthlyRate, startDate: startDate, events: events)
     }
     
@@ -59,7 +66,7 @@ struct AppData: Codable {
     }
 }
 
-struct Spend: Identifiable, Codable {
+struct Spend: Identifiable, Codable, Equatable {
     var id: UUID = UUID()
     var name: String
     var merchant: String?
@@ -68,7 +75,7 @@ struct Spend: Identifiable, Codable {
     var dateAdded: Date = Date()
 }
 
-enum Event: Codable, Identifiable {
+enum Event: Codable, Identifiable, Equatable {
     case spend(Spend)
     
     var id: UUID {
@@ -99,13 +106,14 @@ func formatCurrency(_ amount: Double) -> String {
 
 
 func viewBalance(_ amount: Double) -> some View {
-    let background = amount < 0 ? Color.red : Color.green
-    
     return VStack {
         Text("\(formatCurrency(amount))")
             .font(.title2)
             .monospacedDigit()
     }
     .padding(5)
-    .background(RoundedRectangle(cornerRadius: 5).fill(background))
+}
+
+func background(_ amount: Double) -> Color {
+    amount < 0 ? Color.red : Color.green
 }

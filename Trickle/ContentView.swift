@@ -46,9 +46,8 @@ extension Date {
 struct SpendView: View {
     @Binding var deduction: Spend
     @State private var inputAmount: String
-    var onSave: () -> Void  // Closure to trigger save in the parent view
 
-    init(deduction: Binding<Spend>, onSave: @escaping () -> Void) {
+    init(deduction: Binding<Spend>) {
         self._deduction = deduction
 
         // if the input amount ends with .0, remove it
@@ -57,17 +56,12 @@ struct SpendView: View {
             amount = String(amount.dropLast(2))
         }
         self._inputAmount = State(initialValue: amount)
-
-        self.onSave = onSave
     }
 
     var body: some View {
         HStack {
             TextField("Name", text: $deduction.name)
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            .onChange(of: deduction.name) { _ in
-                self.onSave()
-            }
             Spacer()
             TextField("Amount", text: $inputAmount)
             .keyboardType(.numbersAndPunctuation)
@@ -78,7 +72,6 @@ struct SpendView: View {
                 } else if inputAmount.isEmpty {
                     deduction.amount = 0
                 }
-                self.onSave()
             }
         }
     }
@@ -89,22 +82,64 @@ struct ContentView: View {
     @State private var currentTime: Date = Date()
     @State private var tempMonthlyRate: String = ""
     @State private var showingSettings = false
-    @State private var selectedDate: Date = Date()
     @Environment(\.scenePhase) private var scenePhase
+    
+    @State private var startingOffset: CGFloat = 0
+    @State private var offset: CGFloat = 200
+    @State private var isDragging = false
+    @State private var foregroundHidden = false
 
     init(initialAppData: AppData? = nil) {
         let initialAppData = initialAppData ?? AppData.load()
         _appData = State(initialValue: initialAppData)
     }
-    
+
     var body: some View {
+        GeometryReader { geometry in
+            let forgroundHiddenOffset: CGFloat = geometry.size.height - 100
+            let forgroundShowingOffset: CGFloat = 200
+            
+            ZStack {
+                // Background View
+                BackgroundView(appData: $appData)
+                
+                // Foreground View
+                ForegroundView(appData: $appData, hidden: foregroundHidden)
+                    .offset(y: max(offset, 0))
+                    .gesture(
+                        DragGesture()
+                            .onChanged { gesture in
+                                if isDragging == false {
+                                    startingOffset = self.offset
+                                }
+                                isDragging = true
+
+                                let newOffset = startingOffset + gesture.translation.height
+                                self.offset = min(max(newOffset, forgroundShowingOffset), forgroundHiddenOffset)
+                            }
+                            .onEnded { gesture in
+                                isDragging = false
+                                foregroundHidden = gesture.velocity.height > 0
+                                withAnimation(.spring()) {
+                                    if foregroundHidden {
+                                        self.offset = forgroundHiddenOffset                                    } else {
+                                        self.offset = forgroundShowingOffset
+                                    }
+                                }
+                            }
+                    )
+            }.onChange(of: appData) { newAppData in
+                let _ = newAppData.save()
+            }
+        }
+    }
+
+    var body_old: some View {
         NavigationView {
             ZStack {
                 if showingSettings {
                     settingsView
                 } else {
-                    mainContentView
-                    addSpendingButton
                 }
             }
             .navigationBarItems(leading:
@@ -157,47 +192,8 @@ struct ContentView: View {
             }
         }
     }
-    
 
-    var mainContentView: some View {
-        let spendEvents = appData.events.indices.compactMap { index in
-            if case .spend(let spend) = appData.events[index] {
-                if Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate) {
-                    return Binding(
-                        get: { spend },
-                        set: { appData.events[index] = Event.spend($0) }
-                    )
-                }
-            }
-            return nil
-        };
-        
-        let balance = appData.getTrickleBalance(time: Date())
-        return VStack {
-            viewBalance(balance)
-            
-            CalendarStrip(selectedDate: $selectedDate) { date in
-                // This closure is called when a date is selected
-                selectedDate = date
-            }
-            
-            List {
-                ForEach(spendEvents, id: \.wrappedValue.id) { spend in
-                    SpendView(deduction: spend, onSave: save)
-                }
-                .onDelete(perform: { indexSet in
-                    for index in indexSet {
-                        let spend = spendEvents[index]
-                        deleteEvent(id: spend.id)
-                    }
-                })
-            }
-            .listStyle(InsetGroupedListStyle())
-        };
-    }
-    
-
-    var addSpendingButton: some View {
+    /*var addSpendingButton: some View {
         VStack {
             Spacer()
             HStack {
@@ -217,7 +213,7 @@ struct ContentView: View {
                 .padding()
             }
         }
-    }
+    }*/
     
     func addSpend(spend: Spend) {
         appData = appData.addSpend(spend: spend).save()
@@ -244,16 +240,84 @@ struct ContentView: View {
         }
     }
     
-    private func deleteEvent(id: UUID) {
-        appData.events.removeAll { $0.id == id }
-        save()
-    }
 
     private func save() {
         let _ = appData.save()
     }
 }
 
+
+struct BackgroundView: View {
+    @Binding var appData: AppData
+    
+    var body: some View {
+        let balance = appData.getTrickleBalance(time: Date())
+        
+        VStack(alignment: .leading, spacing: 10) {
+            viewBalance(balance) 
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
+    }
+}
+
+struct ForegroundView: View {
+    @Binding var appData: AppData
+    let hidden: Bool
+    
+    @State private var selectedDate: Date = Date()
+    
+    var body: some View {
+        let spendEvents = appData.events.indices.compactMap { index in
+            if case .spend(let spend) = appData.events[index] {
+                if Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate) {
+                    return Binding(
+                        get: { spend },
+                        set: { appData.events[index] = Event.spend($0) }
+                    )
+                }
+            }
+            return nil
+        };
+        
+        VStack {
+            RoundedRectangle(cornerRadius: 20)
+                .frame(height: 50)
+                .overlay(
+                    hidden ?
+                    Image(systemName: "chevron.up") :
+                    Image(systemName: "chevron.down")
+                )
+            
+            CalendarStrip(selectedDate: $selectedDate) { date in
+                // This closure is called when a date is selected
+                selectedDate = date
+            }
+            
+            List {
+                ForEach(spendEvents, id: \.wrappedValue.id) { spend in
+                    SpendView(deduction: spend)
+                }
+                .onDelete(perform: { indexSet in
+                    for index in indexSet {
+                        let spend = spendEvents[index]
+                        appData = appData.deleteEvent(id: spend.id)
+                    }
+                })
+            }
+            .listStyle(InsetGroupedListStyle())
+
+            .background(Color.white)
+        }
+        .frame(maxHeight: .infinity, alignment: .bottom)
+    }
+}
+
 #Preview {
-    ContentView(initialAppData: AppData(monthlyRate: 1000, startDate: Date().startOfDay, events: []))
+    ContentView(initialAppData: AppData(
+        monthlyRate: 1000,
+        startDate: Date().startOfDay,
+        events: [
+            .spend(Spend(name: "7/11", amount: 30))
+        ]
+    ))
 }
