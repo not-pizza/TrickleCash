@@ -1,9 +1,23 @@
 import Foundation
+import WidgetKit
 
 struct AppData: Codable {
     var monthlyRate: Double
     var startDate: Date
     var events: [Event]
+    
+    func getTrickleBalance(time: Date) -> Double {
+        let secondsElapsed = time.timeIntervalSince(startDate)
+        let perSecondRate = monthlyRate / (30.416 * 24 * 60 * 60)
+        let trickleValue = perSecondRate * secondsElapsed
+        let totalDeductions = events.reduce(0) { total, event in
+            if case .spend(let spend) = event {
+                return total + spend.amount
+            }
+            return total
+        }
+        return trickleValue - totalDeductions
+    }
 }
 
 struct Spend: Identifiable, Codable {
@@ -35,6 +49,13 @@ enum UpdatableAppData: Codable {
     }
 }
 
+func addSpend(spend: Spend) -> AppData {
+    var appData = loadAppData();
+    appData.events.append(.spend(spend))
+    saveAppData(appData: appData)
+    return appData
+}
+
 func loadAppData() -> AppData {
     if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
         if let savedData = defaults.data(forKey: "AppData"),
@@ -48,4 +69,17 @@ func loadAppData() -> AppData {
         startDate: Date(),
         events: []
     )
+}
+
+func saveAppData(appData: AppData) {
+    if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
+        let updatableAppData = UpdatableAppData.v1(appData)
+        if let encoded = try? JSONEncoder().encode(updatableAppData) {
+            defaults.set(encoded, forKey: "AppData")
+            print("saved app data")
+            WidgetCenter.shared.reloadAllTimelines()
+            return
+        }
+    }
+    print("couldn't save app data")
 }

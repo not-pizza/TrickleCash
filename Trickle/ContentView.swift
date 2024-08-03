@@ -90,6 +90,7 @@ struct ContentView: View {
     @State private var tempMonthlyRate: String = ""
     @State private var showingSettings = false
     @State private var selectedDate: Date = Date()
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         let initialAppData = loadAppData()
@@ -118,7 +119,7 @@ struct ContentView: View {
                         }
                     } else {
                         Button(action: {
-                            saveAppData()
+                            save()
                             showingSettings = false
                         }) {
                             Image(systemName: "xmark")
@@ -132,6 +133,10 @@ struct ContentView: View {
         .onAppear {
             appData = loadAppData()
             setupTimer()
+        }.onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                appData = loadAppData()
+            }
         }
     }
 
@@ -147,7 +152,7 @@ struct ContentView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             Button("Save Changes") {
-                saveAppData()
+                save()
                 showingSettings = false
             }
         }
@@ -178,7 +183,7 @@ struct ContentView: View {
             
             List {
                 ForEach(spendEvents, id: \.wrappedValue.id) { spend in
-                    SpendView(deduction: spend, onSave: saveAppData)
+                    SpendView(deduction: spend, onSave: save)
                 }
                 .onDelete(perform: { indexSet in
                     for index in indexSet {
@@ -199,8 +204,7 @@ struct ContentView: View {
                 Spacer()
                 Button(action: {
                     let newSpend = Spend(name: "", amount: 0.0, dateAdded: selectedDate)
-                    appData.events.append(.spend(newSpend))
-                    saveAppData()
+                    addSpend(spend: newSpend)
                 }) {
                     Image(systemName: "plus.circle.fill")
                         .resizable()
@@ -213,6 +217,11 @@ struct ContentView: View {
                 .padding()
             }
         }
+    }
+    
+    func addSpend(spend: Spend) {
+        appData.events.append(.spend(spend))
+        save()
     }
 
     private func setupTimer() {
@@ -238,27 +247,11 @@ struct ContentView: View {
     
     private func deleteEvent(id: UUID) {
         appData.events.removeAll { $0.id == id }
-        saveAppData()
+        save()
     }
 
-    private func saveAppData() {
-        if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
-            if let monthlyRate = Double(tempMonthlyRate) {
-                appData.monthlyRate = monthlyRate
-                UserDefaults.standard.set(monthlyRate, forKey: "MonthlyRate")
-            } else {
-                tempMonthlyRate = "\(appData.monthlyRate)" // Revert to the last valid rate
-            }
-            
-            let updatableAppData = UpdatableAppData.v1(appData)
-            if let encoded = try? JSONEncoder().encode(updatableAppData) {
-                defaults.set(encoded, forKey: "AppData")
-                print("saved app data")
-                WidgetCenter.shared.reloadAllTimelines()
-                return
-            }
-        }
-        print("couldn't save app data")
+    private func save() {
+        saveAppData(appData: appData)
     }
 }
 

@@ -22,6 +22,11 @@
 		AB78A48D2C39CBC2007C4787 /* TrickleWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AB78A4952C445787007C4787 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4942C445787007C4787 /* Models.swift */; };
 		AB78A4962C445888007C4787 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4942C445787007C4787 /* Models.swift */; };
+		AB78A4C22C5DD5A3007C4787 /* AddApplePayTransactionShortcutExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4C12C5DD5A3007C4787 /* AddApplePayTransactionShortcutExtension.swift */; };
+		AB78A4C42C5DD5A3007C4787 /* AddApplePayTransactionShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4C32C5DD5A3007C4787 /* AddApplePayTransactionShortcut.swift */; };
+		AB78A4C82C5DD5A3007C4787 /* AddApplePayTransactionShortcut.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = AB78A4BF2C5DD5A3007C4787 /* AddApplePayTransactionShortcut.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AB78A4CD2C5DDC55007C4787 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4942C445787007C4787 /* Models.swift */; };
+		AB78A4CE2C5DE170007C4787 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47B2C39CBC0007C4787 /* WidgetKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +51,13 @@
 			remoteGlobalIDString = AB78A4782C39CBC0007C4787;
 			remoteInfo = TrickleWidgetExtension;
 		};
+		AB78A4C62C5DD5A3007C4787 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB2D2B892BFC4E5200F03DFD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB78A4BE2C5DD5A3007C4787;
+			remoteInfo = AddApplePayTransactionShortcut;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -58,6 +70,17 @@
 				AB78A48D2C39CBC2007C4787 /* TrickleWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB78A4C92C5DD5A3007C4787 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				AB78A4C82C5DD5A3007C4787 /* AddApplePayTransactionShortcut.appex in Embed ExtensionKit Extensions */,
+			);
+			name = "Embed ExtensionKit Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -83,6 +106,11 @@
 		AB78A4922C39D66A007C4787 /* Trickle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Trickle.entitlements; sourceTree = "<group>"; };
 		AB78A4932C39D68D007C4787 /* TrickleWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TrickleWidgetExtension.entitlements; sourceTree = "<group>"; };
 		AB78A4942C445787007C4787 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		AB78A4BF2C5DD5A3007C4787 /* AddApplePayTransactionShortcut.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = AddApplePayTransactionShortcut.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB78A4C12C5DD5A3007C4787 /* AddApplePayTransactionShortcutExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddApplePayTransactionShortcutExtension.swift; sourceTree = "<group>"; };
+		AB78A4C32C5DD5A3007C4787 /* AddApplePayTransactionShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddApplePayTransactionShortcut.swift; sourceTree = "<group>"; };
+		AB78A4C52C5DD5A3007C4787 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB78A4CF2C5DE33F007C4787 /* AddApplePayTransactionShortcut.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AddApplePayTransactionShortcut.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +144,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AB78A4BC2C5DD5A3007C4787 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB78A4CE2C5DE170007C4787 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -127,6 +163,7 @@
 				AB2D2BA42BFC4E5400F03DFD /* TrickleTests */,
 				AB2D2BAE2BFC4E5400F03DFD /* TrickleUITests */,
 				AB78A47F2C39CBC0007C4787 /* TrickleWidget */,
+				AB78A4C02C5DD5A3007C4787 /* AddApplePayTransactionShortcut */,
 				AB78A47A2C39CBC0007C4787 /* Frameworks */,
 				AB2D2B922BFC4E5200F03DFD /* Products */,
 			);
@@ -139,6 +176,7 @@
 				AB2D2BA12BFC4E5400F03DFD /* TrickleTests.xctest */,
 				AB2D2BAB2BFC4E5400F03DFD /* TrickleUITests.xctest */,
 				AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */,
+				AB78A4BF2C5DD5A3007C4787 /* AddApplePayTransactionShortcut.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -201,6 +239,17 @@
 			path = TrickleWidget;
 			sourceTree = "<group>";
 		};
+		AB78A4C02C5DD5A3007C4787 /* AddApplePayTransactionShortcut */ = {
+			isa = PBXGroup;
+			children = (
+				AB78A4CF2C5DE33F007C4787 /* AddApplePayTransactionShortcut.entitlements */,
+				AB78A4C12C5DD5A3007C4787 /* AddApplePayTransactionShortcutExtension.swift */,
+				AB78A4C32C5DD5A3007C4787 /* AddApplePayTransactionShortcut.swift */,
+				AB78A4C52C5DD5A3007C4787 /* Info.plist */,
+			);
+			path = AddApplePayTransactionShortcut;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -212,11 +261,13 @@
 				AB2D2B8E2BFC4E5200F03DFD /* Frameworks */,
 				AB2D2B8F2BFC4E5200F03DFD /* Resources */,
 				AB78A4912C39CBC2007C4787 /* Embed Foundation Extensions */,
+				AB78A4C92C5DD5A3007C4787 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				AB78A48C2C39CBC2007C4787 /* PBXTargetDependency */,
+				AB78A4C72C5DD5A3007C4787 /* PBXTargetDependency */,
 			);
 			name = Trickle;
 			packageProductDependencies = (
@@ -278,6 +329,23 @@
 			productReference = AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		AB78A4BE2C5DD5A3007C4787 /* AddApplePayTransactionShortcut */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB78A4CC2C5DD5A3007C4787 /* Build configuration list for PBXNativeTarget "AddApplePayTransactionShortcut" */;
+			buildPhases = (
+				AB78A4BB2C5DD5A3007C4787 /* Sources */,
+				AB78A4BC2C5DD5A3007C4787 /* Frameworks */,
+				AB78A4BD2C5DD5A3007C4787 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AddApplePayTransactionShortcut;
+			productName = AddApplePayTransactionShortcut;
+			productReference = AB78A4BF2C5DD5A3007C4787 /* AddApplePayTransactionShortcut.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -302,6 +370,9 @@
 					AB78A4782C39CBC0007C4787 = {
 						CreatedOnToolsVersion = 15.4;
 					};
+					AB78A4BE2C5DD5A3007C4787 = {
+						CreatedOnToolsVersion = 15.4;
+					};
 				};
 			};
 			buildConfigurationList = AB2D2B8C2BFC4E5200F03DFD /* Build configuration list for PBXProject "Trickle" */;
@@ -324,6 +395,7 @@
 				AB2D2BA02BFC4E5400F03DFD /* TrickleTests */,
 				AB2D2BAA2BFC4E5400F03DFD /* TrickleUITests */,
 				AB78A4782C39CBC0007C4787 /* TrickleWidgetExtension */,
+				AB78A4BE2C5DD5A3007C4787 /* AddApplePayTransactionShortcut */,
 			);
 		};
 /* End PBXProject section */
@@ -357,6 +429,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB78A4892C39CBC2007C4787 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB78A4BD2C5DD5A3007C4787 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +479,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AB78A4BB2C5DD5A3007C4787 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB78A4CD2C5DDC55007C4787 /* Models.swift in Sources */,
+				AB78A4C42C5DD5A3007C4787 /* AddApplePayTransactionShortcut.swift in Sources */,
+				AB78A4C22C5DD5A3007C4787 /* AddApplePayTransactionShortcutExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -417,6 +506,11 @@
 			isa = PBXTargetDependency;
 			target = AB78A4782C39CBC0007C4787 /* TrickleWidgetExtension */;
 			targetProxy = AB78A48B2C39CBC2007C4787 /* PBXContainerItemProxy */;
+		};
+		AB78A4C72C5DD5A3007C4787 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB78A4BE2C5DD5A3007C4787 /* AddApplePayTransactionShortcut */;
+			targetProxy = AB78A4C62C5DD5A3007C4787 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -738,6 +832,60 @@
 			};
 			name = Release;
 		};
+		AB78A4CA2C5DD5A3007C4787 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = AddApplePayTransactionShortcut/AddApplePayTransactionShortcut.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AddApplePayTransactionShortcut/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = AddApplePayTransactionShortcut;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.Trickle.AddApplePayTransactionShortcut;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AB78A4CB2C5DD5A3007C4787 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = AddApplePayTransactionShortcut/AddApplePayTransactionShortcut.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AddApplePayTransactionShortcut/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = AddApplePayTransactionShortcut;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.Trickle.AddApplePayTransactionShortcut;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -782,6 +930,15 @@
 			buildConfigurations = (
 				AB78A48F2C39CBC2007C4787 /* Debug */,
 				AB78A4902C39CBC2007C4787 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AB78A4CC2C5DD5A3007C4787 /* Build configuration list for PBXNativeTarget "AddApplePayTransactionShortcut" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB78A4CA2C5DD5A3007C4787 /* Debug */,
+				AB78A4CB2C5DD5A3007C4787 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

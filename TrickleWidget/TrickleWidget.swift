@@ -7,7 +7,8 @@ struct Provider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), value: calculateValue(time: Date()))
+        let appData = loadAppData()
+        let entry = SimpleEntry(date: Date(), value: appData.getTrickleBalance(time: Date()))
         completion(entry)
     }
 
@@ -17,8 +18,9 @@ struct Provider: TimelineProvider {
         let endDate = Calendar.current.date(byAdding: .minute, value: 24, to: currentDate)!
 
         var nextUpdateDate = currentDate
+        let appData = loadAppData()
         while nextUpdateDate <= endDate {
-            let entry = SimpleEntry(date: nextUpdateDate, value: calculateValue(time: nextUpdateDate))
+            let entry = SimpleEntry(date: nextUpdateDate, value: appData.getTrickleBalance(time: Date()))
             entries.append(entry)
             nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: nextUpdateDate)!
         }
@@ -27,19 +29,6 @@ struct Provider: TimelineProvider {
         completion(timeline)
     }
     
-    private func calculateValue(time: Date) -> Double {
-        let appData = loadAppData()
-        let secondsElapsed = time.timeIntervalSince(appData.startDate)
-        let perSecondRate = appData.monthlyRate / (30.416 * 24 * 60 * 60)
-        let trickleValue = perSecondRate * secondsElapsed
-        let totalDeductions = appData.events.reduce(0) { total, event in
-            if case .spend(let spend) = event {
-                return total + spend.amount
-            }
-            return total
-        }
-        return trickleValue - totalDeductions
-    }
 }
 
 struct SimpleEntry: TimelineEntry {
