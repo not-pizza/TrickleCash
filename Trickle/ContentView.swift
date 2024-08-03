@@ -6,9 +6,12 @@ extension View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
+
 struct CalendarStrip: View {
     @Binding var selectedDate: Date
     let onDateSelected: (Date) -> Void
+    
+    @State private var showDatePicker = false
     
     private let calendar = Calendar.current
     private let dateFormatter: DateFormatter = {
@@ -18,29 +21,45 @@ struct CalendarStrip: View {
     }()
     
     var body: some View {
-        HStack {
-            Button(action: {
-                selectedDate = calendar.date(byAdding: .day, value: -1, to: selectedDate)!
-                onDateSelected(selectedDate)
-            }) {
-                Image(systemName: "chevron.left")
+        VStack {
+            HStack {
+                Button(action: {
+                    selectedDate = calendar.date(byAdding: .day, value: -1, to: selectedDate)!
+                    onDateSelected(selectedDate)
+                }) {
+                    Image(systemName: "chevron.left")
+                }.buttonStyle(.plain)
+                
+                Spacer()
+                
+                Button(action: {
+                    showDatePicker.toggle()
+                }) {
+                    Text(dateFormatter.string(from: selectedDate))
+                        .font(.headline)
+                }.buttonStyle(.plain)
+                
+                Spacer()
+                
+                Button(action: {
+                    selectedDate = calendar.date(byAdding: .day, value: 1, to: selectedDate)!
+                    onDateSelected(selectedDate)
+                }) {
+                    Image(systemName: "chevron.right")
+                }.buttonStyle(.plain)
             }
+            .padding()
             
-            Spacer()
-            
-            Text(dateFormatter.string(from: selectedDate))
-                .font(.headline)
-            
-            Spacer()
-            
-            Button(action: {
-                selectedDate = calendar.date(byAdding: .day, value: 1, to: selectedDate)!
-                onDateSelected(selectedDate)
-            }) {
-                Image(systemName: "chevron.right")
+            if showDatePicker {
+                DatePicker("Select Date", selection: $selectedDate, displayedComponents: .date)
+                    .datePickerStyle(GraphicalDatePickerStyle())
+                    .onChange(of: selectedDate) { newValue in
+                        onDateSelected(newValue)
+                        showDatePicker = false
+                    }
+                    .padding()
             }
         }
-        .padding()
     }
 }
 
@@ -234,6 +253,7 @@ struct ForegroundView: View {
     @State private var hidden = false
     
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
     
     struct DragState: Equatable {
         let height: Double
@@ -307,6 +327,11 @@ struct ForegroundView: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .frame(maxHeight: .infinity, alignment: .bottom)
         .ignoresSafeArea(.all)
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                selectedDate = Date()
+            }
+        }
     }
     
     
@@ -330,7 +355,7 @@ struct ForegroundView: View {
                 hidden ?
                 Image(systemName: "chevron.up") :
                 Image(systemName: "chevron.down")
-            }
+            }.buttonStyle(.plain)
             
             CalendarStrip(selectedDate: $selectedDate) { date in
                 selectedDate = date
