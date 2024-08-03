@@ -7,17 +7,35 @@
 		<key>AddApplePayTransactionShortcut.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>0</integer>
 		</dict>
 		<key>Trickle.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
 		<key>TrickleWidgetExtension.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>AB2D2B902BFC4E5200F03DFD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>AB78A4782C39CBC0007C4787</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>AB78A4BE2C5DD5A3007C4787</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

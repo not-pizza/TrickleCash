@@ -280,13 +280,11 @@ struct ForegroundView: View {
         };
         
         VStack {
-            RoundedRectangle(cornerRadius: 20)
-                .frame(height: 50)
-                .overlay(
-                    hidden ?
-                    Image(systemName: "chevron.up") :
-                    Image(systemName: "chevron.down")
-                )
+            hidden ?
+                Image(systemName: "chevron.up") :
+                Image(systemName: "chevron.down")
+            Spacer()
+                
             
             CalendarStrip(selectedDate: $selectedDate) { date in
                 // This closure is called when a date is selected
@@ -305,7 +303,6 @@ struct ForegroundView: View {
                 })
             }
             .listStyle(InsetGroupedListStyle())
-
             .background(Color.white)
         }
         .frame(maxHeight: .infinity, alignment: .bottom)
