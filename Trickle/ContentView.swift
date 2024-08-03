@@ -340,7 +340,7 @@ struct ForegroundView: View {
             Color.clear
                 .frame(width: 10, height: 10)
             
-            Button(action: {
+            /*Button(action: {
                 hidden = !hidden
                 // TODO: deduplicate
                 withAnimation(.spring()) {
@@ -355,7 +355,7 @@ struct ForegroundView: View {
                 hidden ?
                 Image(systemName: "chevron.up") :
                 Image(systemName: "chevron.down")
-            }.buttonStyle(.plain)
+            }.buttonStyle(.plain)*/
             
             CalendarStrip(selectedDate: $selectedDate) { date in
                 selectedDate = date
