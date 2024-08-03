@@ -85,15 +85,15 @@ struct SpendView: View {
 }
 
 struct ContentView: View {
-    @State private var appData: AppData
+    @State var appData: AppData
     @State private var currentTime: Date = Date()
     @State private var tempMonthlyRate: String = ""
     @State private var showingSettings = false
     @State private var selectedDate: Date = Date()
     @Environment(\.scenePhase) private var scenePhase
 
-    init() {
-        let initialAppData = AppData.load()
+    init(initialAppData: AppData? = nil) {
+        let initialAppData = initialAppData ?? AppData.load()
         _appData = State(initialValue: initialAppData)
     }
     
@@ -255,5 +255,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(initialAppData: AppData(monthlyRate: 1000, startDate: Date().startOfDay, events: []))
 }
