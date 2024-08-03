@@ -52,7 +52,6 @@ struct TrickleWidgetEntryView: View {
     var entry: Provider.Entry
     
     var body: some View {
-        
         VStack {
             Text("Current Balance")
             viewBalance(entry.value)

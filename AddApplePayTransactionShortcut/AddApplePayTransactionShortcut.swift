@@ -25,7 +25,7 @@ struct TrickleBalanceAdjustmentView: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                Text(formatCurrency(spend.amount))
+                Text(formatCurrency(-spend.amount))
                     .font(.title2)
                     .foregroundColor(.red)
                 

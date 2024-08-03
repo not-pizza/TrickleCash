@@ -101,9 +101,9 @@ func viewBalance(_ amount: Double) -> some View {
     
     return VStack {
         Text("\(formatCurrency(amount))")
-            .font(.largeTitle)
+            .font(.title2)
             .monospacedDigit()
     }
-    .padding(15)
+    .padding(5)
     .background(Capsule().fill(background))
 }
