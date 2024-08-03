@@ -43,13 +43,6 @@ struct TrickleBalanceAdjustmentView: View {
         .padding()
         .cornerRadius(10)
     }
-    
-    private func formatCurrency(_ amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD" // Change this to your desired currency
-        return formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
-    }
 }
 
 struct AddApplePayTransactionShortcut: AppIntent {

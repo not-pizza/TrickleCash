@@ -50,13 +50,12 @@ extension View {
 
 struct TrickleWidgetEntryView: View {
     var entry: Provider.Entry
-
+    
     var body: some View {
+        
         VStack {
             Text("Current Balance")
-            Text("$\(entry.value, specifier: "%.0f")")
-                .font(.largeTitle)
-                .monospacedDigit()
+            viewBalance(entry.value)
         }
         .widgetBackground(backgroundView: Color.clear)
     }

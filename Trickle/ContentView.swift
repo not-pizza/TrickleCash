@@ -172,9 +172,9 @@ struct ContentView: View {
             return nil
         };
         
+        let balance = appData.getTrickleBalance(time: Date())
         return VStack {
-            Text("$\((currentTrickleValue() - totalDeductions()), specifier: "%.2f")")
-                .monospacedDigit()
+            viewBalance(balance)
             
             CalendarStrip(selectedDate: $selectedDate) { date in
                 // This closure is called when a date is selected

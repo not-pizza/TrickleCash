@@ -1,5 +1,6 @@
 import Foundation
 import WidgetKit
+import SwiftUI
 
 struct AppData: Codable {
     var monthlyRate: Double
@@ -85,4 +86,24 @@ enum UpdatableAppData: Codable {
             return data
         }
     }
+}
+
+func formatCurrency(_ amount: Double) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.currencyCode = "USD"
+    return formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
+}
+
+
+func viewBalance(_ amount: Double) -> some View {
+    let background = amount < 0 ? Color.red : Color.green
+    
+    return VStack {
+        Text("\(formatCurrency(amount))")
+            .font(.largeTitle)
+            .monospacedDigit()
+    }
+    .padding(15)
+    .background(Capsule().fill(background))
 }
