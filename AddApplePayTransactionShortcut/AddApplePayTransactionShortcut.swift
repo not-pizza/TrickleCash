@@ -90,7 +90,10 @@ struct AddApplePayTransactionShortcut: AppIntent {
             components.append(merchantName)
         }
         
-        if !name.isEmpty {
+        let normalized_name = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let normalized_merchant = merchantName.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if !name.isEmpty
+            && normalized_name != normalized_merchant {
             components.append(name)
         }
         
