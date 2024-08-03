@@ -12,6 +12,5 @@ import SwiftUI
 struct TrickleWidgetBundle: WidgetBundle {
     var body: some Widget {
         TrickleWidget()
-        TrickleWidgetLiveActivity()
     }
 }
