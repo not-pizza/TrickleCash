@@ -50,7 +50,6 @@ struct SpendView: View {
     init(deduction: Binding<Spend>) {
         self._deduction = deduction
 
-        // if the input amount ends with .0, remove it
         var amount = String(deduction.wrappedValue.amount)
         if amount.hasSuffix(".0") {
             amount = String(amount.dropLast(2))
@@ -77,22 +76,16 @@ struct SpendView: View {
     }
 }
 
-struct ContentView: View {
-    @State var appData: AppData
+struct TrickleView: View {
+    @Binding var appData: AppData
+    var openSettings: () -> Void
+    
     @State private var currentTime: Date = Date()
-    @State private var tempMonthlyRate: String = ""
-    @State private var showingSettings = false
-    @Environment(\.scenePhase) private var scenePhase
     
     @State private var startingOffset: CGFloat = 0
     @State private var offset: CGFloat = 200
     @State private var isDragging = false
     @State private var foregroundHidden = false
-
-    init(initialAppData: AppData? = nil) {
-        let initialAppData = initialAppData ?? AppData.load()
-        _appData = State(initialValue: initialAppData)
-    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -100,10 +93,8 @@ struct ContentView: View {
             let forgroundShowingOffset: CGFloat = 200
             
             ZStack {
-                // Background View
-                BackgroundView(appData: $appData)
+                BackgroundView(appData: $appData, onSettingsTapped: openSettings)
                 
-                // Foreground View
                 ForegroundView(appData: $appData, hidden: foregroundHidden)
                     .offset(y: max(offset, 0))
                     .gesture(
@@ -133,87 +124,6 @@ struct ContentView: View {
             }
         }
     }
-
-    var body_old: some View {
-        NavigationView {
-            ZStack {
-                if showingSettings {
-                    settingsView
-                } else {
-                }
-            }
-            .navigationBarItems(leading:
-                Group {
-                    if !showingSettings {
-                        Button(action: {
-                            showingSettings = true
-                            tempMonthlyRate = "\(appData.monthlyRate)"
-                        }) {
-                            Image(systemName: "gear")
-                                .foregroundColor(.blue)
-                        }
-                    } else {
-                        Button(action: {
-                            save()
-                            showingSettings = false
-                        }) {
-                            Image(systemName: "xmark")
-                                .foregroundColor(.blue)
-                        }
-                    }
-                }
-            )
-            .navigationBarTitle(showingSettings ? "Settings" : "Cash", displayMode: .inline)
-        }
-        .onAppear {
-            appData = AppData.load()
-            setupTimer()
-        }.onChange(of: scenePhase) { newPhase in
-            if newPhase == .active {
-                appData = AppData.load()
-            }
-        }
-    }
-
-    var settingsView: some View {
-        Form {
-            DatePicker("Start Date", selection: $appData.startDate, displayedComponents: .date)
-                .onChange(of: appData.startDate) { newValue in
-                    UserDefaults.standard.set(newValue, forKey: "StartDate")
-                }
-            
-            TextField("Monthly Rate", text: $tempMonthlyRate)
-                .keyboardType(.decimalPad)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            
-            Button("Save Changes") {
-                save()
-                showingSettings = false
-            }
-        }
-    }
-
-    /*var addSpendingButton: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                Button(action: {
-                    let newSpend = Spend(name: "", amount: 0.0, dateAdded: selectedDate)
-                    addSpend(spend: newSpend)
-                }) {
-                    Image(systemName: "plus.circle.fill")
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .foregroundColor(.blue)
-                        .background(Color.white)
-                        .clipShape(Circle())
-                        .shadow(radius: 5)
-                }
-                .padding()
-            }
-        }
-    }*/
     
     func addSpend(spend: Spend) {
         appData = appData.addSpend(spend: spend).save()
@@ -249,12 +159,28 @@ struct ContentView: View {
 
 struct BackgroundView: View {
     @Binding var appData: AppData
+    var onSettingsTapped: () -> Void
     
     var body: some View {
         let balance = appData.getTrickleBalance(time: Date())
         
         VStack(alignment: .leading, spacing: 10) {
-            viewBalance(balance) 
+            HStack {
+                Color.clear
+                    .frame(width: 24, height: 24)  // Dummy element
+                Spacer()
+                
+                viewBalance(balance)
+                    .font(.system(size: 30))
+                
+                Spacer()
+                Button(action: onSettingsTapped) {
+                    Image(systemName: "gear")
+                        .foregroundColor(.primary)
+                        .font(.system(size: 26))
+                }
+            }
+            .padding()
         }
         .frame(maxHeight: .infinity, alignment: .top)
     }
@@ -306,6 +232,51 @@ struct ForegroundView: View {
             .background(Color.white)
         }
         .frame(maxHeight: .infinity, alignment: .bottom)
+    }
+}
+
+struct ContentView: View {
+    @State var appData: AppData
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var showingSettings = false
+    @State private var tempMonthlyRate: String = ""
+    
+    init(initialAppData: AppData? = nil) {
+        let initialAppData = initialAppData ?? AppData.load()
+        _appData = State(initialValue: initialAppData)
+    }
+    
+    var settingsView: some View {
+        Form {
+            DatePicker("Start Date", selection: $appData.startDate, displayedComponents: .date)
+                .onChange(of: appData.startDate) { newValue in
+                    UserDefaults.standard.set(newValue, forKey: "StartDate")
+                }
+            
+            TextField("Monthly Rate", text: $tempMonthlyRate)
+                .keyboardType(.decimalPad)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+            
+            Button("Save Changes") {
+                showingSettings = false
+            }
+        }
+    }
+    
+    var body: some View {
+        if showingSettings {
+            settingsView
+        }
+        else {
+            TrickleView(appData: $appData, openSettings: {showingSettings = true})
+                .onAppear {
+                    appData = AppData.load()
+                }.onChange(of: scenePhase) { newPhase in
+                    if newPhase == .active {
+                        appData = AppData.load()
+                    }
+                }
+        }
     }
 }
 
