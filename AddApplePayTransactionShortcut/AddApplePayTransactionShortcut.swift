@@ -62,14 +62,15 @@ struct AddApplePayTransactionShortcut: AppIntent {
     var amount: Double
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Add $\(\.$amount) transaction from \(\.$merchantName)") {
+        Summary("Add a $\(\.$amount) transaction from \(\.$merchantName)") {
             \.$name
             \.$cardOrPass
         }
     }
 
     func perform() async throws -> some IntentResult & ProvidesDialog & ShowsSnippetView {
-        let spend = Spend(name: createSpendName(), amount: amount, dateAdded: Date())
+        let name = name.trimmingCharacters(in: .whitespaces) != "" ? name : merchantName
+        let spend = Spend(name: name, merchant: merchantName, paymentMethod: cardOrPass, amount: amount, dateAdded: Date())
         
         let time = Date();
         var appData = AppData.load();
@@ -82,27 +83,5 @@ struct AddApplePayTransactionShortcut: AppIntent {
             TrickleBalanceAdjustmentView(previousBalance: previousBalance, spend: spend, newBalance: newBalance, merchant: merchantName)
         }
     }
-    
-    func createSpendName() -> String {
-        var components: [String] = []
-        
-        if !merchantName.isEmpty {
-            components.append(merchantName)
-        }
-        
-        let normalized_name = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let normalized_merchant = merchantName.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        if !name.isEmpty
-            && normalized_name != normalized_merchant {
-            components.append(name)
-        }
-        
-        if !cardOrPass.isEmpty {
-            components.append("(\(cardOrPass))")
-        }
-        
-        return components.joined(separator: " - ")
-    }
-
 }
 

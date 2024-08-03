@@ -62,6 +62,8 @@ struct AppData: Codable {
 struct Spend: Identifiable, Codable {
     var id: UUID = UUID()
     var name: String
+    var merchant: String?
+    var paymentMethod: String?
     var amount: Double
     var dateAdded: Date = Date()
 }
