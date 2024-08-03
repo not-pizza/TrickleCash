@@ -107,5 +107,5 @@ func viewBalance(_ amount: Double) -> some View {
             .monospacedDigit()
     }
     .padding(5)
-    .background(Capsule().fill(background))
+    .background(RoundedRectangle(cornerRadius: 5).fill(background))
 }
