@@ -6,7 +6,6 @@ extension View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
-
 struct CalendarStrip: View {
     @Binding var selectedDate: Date
     let onDateSelected: (Date) -> Void
@@ -14,32 +13,34 @@ struct CalendarStrip: View {
     private let calendar = Calendar.current
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEE\nd"
+        formatter.dateFormat = "EEEE, MMMM d"
         return formatter
     }()
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(-5...0, id: \.self) { offset in
-                    let date = calendar.date(byAdding: .day, value: offset, to: Date())!
-                    VStack {
-                        Text(dateFormatter.string(from: date))
-                            .font(.system(size: 14))
-                            .multilineTextAlignment(.center)
-                    }
-                    .frame(width: 50, height: 50)
-                    .background(date.startOfDay == selectedDate.startOfDay ? Color.blue : Color.gray.opacity(0.2))
-                    .foregroundColor(date.startOfDay == selectedDate.startOfDay ? Color.white : Color.primary)
-                    .cornerRadius(8)
-                    .onTapGesture {
-                        selectedDate = date
-                        onDateSelected(date)
-                    }
-                }
+        HStack {
+            Button(action: {
+                selectedDate = calendar.date(byAdding: .day, value: -1, to: selectedDate)!
+                onDateSelected(selectedDate)
+            }) {
+                Image(systemName: "chevron.left")
             }
-            .padding()
+            
+            Spacer()
+            
+            Text(dateFormatter.string(from: selectedDate))
+                .font(.headline)
+            
+            Spacer()
+            
+            Button(action: {
+                selectedDate = calendar.date(byAdding: .day, value: 1, to: selectedDate)!
+                onDateSelected(selectedDate)
+            }) {
+                Image(systemName: "chevron.right")
+            }
         }
+        .padding()
     }
 }
 
@@ -89,16 +90,38 @@ struct TrickleView: View {
     @State private var currentTime: Date = Date()
     
     @State private var offset: CGFloat = 200
+    
+    @State private var initialForgroundShowingOffset: CGFloat?
+    @State private var setInitialForgroundShowingOffset: Bool = false
 
     var body: some View {
-        
+
         GeometryReader { geometry in
+            let forgroundHiddenOffset: CGFloat = geometry.size.height - 100
+            let forgroundShowingOffset: CGFloat = geometry.size.height / 5
+            
             ZStack {
-                BackgroundView(appData: $appData, onSettingsTapped: openSettings)
-                
-                ForegroundView(appData: $appData, offset: $offset, geometry: geometry)
+                ForegroundView(
+                    appData: $appData,
+                    offset: $offset,
+                    geometry: geometry,
+                    foregroundHiddenOffset: forgroundHiddenOffset,
+                    foregroundShowingOffset: forgroundShowingOffset
+                )
                     .offset(y: max(offset, 0))
-            }
+                    .zIndex(1)
+                
+                BackgroundView(
+                    appData: $appData,
+                    onSettingsTapped: openSettings,
+                    forgroundShowingOffset: initialForgroundShowingOffset ?? forgroundShowingOffset
+                ).zIndex(0)
+            }.onAppear(perform: {
+                    if !setInitialForgroundShowingOffset {
+                        initialForgroundShowingOffset = forgroundShowingOffset
+                    }
+                }
+            )
         }
     }
     
@@ -133,31 +156,66 @@ struct TrickleView: View {
     }
 }
 
+struct CircularProgressView: View {
+    let progress: Double
+    let balance: Double
+    
+    var body: some View {
+        let lineWidth: CGFloat = 8
+        ZStack {
+            Circle()
+                .stroke(lineWidth: lineWidth)
+                .opacity(0.3)
+                .foregroundColor(.gray)
+            
+            Circle()
+                .trim(from: 0.0, to: CGFloat(min(self.progress, 1.0)))
+                .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
+                .foregroundColor(.blue)
+                .rotationEffect(Angle(degrees: 270.0))
+                .animation(.linear, value: progress)
+            
+            VStack {
+                viewBalance(balance)
+                    .font(.system(size: 30))
+            }
+        }
+    }
+}
 
 struct BackgroundView: View {
     @Binding var appData: AppData
     var onSettingsTapped: () -> Void
+    var forgroundShowingOffset: CGFloat
+    
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         let balance = appData.getTrickleBalance(time: Date())
         
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Color.clear
-                    .frame(width: 24, height: 24)  // Dummy element
-                Spacer()
-                
-                viewBalance(balance)
-                    .font(.system(size: 30))
-                
-                Spacer()
-                Button(action: onSettingsTapped) {
-                    Image(systemName: "gear")
-                        .foregroundColor(.primary)
-                        .font(.system(size: 26))
+        ZStack {
+            balanceBackground(balance, colorScheme: colorScheme).ignoresSafeArea()
+            
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Color.clear
+                        .frame(width: 24, height: 24)  // Dummy element
+                    Spacer()
+                    
+                    CircularProgressView(progress: 0.5, balance: balance)
+                        .frame(width: forgroundShowingOffset * 0.8, height: forgroundShowingOffset * 0.8)
+                    
+                    
+                    Spacer()
+                    Button(action: onSettingsTapped) {
+                        Image(systemName: "gear")
+                            .foregroundColor(.primary)
+                            .font(.system(size: 26))
+                    }
                 }
+                .padding()
             }
-            .padding()
+            .frame(maxHeight: .infinity, alignment: .top)
         }
         .frame(maxHeight: .infinity, alignment: .top)
     }
@@ -167,11 +225,28 @@ struct ForegroundView: View {
     @Binding var appData: AppData
     @Binding var offset: CGFloat
     var geometry: GeometryProxy
+    var foregroundHiddenOffset: Double
+    var foregroundShowingOffset: Double
     
     @State private var startingOffset: CGFloat = 0
     @State private var selectedDate: Date = Date()
     @State private var isDragging = false
     @State private var hidden = false
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    struct DragState: Equatable {
+        let height: Double
+        let foregroundHiddenOffset: Double
+        let foregroundShowingOffset: Double
+        let isDragging: Bool
+        let hidden: Bool
+    }
+    
+    var backgroundColor: Color {
+        colorScheme == .dark ? Color.black : Color.white
+    }
+    
     
     private func spendEventBindings() -> [Binding<Spend>] {
         var spendEvents = appData.events.indices.compactMap { index in
@@ -190,42 +265,65 @@ struct ForegroundView: View {
     }
     
     var body: some View {
-        let spendEvents = spendEventBindings()
+        let dragState = DragState(
+            height: geometry.size.height,
+            foregroundHiddenOffset: foregroundHiddenOffset,
+            foregroundShowingOffset: foregroundShowingOffset,
+            isDragging: isDragging,
+            hidden: hidden
+        )
         
-        VStack {
-            draggable
-            
-            List {
-                ForEach(spendEvents, id: \.wrappedValue.id) { spend in
-                    SpendView(deduction: spend)
-                }
-                .onDelete(perform: { indexSet in
-                    for index in indexSet {
-                        let spend = spendEvents[index]
-                        appData = appData.deleteEvent(id: spend.id)
-                    }
-                })
+        let spendEvents = spendEventBindings()
+        let spendList = List {
+            ForEach(spendEvents, id: \.wrappedValue.id) { spend in
+                SpendView(deduction: spend)
             }
+            .onDelete(perform: { indexSet in
+                for index in indexSet {
+                    let spend = spendEvents[index]
+                    appData = appData.deleteEvent(id: spend.id)
+                }
+            })
             .listStyle(InsetGroupedListStyle())
-            .background(Color.white)
         }
+
+        ZStack {
+            backgroundColor
+                .ignoresSafeArea()
+
+            VStack {
+                draggable
+                
+                if #available(iOS 16.0, *) {
+                    spendList.scrollContentBackground(.hidden)
+                }
+                else {
+                    spendList
+                }
+                
+            }
+            .frame(maxHeight: .infinity, alignment: .bottom)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 10))
         .frame(maxHeight: .infinity, alignment: .bottom)
+        .ignoresSafeArea(.all)
     }
     
+    
     var draggable: some View {
-        let forgroundHiddenOffset: CGFloat = geometry.size.height - 50
-        let forgroundShowingOffset: CGFloat = geometry.size.height / 5
-        
         return VStack(spacing: 10) {
+            Color.clear
+                .frame(width: 10, height: 10)
+            
             Button(action: {
                 hidden = !hidden
                 // TODO: deduplicate
                 withAnimation(.spring()) {
                     if hidden {
                         endEditing()
-                        self.offset = forgroundHiddenOffset
+                        self.offset = foregroundHiddenOffset
                     } else {
-                        self.offset = forgroundShowingOffset
+                        self.offset = foregroundShowingOffset
                     }
                 }
             }) {
@@ -263,7 +361,6 @@ struct ForegroundView: View {
                 }
             }
         }
-        
     }
     
 }

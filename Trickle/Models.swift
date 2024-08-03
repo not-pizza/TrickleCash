@@ -114,6 +114,6 @@ func viewBalance(_ amount: Double) -> some View {
     .padding(5)
 }
 
-func background(_ amount: Double) -> Color {
+func balanceBackground(_ amount: Double, colorScheme: ColorScheme) -> Color {
     amount < 0 ? Color.red : Color.green
 }
