@@ -27,6 +27,7 @@
 		AB78A4C82C5DD5A3007C4787 /* AddApplePayTransactionShortcut.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = AB78A4BF2C5DD5A3007C4787 /* AddApplePayTransactionShortcut.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AB78A4CD2C5DDC55007C4787 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4942C445787007C4787 /* Models.swift */; };
 		AB78A4CE2C5DE170007C4787 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47B2C39CBC0007C4787 /* WidgetKit.framework */; };
+		AB78A4D02C5DF9DB007C4787 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47D2C39CBC0007C4787 /* SwiftUI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,6 +149,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB78A4D02C5DF9DB007C4787 /* SwiftUI.framework in Frameworks */,
 				AB78A4CE2C5DE170007C4787 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
