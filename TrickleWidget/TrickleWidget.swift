@@ -53,8 +53,8 @@ struct TrickleWidgetEntryView: View {
     
     var body: some View {
         VStack {
-            Text("Current Balance")
-            viewBalance(entry.value)
+            Text("Trickle")
+            viewBalanceNoDecimals(entry.value)
         }
         .widgetBackground(backgroundView: Color.clear)
     }

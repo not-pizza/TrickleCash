@@ -115,7 +115,8 @@ struct CircularProgressView: View {
                 .animation(.linear, value: progress)
             
             VStack {
-                viewBalance(balance).frame(width: frameSize * 0.8)
+                viewBalance(balance)
+                    .frame(width: frameSize * 0.8)
                     .scaledToFill()
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)

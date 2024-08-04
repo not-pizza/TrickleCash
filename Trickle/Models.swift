@@ -112,6 +112,14 @@ enum UpdatableAppData: Codable {
     }
 }
 
+func formatCurrencyNoDecimals(_ amount: Double) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.currencyCode = "USD"
+    formatter.maximumFractionDigits = 0
+    return formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
+}
+
 func formatCurrency(_ amount: Double) -> String {
     let formatter = NumberFormatter()
     formatter.numberStyle = .currency
@@ -122,13 +130,20 @@ func formatCurrency(_ amount: Double) -> String {
     return formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
 }
 
-
-func viewBalance(_ amount: Double) -> some View {
-    return Text("\(formatCurrency(amount))")
+func viewBalance(_ amount: String) -> some View {
+    return Text(amount)
             .font(.title2)
             .monospacedDigit()
             .bold()
-    
+            .lineLimit(1)
+}
+
+func viewBalanceNoDecimals(_ amount: Double) -> some View {
+    viewBalance(formatCurrencyNoDecimals(amount))
+}
+
+func viewBalance(_ amount: Double) -> some View {
+    viewBalance(formatCurrency(amount))
 }
 
 func balanceBackground(_ amount: Double, colorScheme: ColorScheme) -> Color {
