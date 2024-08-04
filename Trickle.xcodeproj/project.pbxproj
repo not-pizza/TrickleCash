@@ -28,6 +28,7 @@
 		AB78A4CD2C5DDC55007C4787 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4942C445787007C4787 /* Models.swift */; };
 		AB78A4CE2C5DE170007C4787 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47B2C39CBC0007C4787 /* WidgetKit.framework */; };
 		AB78A4D02C5DF9DB007C4787 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47D2C39CBC0007C4787 /* SwiftUI.framework */; };
+		AB7B79262C6011FA003647EF /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7B79252C6011FA003647EF /* Expression.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +105,7 @@
 		AB78A4C32C5DD5A3007C4787 /* AddApplePayTransactionShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddApplePayTransactionShortcut.swift; sourceTree = "<group>"; };
 		AB78A4C52C5DD5A3007C4787 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB78A4CF2C5DE33F007C4787 /* AddApplePayTransactionShortcut.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AddApplePayTransactionShortcut.entitlements; sourceTree = "<group>"; };
+		AB7B79252C6011FA003647EF /* Expression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +179,7 @@
 				AB2D2B9A2BFC4E5300F03DFD /* Preview Content */,
 				AB1669302C5F035B0048A993 /* CalendarStrip.swift */,
 				AB1669322C5F03870048A993 /* SpendView.swift */,
+				AB7B79252C6011FA003647EF /* Expression.swift */,
 			);
 			path = Trickle;
 			sourceTree = "<group>";
@@ -399,6 +402,7 @@
 				AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */,
 				AB1669312C5F035B0048A993 /* CalendarStrip.swift in Sources */,
 				AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */,
+				AB7B79262C6011FA003647EF /* Expression.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,21 +22,56 @@ struct SpendView: View {
         self._inputAmount = State(initialValue: amount)
     }
 
+    var nameView : some View { TextField("Name", text: $deduction.name)
+            .textFieldStyle(.plain)
+            .background(.clear)
+    }
+    
+    var amountView : some View {
+        TextField("Amount", text: $inputAmount)
+            .keyboardType(.numbersAndPunctuation)
+            .textFieldStyle(.plain)
+            .onChange(of: inputAmount) { newValue in
+                do {
+                    let value = try Expression(newValue).evaluate()
+                    deduction.amount = value
+                }
+                catch {
+                    deduction.amount = 0
+
+                }
+            }
+            .background(.clear)
+            .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
+                if let textField = obj.object as? UITextField {
+                    textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                }
+            }
+    }
+    
     var body: some View {
         HStack {
-            TextField("Name", text: $deduction.name)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
+            nameView
             Spacer()
-            TextField("Amount", text: $inputAmount)
-            .keyboardType(.numbersAndPunctuation)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .onChange(of: inputAmount) { newValue in
-                if let value = Double(newValue) {
-                    deduction.amount = value
-                } else if inputAmount.isEmpty {
-                    deduction.amount = 0
-                }
+            Text("$")
+            if #available(iOS 16.0, *) {
+                amountView
+                    .bold()
+            }
+            else {
+                amountView
             }
         }
     }
+}
+
+
+#Preview {
+    var spend = Spend(name: "7/11", amount: 30)
+    let binding = Binding<Spend>(
+        get: { spend },
+        set: { _ in () }
+    )
+
+    return SpendView(deduction: binding)
 }

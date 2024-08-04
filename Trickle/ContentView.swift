@@ -62,7 +62,7 @@ struct TrickleView: View {
     }
 
     private func setupTimer() {
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
             currentTime = Date()
         }
     }
@@ -201,16 +201,25 @@ struct ForegroundView: View {
     var body: some View {
         let spendEvents = spendEventBindings()
         let spendList = List {
-            ForEach(spendEvents, id: \.wrappedValue.id) { spend in
-                SpendView(deduction: spend)
-            }
-            .onDelete(perform: { indexSet in
-                for index in indexSet {
-                    let spend = spendEvents[index]
-                    appData = appData.deleteEvent(id: spend.id)
+            Section {
+                ForEach(spendEvents, id: \.wrappedValue.id) { spend in
+                    SpendView(deduction: spend)
                 }
-            })
-            .listStyle(InsetGroupedListStyle())
+                .onDelete(perform: { indexSet in
+                    for index in indexSet {
+                        let spend = spendEvents[index]
+                        appData = appData.deleteEvent(id: spend.id)
+                    }
+                })
+                .listRowSeparator(.hidden)
+                .listRowSeparatorTint(.clear)
+                .listRowBackground(Rectangle()
+                    .background(.clear)
+                    .foregroundColor(.clear)
+                )
+                
+            }
+            .listStyle(.inset)
         }
 
         ZStack {
@@ -261,7 +270,7 @@ struct ForegroundView: View {
                 hidden ?
                 Image(systemName: "chevron.up") :
                 Image(systemName: "chevron.down")
-            }.buttonStyle(.plain)*/
+            }*/
             
             CalendarStrip(selectedDate: $selectedDate) { date in
                 selectedDate = date
