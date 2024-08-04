@@ -109,18 +109,19 @@ func formatCurrency(_ amount: Double) -> String {
     let formatter = NumberFormatter()
     formatter.numberStyle = .currency
     formatter.currencyCode = "USD"
+    if amount > 9999 || amount < -999 {
+        formatter.maximumFractionDigits = 0
+    }
     return formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
 }
 
 
 func viewBalance(_ amount: Double) -> some View {
-    return VStack {
-        Text("\(formatCurrency(amount))")
+    return Text("\(formatCurrency(amount))")
             .font(.title2)
             .monospacedDigit()
             .bold()
-    }
-    .padding(5)
+    
 }
 
 func balanceBackground(_ amount: Double, colorScheme: ColorScheme) -> Color {

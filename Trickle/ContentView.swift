@@ -91,6 +91,7 @@ struct TrickleView: View {
 struct CircularProgressView: View {
     let progress: Double
     let balance: Double
+    let frameSize: Double
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -114,10 +115,12 @@ struct CircularProgressView: View {
                 .animation(.linear, value: progress)
             
             VStack {
-                viewBalance(balance)
-                    .font(.system(size: 30))
+                viewBalance(balance).frame(width: frameSize * 0.8)
+                    .scaledToFill()
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
             }
-        }
+        }.frame(width: frameSize, height: frameSize)
     }
 }
 
@@ -141,8 +144,7 @@ struct BackgroundView: View {
                         .frame(width: 24, height: 24)  // Dummy element
                     Spacer()
                     
-                    CircularProgressView(progress: appData.getPercentThroughCurrentCent(time: currentTime), balance: balance)
-                        .frame(width: forgroundShowingOffset * 0.8, height: forgroundShowingOffset * 0.8)
+                    CircularProgressView(progress: appData.getPercentThroughCurrentCent(time: currentTime), balance: balance, frameSize: forgroundShowingOffset * 0.8)
                     
                     
                     Spacer()
