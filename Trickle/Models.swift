@@ -75,12 +75,19 @@ struct AppData: Codable, Equatable {
 }
 
 struct Spend: Identifiable, Codable, Equatable {
+    enum AddedFrom : Codable, Equatable {
+        case shortcut
+    }
+    
     var id: UUID = UUID()
     var name: String
     var merchant: String?
     var paymentMethod: String?
     var amount: Double
     var dateAdded: Date = Date()
+    
+    // If unset, it means it was added by the app
+    var addedFrom: AddedFrom?
 }
 
 enum Event: Codable, Identifiable, Equatable {

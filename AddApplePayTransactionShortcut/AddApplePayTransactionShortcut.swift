@@ -70,7 +70,7 @@ struct AddApplePayTransactionShortcut: AppIntent {
 
     func perform() async throws -> some IntentResult & ProvidesDialog & ShowsSnippetView {
         let name = name.trimmingCharacters(in: .whitespaces) != "" ? name : merchantName
-        let spend = Spend(name: name, merchant: merchantName, paymentMethod: cardOrPass, amount: amount, dateAdded: Date())
+        let spend = Spend(name: name, merchant: merchantName, paymentMethod: cardOrPass, amount: amount, dateAdded: Date(), addedFrom: .shortcut)
         
         let time = Date();
         var appData = AppData.load();
