@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AB1669312C5F035B0048A993 /* CalendarStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1669302C5F035B0048A993 /* CalendarStrip.swift */; };
+		AB1669332C5F03870048A993 /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1669322C5F03870048A993 /* SpendView.swift */; };
 		AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */; };
 		AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B962BFC4E5200F03DFD /* ContentView.swift */; };
 		AB2D2B992BFC4E5300F03DFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */; };
@@ -78,6 +80,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AB1669302C5F035B0048A993 /* CalendarStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStrip.swift; sourceTree = "<group>"; };
+		AB1669322C5F03870048A993 /* SpendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendView.swift; sourceTree = "<group>"; };
 		AB2D2B912BFC4E5200F03DFD /* Trickle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trickle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleApp.swift; sourceTree = "<group>"; };
 		AB2D2B962BFC4E5200F03DFD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -171,6 +175,8 @@
 				AB78A4942C445787007C4787 /* Models.swift */,
 				AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */,
 				AB2D2B9A2BFC4E5300F03DFD /* Preview Content */,
+				AB1669302C5F035B0048A993 /* CalendarStrip.swift */,
+				AB1669322C5F03870048A993 /* SpendView.swift */,
 			);
 			path = Trickle;
 			sourceTree = "<group>";
@@ -388,8 +394,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB1669332C5F03870048A993 /* SpendView.swift in Sources */,
 				AB78A4952C445787007C4787 /* Models.swift in Sources */,
 				AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */,
+				AB1669312C5F035B0048A993 /* CalendarStrip.swift in Sources */,
 				AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
