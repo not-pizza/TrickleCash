@@ -19,7 +19,15 @@ struct AppData: Codable, Equatable {
         }
         return trickleValue - totalDeductions
     }
-    
+
+    func getPercentThroughCurrentCent(time: Date) -> Double {
+        let balance = getTrickleBalance(time: time)
+        var percent = (balance - 0.005).truncatingRemainder(dividingBy: 0.01) * 100
+        if balance < 0 {
+            percent = 1 + percent
+        }
+        return percent
+    }
     
     func addSpend(spend: Spend) -> Self {
         var events = events
@@ -110,6 +118,7 @@ func viewBalance(_ amount: Double) -> some View {
         Text("\(formatCurrency(amount))")
             .font(.title2)
             .monospacedDigit()
+            .bold()
     }
     .padding(5)
 }

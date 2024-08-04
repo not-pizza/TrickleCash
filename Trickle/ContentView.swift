@@ -25,7 +25,6 @@ struct TrickleView: View {
     @State private var setInitialForgroundShowingOffset: Bool = false
 
     var body: some View {
-
         GeometryReader { geometry in
             let forgroundHiddenOffset: CGFloat = geometry.size.height - 100
             let forgroundShowingOffset: CGFloat = geometry.size.height / 5
@@ -44,7 +43,8 @@ struct TrickleView: View {
                 BackgroundView(
                     appData: $appData,
                     onSettingsTapped: openSettings,
-                    forgroundShowingOffset: initialForgroundShowingOffset ?? forgroundShowingOffset
+                    forgroundShowingOffset: initialForgroundShowingOffset ?? forgroundShowingOffset,
+                    currentTime: currentTime
                 ).zIndex(0)
             }.onAppear(perform: {
                     if !setInitialForgroundShowingOffset {
@@ -52,6 +52,8 @@ struct TrickleView: View {
                     }
                 }
             )
+        }.onAppear() {
+            setupTimer()
         }
     }
     
@@ -90,18 +92,24 @@ struct CircularProgressView: View {
     let progress: Double
     let balance: Double
     
+    @Environment(\.colorScheme) var colorScheme
+    
+    var backgroundColor: Color {
+        colorScheme == .dark ? Color.white : Color.black
+    }
+    
     var body: some View {
         let lineWidth: CGFloat = 8
-        ZStack {
+        return ZStack {
             Circle()
                 .stroke(lineWidth: lineWidth)
                 .opacity(0.3)
-                .foregroundColor(.gray)
+                .foregroundColor(backgroundColor)
             
             Circle()
                 .trim(from: 0.0, to: CGFloat(min(self.progress, 1.0)))
                 .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-                .foregroundColor(.blue)
+                .foregroundColor(backgroundColor)
                 .rotationEffect(Angle(degrees: 270.0))
                 .animation(.linear, value: progress)
             
@@ -117,11 +125,12 @@ struct BackgroundView: View {
     @Binding var appData: AppData
     var onSettingsTapped: () -> Void
     var forgroundShowingOffset: CGFloat
+    var currentTime: Date
     
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        let balance = appData.getTrickleBalance(time: Date())
+        let balance = appData.getTrickleBalance(time: currentTime)
         
         ZStack {
             balanceBackground(balance, colorScheme: colorScheme).ignoresSafeArea()
@@ -132,7 +141,7 @@ struct BackgroundView: View {
                         .frame(width: 24, height: 24)  // Dummy element
                     Spacer()
                     
-                    CircularProgressView(progress: 0.5, balance: balance)
+                    CircularProgressView(progress: appData.getPercentThroughCurrentCent(time: currentTime), balance: balance)
                         .frame(width: forgroundShowingOffset * 0.8, height: forgroundShowingOffset * 0.8)
                     
                     
@@ -166,18 +175,9 @@ struct ForegroundView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.scenePhase) private var scenePhase
     
-    struct DragState: Equatable {
-        let height: Double
-        let foregroundHiddenOffset: Double
-        let foregroundShowingOffset: Double
-        let isDragging: Bool
-        let hidden: Bool
-    }
-    
     var backgroundColor: Color {
         colorScheme == .dark ? Color.black : Color.white
     }
-    
     
     private func spendEventBindings() -> [Binding<Spend>] {
         var spendEvents = appData.events.indices.compactMap { index in
@@ -196,14 +196,6 @@ struct ForegroundView: View {
     }
     
     var body: some View {
-        let dragState = DragState(
-            height: geometry.size.height,
-            foregroundHiddenOffset: foregroundHiddenOffset,
-            foregroundShowingOffset: foregroundShowingOffset,
-            isDragging: isDragging,
-            hidden: hidden
-        )
-        
         let spendEvents = spendEventBindings()
         let spendList = List {
             ForEach(spendEvents, id: \.wrappedValue.id) { spend in
