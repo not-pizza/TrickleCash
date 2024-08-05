@@ -37,8 +37,8 @@ struct Intro: View {
     
     var gradientColors: [Color] {
         colorScheme == .dark ?
-        [Color.primary] :
-        [Color.primary]
+        [Color.black] :
+        [Color.white]
     }
 
     
@@ -55,7 +55,6 @@ struct Intro: View {
             events: []
         )
     }
-    
     var body: some View {
         ZStack {
             LinearGradient(gradient: Gradient(colors: gradientColors),
@@ -64,61 +63,58 @@ struct Intro: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 30) {
-                Text("Trickle")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                
-                Text("Stay on budget throughout the month")
-                    .font(.title2)
-                
-                
-                if currentPage == 1 {
+                ScrollView {
                     VStack(spacing: 30) {
-                        Text("Your monthly budget\nNot including bills and subscriptions:")
-                            .multilineTextAlignment(.center)
-                            .lineLimit(nil)
-                            .frame(height: 50)
+                        Text("Trickle")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
                         
-                        HStack {
-                            Text("$")
-                            TextField("Enter amount", text: $monthlyRateString)
-                                .keyboardType(.decimalPad)
+                        Text("Stay on budget throughout the month")
+                            .font(.title2)
+                        
+                        if currentPage == 1 {
+                            VStack(spacing: 30) {
+                                Text("Your monthly budget\nNot including bills and subscriptions:")
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(nil)
+                                    .frame(height: 50)
+                                
+                                HStack {
+                                    Text("$")
+                                    TextField("Enter amount", text: $monthlyRateString)
+                                        .keyboardType(.decimalPad)
+                                        .padding()
+                                        .background(Color.white.opacity(0.2))
+                                        .cornerRadius(10)
+                                }
+                            }
+                            .padding()
+                            
+                            SpendingAvailability(monthlyRate: monthlyRate)
+                        }
+                        else if currentPage == 2 {
+                            Text("Keep track of how much you have left to spend:")
+                                .multilineTextAlignment(.center)
+                                .font(.headline)
                                 .padding()
-                                .background(Color.white.opacity(0.2))
-                                .cornerRadius(10)
+                            
+                            CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: 200)
+
+                            Text("Log your spending and we'll deduct it from your balance.")
+                                .multilineTextAlignment(.center)
+                                .font(.headline)
+                                .padding()
+                        } else {
+                            Text("Stay positive, stay on track, and make your financial goals a reality.")
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .font(.title2)
                         }
                     }
                     .padding()
-                    
-                    SpendingAvailability(monthlyRate: monthlyRate)
-                    
-                    Spacer()
                 }
-                // Display different text based on the current page
-                else if currentPage == 2 {
-                    Spacer()
-                    Text("Keep track of how much you have left to spend:")
-                        .multilineTextAlignment(.center)
-                        .font(.headline)
-                        .padding()
-                    
-                    CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: 200)
-
-                    Text("Log your spending and we'll deduct it from your balance.")
-                        .multilineTextAlignment(.center)
-                        .font(.headline)
-                        .padding()
-                    Spacer()
-                } else {
-                    Spacer()
-                    Text("Stay positive, stay on track, and make your financial goals a reality.")
-                        .multilineTextAlignment(.center)
-                        .padding()
-                        .font(.title2)
-                    Spacer()
-                }
-                
-                
+            }
+            .safeAreaInset(edge: .bottom) {
                 HStack {
                     if currentPage > 1 {
                         // Back button
@@ -144,14 +140,15 @@ struct Intro: View {
                     }) {
                         Text(currentPage == 3 ? "Finish" : "Next")
                             .padding()
-                            .background(toDouble(monthlyRateString) == nil ? Color.secondary : Color.primary)
+                            .background(toDouble(monthlyRateString) == nil ? Color.gray : Color.primary)
                             .cornerRadius(10)
-                    }.disabled(toDouble(monthlyRateString) == nil)
+                    }
+                    .disabled(toDouble(monthlyRateString) == nil)
                 }
                 .padding()
             }
-            .padding()
-        }.onAppear() {
+        }
+        .onAppear {
             setupTimer()
         }
     }

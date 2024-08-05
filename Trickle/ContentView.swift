@@ -319,47 +319,48 @@ struct ContentView: View {
         let initialAppData = initialAppData ?? AppData.loadOrDefault()
         _appData = State(initialValue: initialAppData)
     }
-    
-   var settingsView: some View {
+    var settingsView: some View {
         VStack(spacing: 20) {
-            VStack(alignment: .leading, spacing: 15) {
-                Text("Settings")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding(.top)
-                
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Monthly Spending")
-                        .font(.headline)
-                    Text("Excluding bills and subscriptions")
-                        .font(.subheadline)
-                    TextField("Enter amount", text: $tempMonthlyRate)
-                        .keyboardType(.decimalPad)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .onChange(of: tempMonthlyRate) { newTempMonthlyRate in
-                            if let monthlyRate = toDouble(newTempMonthlyRate) {
-                                appData.monthlyRate = monthlyRate
-                                let _ = appData.save()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 15) {
+                    Text("Settings")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.top)
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Monthly Spending")
+                            .font(.headline)
+                        Text("Excluding bills and subscriptions")
+                            .font(.subheadline)
+                        TextField("Enter amount", text: $tempMonthlyRate)
+                            .keyboardType(.decimalPad)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .onChange(of: tempMonthlyRate) { newTempMonthlyRate in
+                                if let monthlyRate = toDouble(newTempMonthlyRate) {
+                                    appData.monthlyRate = monthlyRate
+                                    let _ = appData.save()
+                                }
                             }
-                        }
+                    }
+                                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Start Date")
+                            .font(.headline)
+                        DatePicker("", selection: $appData.startDate, displayedComponents: .date)
+                            .datePickerStyle(CompactDatePickerStyle())
+                            .labelsHidden()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
-                                
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Start Date")
-                        .font(.headline)
-                    DatePicker("", selection: $appData.startDate, displayedComponents: .date)
-                        .datePickerStyle(CompactDatePickerStyle())
-                        .labelsHidden()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+                .padding()
+
+                SpendingAvailability(monthlyRate: appData.monthlyRate)
+
+                Spacer()
             }
-            .padding()
-
-            SpendingAvailability(monthlyRate: appData.monthlyRate)
-
-            
-            Spacer()
-            
+        }
+        .safeAreaInset(edge: .bottom) {
             Button(action: {
                 showingSettings = false
             }) {
@@ -367,6 +368,8 @@ struct ContentView: View {
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
                     .cornerRadius(10)
             }
             .padding()
