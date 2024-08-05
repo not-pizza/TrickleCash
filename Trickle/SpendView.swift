@@ -59,13 +59,7 @@ struct SpendView: View {
 }
 
 func toDouble(_ s: String) -> Double? {
-    do {
-        let value = try Expression(s).evaluate()
-        return value
-    }
-    catch {
-        return nil
-    }
+    return try? Expression(s).evaluate()
 }
 
 #Preview {

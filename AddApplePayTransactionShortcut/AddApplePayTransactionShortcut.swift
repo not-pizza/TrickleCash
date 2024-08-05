@@ -73,7 +73,7 @@ struct AddApplePayTransactionShortcut: AppIntent {
         let spend = Spend(name: name, merchant: merchantName, paymentMethod: cardOrPass, amount: amount, dateAdded: Date(), addedFrom: .shortcut)
         
         let time = Date();
-        var appData = AppData.load();
+        var appData = AppData.loadOrDefault();
         let previousBalance = appData.getTrickleBalance(time: time)
         appData = appData.addSpend(spend: spend).save()
         let newBalance = appData.getTrickleBalance(time: time)

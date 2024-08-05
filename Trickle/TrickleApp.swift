@@ -9,9 +9,21 @@ import SwiftUI
 
 @main
 struct TrickleApp: App {
+    @State var finishedIntro = AppData.load() != nil
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if finishedIntro {
+                ContentView()
+            }
+            else {
+                Intro (
+                    finishIntro: { appData in
+                        let _ = appData.save()
+                        finishedIntro = true
+                    }
+                )
+            }
         }
     }
 }

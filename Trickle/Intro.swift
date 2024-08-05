@@ -1,16 +1,7 @@
 import SwiftUI
 
-struct Intro: View {
-    @State private var monthlyRateString: String = "1000"
-    @State private var showingDetails: Bool = false
-    @State private var currentPage: Int = 1 // New state variable to track the current page
-    @State private var currentTime: Date = Date()
-    @State private var startDate: Date = Date()
-    var finishIntro: (AppData) -> Void
-    
-    private var monthlyRate: Double {
-        return toDouble(monthlyRateString) ?? 0
-    }
+struct SpendingAvailability: View {
+    var monthlyRate: Double
     
     private var dailyRate: Double {
         return monthlyRate * 12 / 365.0
@@ -21,6 +12,42 @@ struct Intro: View {
         return (30.0 * 24 * 60 * 60) / (monthlyRate * 100)
     }
     
+    var body: some View {
+        VStack(alignment: .center, spacing: 15) {
+            Text("This means you can spend").bold()
+            Text("$\(monthlyRate, specifier: "%.0f") per month")
+            Text("$\(dailyRate, specifier: "%.0f") per day")
+            Text("1 cent every \(secondsPerCent, specifier: "%.0f") seconds")
+        }
+        .padding()
+        .background(Color.secondary.opacity(0.2))
+        .cornerRadius(10)
+    }
+    
+}
+
+struct Intro: View {
+    @State private var monthlyRateString: String = "1000"
+    @State private var showingDetails: Bool = false
+    @State private var currentPage: Int = 1 // New state variable to track the current page
+    @State private var currentTime: Date = Date()
+    @State private var startDate: Date = Date()
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    var gradientColors: [Color] {
+        colorScheme == .dark ?
+        [Color.primary] :
+        [Color.primary]
+    }
+
+    
+    var finishIntro: (AppData) -> Void
+    
+    private var monthlyRate: Double {
+        return toDouble(monthlyRateString) ?? 0
+    }
+        
     private var appData: AppData {
         AppData(
             monthlyRate: monthlyRate,
@@ -31,61 +58,47 @@ struct Intro: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]),
+            LinearGradient(gradient: Gradient(colors: gradientColors),
                            startPoint: .topLeading,
                            endPoint: .bottomTrailing)
                 .ignoresSafeArea()
             
             VStack(spacing: 30) {
-                Text("Welcome to Trickle")
+                Text("Trickle")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
                 
                 Text("Stay on budget throughout the month")
-                    .font(.title3)
-                    .foregroundColor(.white)
+                    .font(.title2)
                 
                 
                 if currentPage == 1 {
                     VStack(spacing: 30) {
                         Text("Your monthly budget\nNot including bills and subscriptions:")
-                            .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .lineLimit(nil)
                             .frame(height: 50)
                         
                         HStack {
                             Text("$")
-                                .foregroundColor(.white)
                             TextField("Enter amount", text: $monthlyRateString)
                                 .keyboardType(.decimalPad)
                                 .padding()
                                 .background(Color.white.opacity(0.2))
                                 .cornerRadius(10)
-                                .foregroundColor(.white)
                         }
                     }
                     .padding()
                     
-                    VStack(alignment: .leading, spacing: 15) {
-                        Text("$\(monthlyRate, specifier: "%.0f") per month")
-                        Text("$\(dailyRate, specifier: "%.2f") per day")
-                        Text("1 cent every \(secondsPerCent, specifier: "%.0f") seconds")
-                    }
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.2))
-                    .cornerRadius(10)
+                    SpendingAvailability(monthlyRate: monthlyRate)
                     
                     Spacer()
                 }
                 // Display different text based on the current page
                 else if currentPage == 2 {
                     Spacer()
-                    Text("Watch your money trickle into your virtual wallet:")
+                    Text("Keep track of how much you have left to spend:")
                         .multilineTextAlignment(.center)
-                        .foregroundColor(.white)
                         .font(.headline)
                         .padding()
                     
@@ -93,7 +106,6 @@ struct Intro: View {
 
                     Text("Log your spending and we'll deduct it from your balance.")
                         .multilineTextAlignment(.center)
-                        .foregroundColor(.white)
                         .font(.headline)
                         .padding()
                     Spacer()
@@ -101,9 +113,8 @@ struct Intro: View {
                     Spacer()
                     Text("Stay positive, stay on track, and make your financial goals a reality.")
                         .multilineTextAlignment(.center)
-                        .foregroundColor(.white)
                         .padding()
-                        .font(.headline)
+                        .font(.title2)
                     Spacer()
                 }
                 
@@ -128,14 +139,12 @@ struct Intro: View {
                     Button(action: {
                         currentPage = min(currentPage + 1, 3)
                         if currentPage == 3 {
-                            // You can add any action here for when they finish both pages
-                            print("Finished introduction")
+                            finishIntro(appData)
                         }
                     }) {
-                        Text(currentPage == 2 ? "Next" : "Finish")
-                            .foregroundColor(.blue)
+                        Text(currentPage == 3 ? "Finish" : "Next")
                             .padding()
-                            .background(toDouble(monthlyRateString) == nil ? Color.gray : Color.white)
+                            .background(toDouble(monthlyRateString) == nil ? Color.secondary : Color.primary)
                             .cornerRadius(10)
                     }.disabled(toDouble(monthlyRateString) == nil)
                 }
@@ -157,5 +166,5 @@ struct Intro: View {
 }
 
 #Preview {
-    return Intro()
+    return Intro(finishIntro: {_ in ()})
 }

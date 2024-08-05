@@ -316,34 +316,63 @@ struct ContentView: View {
     @State private var tempMonthlyRate: String = ""
     
     init(initialAppData: AppData? = nil) {
-        let initialAppData = initialAppData ?? AppData.load()
+        let initialAppData = initialAppData ?? AppData.loadOrDefault()
         _appData = State(initialValue: initialAppData)
     }
     
-    var settingsView: some View {
-        Form {
-            DatePicker("Start Date", selection: $appData.startDate, displayedComponents: .date)
-                .onChange(of: appData.startDate) { newValue in
-                    UserDefaults.standard.set(newValue, forKey: "StartDate")
+   var settingsView: some View {
+        VStack(spacing: 20) {
+            VStack(alignment: .leading, spacing: 15) {
+                Text("Settings")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.top)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Monthly Spending")
+                        .font(.headline)
+                    Text("Excluding bills and subscriptions")
+                        .font(.subheadline)
+                    TextField("Enter amount", text: $tempMonthlyRate)
+                        .keyboardType(.decimalPad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .onChange(of: tempMonthlyRate) { newTempMonthlyRate in
+                            if let monthlyRate = toDouble(newTempMonthlyRate) {
+                                appData.monthlyRate = monthlyRate
+                                let _ = appData.save()
+                            }
+                        }
                 }
-            
-            TextField("Monthly Rate", text: $tempMonthlyRate)
-                .keyboardType(.decimalPad)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .onChange(of: tempMonthlyRate) { newTempMonthlyRate in
-                    if let monthlyRate = Double(newTempMonthlyRate) {
-                        appData.monthlyRate = monthlyRate
-                        print("Changed the monthly rate to \(appData.monthlyRate)")
-                        let _ = appData.save()
-                    }
+                                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Start Date")
+                        .font(.headline)
+                    DatePicker("", selection: $appData.startDate, displayedComponents: .date)
+                        .datePickerStyle(CompactDatePickerStyle())
+                        .labelsHidden()
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
-            
-            Button("Save Changes") {
-                showingSettings = false
             }
+            .padding()
+
+            SpendingAvailability(monthlyRate: appData.monthlyRate)
+
+            
+            Spacer()
+            
+            Button(action: {
+                showingSettings = false
+            }) {
+                Text("Save Changes")
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .cornerRadius(10)
+            }
+            .padding()
         }
     }
-    
+
     var body: some View {
         if showingSettings {
             settingsView
@@ -357,10 +386,10 @@ struct ContentView: View {
                 let _ = newAppData.save()
             }
             .onAppear {
-                appData = AppData.load()
+                appData = AppData.loadOrDefault()
             }.onChange(of: scenePhase) { newPhase in
                 if newPhase == .active {
-                    appData = AppData.load()
+                    appData = AppData.loadOrDefault()
                 }
             }
            

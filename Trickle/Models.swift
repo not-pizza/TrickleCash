@@ -58,7 +58,18 @@ struct AppData: Codable, Equatable {
         return self
     }
     
-    static func load() -> Self {
+    static func load() -> Self? {
+        if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
+            if let savedData = defaults.data(forKey: "AppData"),
+               let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
+                return decodedData.appData
+            }
+        }
+        // Return default values
+        return nil
+    }
+    
+    static func loadOrDefault() -> Self {
         if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
             if let savedData = defaults.data(forKey: "AppData"),
                let decodedData = try? JSONDecoder().decode(UpdatableAppData.self, from: savedData) {
