@@ -32,14 +32,7 @@ struct SpendView: View {
             .keyboardType(.numbersAndPunctuation)
             .textFieldStyle(.plain)
             .onChange(of: inputAmount) { newValue in
-                do {
-                    let value = try Expression(newValue).evaluate()
-                    deduction.amount = value
-                }
-                catch {
-                    deduction.amount = 0
-
-                }
+                deduction.amount = toDouble(newValue) ?? 0
             }
             .background(.clear)
             .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
@@ -65,6 +58,15 @@ struct SpendView: View {
     }
 }
 
+func toDouble(_ s: String) -> Double? {
+    do {
+        let value = try Expression(s).evaluate()
+        return value
+    }
+    catch {
+        return nil
+    }
+}
 
 #Preview {
     var spend = Spend(name: "7/11", amount: 30)

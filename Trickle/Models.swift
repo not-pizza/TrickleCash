@@ -17,7 +17,7 @@ struct AppData: Codable, Equatable {
             }
             return total
         }
-        return trickleValue - totalDeductions
+        return trickleValue - totalDeductions + 0.01
     }
 
     func getPercentThroughCurrentCent(time: Date) -> Double {

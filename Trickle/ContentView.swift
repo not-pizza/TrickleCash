@@ -88,9 +88,9 @@ struct TrickleView: View {
     }
 }
 
-struct CircularProgressView: View {
-    let progress: Double
-    let balance: Double
+struct CircularBalanceView: View {
+    var appData: AppData
+    var currentTime: Date
     let frameSize: Double
     
     @Environment(\.colorScheme) var colorScheme
@@ -100,6 +100,10 @@ struct CircularProgressView: View {
     }
     
     var body: some View {
+        let balance = appData.getTrickleBalance(time: currentTime)
+        let progress = appData.getPercentThroughCurrentCent(time: currentTime)
+
+        
         let lineWidth: CGFloat = 8
         return ZStack {
             Circle()
@@ -108,7 +112,7 @@ struct CircularProgressView: View {
                 .foregroundColor(backgroundColor)
             
             Circle()
-                .trim(from: 0.0, to: CGFloat(min(self.progress, 1.0)))
+                .trim(from: 0.0, to: CGFloat(min(progress, 1.0)))
                 .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
                 .foregroundColor(backgroundColor)
                 .rotationEffect(Angle(degrees: 270.0))
@@ -145,7 +149,7 @@ struct BackgroundView: View {
                         .frame(width: 24, height: 24)  // Dummy element
                     Spacer()
                     
-                    CircularProgressView(progress: appData.getPercentThroughCurrentCent(time: currentTime), balance: balance, frameSize: forgroundShowingOffset * 0.8)
+                    CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: forgroundShowingOffset * 0.8)
                     
                     
                     Spacer()
