@@ -281,7 +281,14 @@ struct ForegroundView: View {
             }
             
             Button(action: {
-                let newSpend = Spend(name: "", amount: 0)
+                let newSpend = Spend(
+                    name: "",
+                    amount: 0,
+                    dateAdded:
+                        selectedDate.startOfDay == Date().startOfDay ?
+                        Date() :
+                        selectedDate
+                )
                 appData.events.append(.spend(newSpend))
             }) {
                 HStack {
