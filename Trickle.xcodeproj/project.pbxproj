@@ -30,10 +30,9 @@
 		AB78A4D02C5DF9DB007C4787 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47D2C39CBC0007C4787 /* SwiftUI.framework */; };
 		AB7B79262C6011FA003647EF /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7B79252C6011FA003647EF /* Expression.swift */; };
 		AB7B79282C602FFB003647EF /* Intro.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7B79272C602FFB003647EF /* Intro.swift */; };
-		ABB525202C62A18B00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB5251F2C62A18B00A52574 /* Oklab */; };
-		ABB525222C62A55C00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525212C62A55C00A52574 /* Oklab */; };
-		ABB525242C62A60600A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525232C62A60600A52574 /* Oklab */; };
-		ABB525262C62A60E00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525252C62A60E00A52574 /* Oklab */; };
+		ABB5252F2C62B98E00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB5252E2C62B98E00A52574 /* Oklab */; };
+		ABB525312C62B99700A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525302C62B99700A52574 /* Oklab */; };
+		ABB525332C62B99C00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525322C62B99C00A52574 /* Oklab */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,7 +118,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ABB525202C62A18B00A52574 /* Oklab in Frameworks */,
+				ABB5252F2C62B98E00A52574 /* Oklab in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,7 +126,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ABB525262C62A60E00A52574 /* Oklab in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ABB525222C62A55C00A52574 /* Oklab in Frameworks */,
+				ABB525312C62B99700A52574 /* Oklab in Frameworks */,
 				AB78A47E2C39CBC0007C4787 /* SwiftUI.framework in Frameworks */,
 				AB78A47C2C39CBC0007C4787 /* WidgetKit.framework in Frameworks */,
 			);
@@ -145,7 +143,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ABB525242C62A60600A52574 /* Oklab in Frameworks */,
+				ABB525332C62B99C00A52574 /* Oklab in Frameworks */,
 				AB78A4D02C5DF9DB007C4787 /* SwiftUI.framework in Frameworks */,
 				AB78A4CE2C5DE170007C4787 /* WidgetKit.framework in Frameworks */,
 			);
@@ -263,7 +261,7 @@
 			);
 			name = Trickle;
 			packageProductDependencies = (
-				ABB5251F2C62A18B00A52574 /* Oklab */,
+				ABB5252E2C62B98E00A52574 /* Oklab */,
 			);
 			productName = Trickle;
 			productReference = AB2D2B912BFC4E5200F03DFD /* Trickle.app */;
@@ -284,7 +282,6 @@
 			);
 			name = TrickleTests;
 			packageProductDependencies = (
-				ABB525252C62A60E00A52574 /* Oklab */,
 			);
 			productName = TrickleTests;
 			productReference = AB2D2BA12BFC4E5400F03DFD /* TrickleTests.xctest */;
@@ -304,7 +301,7 @@
 			);
 			name = TrickleWidgetExtension;
 			packageProductDependencies = (
-				ABB525212C62A55C00A52574 /* Oklab */,
+				ABB525302C62B99700A52574 /* Oklab */,
 			);
 			productName = TrickleWidgetExtension;
 			productReference = AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */;
@@ -324,7 +321,7 @@
 			);
 			name = AddApplePayTransactionShortcut;
 			packageProductDependencies = (
-				ABB525232C62A60600A52574 /* Oklab */,
+				ABB525322C62B99C00A52574 /* Oklab */,
 			);
 			productName = AddApplePayTransactionShortcut;
 			productReference = AB78A4BF2C5DD5A3007C4787 /* AddApplePayTransactionShortcut.appex */;
@@ -366,7 +363,7 @@
 			mainGroup = AB2D2B882BFC4E5200F03DFD;
 			packageReferences = (
 				AB2D2BBE2BFD986E00F03DFD /* XCRemoteSwiftPackageReference "plaid-link-ios" */,
-				ABB5251E2C62A18B00A52574 /* XCRemoteSwiftPackageReference "Oklab" */,
+				ABB5252D2C62B98E00A52574 /* XCRemoteSwiftPackageReference "Oklab" */,
 			);
 			productRefGroup = AB2D2B922BFC4E5200F03DFD /* Products */;
 			projectDirPath = "";
@@ -874,7 +871,7 @@
 				minimumVersion = 5.5.0;
 			};
 		};
-		ABB5251E2C62A18B00A52574 /* XCRemoteSwiftPackageReference "Oklab" */ = {
+		ABB5252D2C62B98E00A52574 /* XCRemoteSwiftPackageReference "Oklab" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/importRyan/Oklab.git";
 			requirement = {
@@ -885,24 +882,19 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		ABB5251F2C62A18B00A52574 /* Oklab */ = {
+		ABB5252E2C62B98E00A52574 /* Oklab */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ABB5251E2C62A18B00A52574 /* XCRemoteSwiftPackageReference "Oklab" */;
+			package = ABB5252D2C62B98E00A52574 /* XCRemoteSwiftPackageReference "Oklab" */;
 			productName = Oklab;
 		};
-		ABB525212C62A55C00A52574 /* Oklab */ = {
+		ABB525302C62B99700A52574 /* Oklab */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ABB5251E2C62A18B00A52574 /* XCRemoteSwiftPackageReference "Oklab" */;
+			package = ABB5252D2C62B98E00A52574 /* XCRemoteSwiftPackageReference "Oklab" */;
 			productName = Oklab;
 		};
-		ABB525232C62A60600A52574 /* Oklab */ = {
+		ABB525322C62B99C00A52574 /* Oklab */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ABB5251E2C62A18B00A52574 /* XCRemoteSwiftPackageReference "Oklab" */;
-			productName = Oklab;
-		};
-		ABB525252C62A60E00A52574 /* Oklab */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = ABB5251E2C62A18B00A52574 /* XCRemoteSwiftPackageReference "Oklab" */;
+			package = ABB5252D2C62B98E00A52574 /* XCRemoteSwiftPackageReference "Oklab" */;
 			productName = Oklab;
 		};
 /* End XCSwiftPackageProductDependency section */
