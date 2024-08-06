@@ -81,7 +81,7 @@ struct TrickleWidget: Widget {
 
 struct TrickleWidget_Previews: PreviewProvider {
     static var previews: some View {
-        TrickleWidgetEntryView(entry: SimpleEntry(date: Date(), value: -20))
+        TrickleWidgetEntryView(entry: SimpleEntry(date: Date(), value: 20))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }
