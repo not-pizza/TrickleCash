@@ -141,7 +141,7 @@ struct BackgroundView: View {
         let balance = appData.getTrickleBalance(time: currentTime)
         
         ZStack {
-            balanceBackground(balance, colorScheme: colorScheme).ignoresSafeArea()
+            balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 10) {
                 HStack {

@@ -63,7 +63,7 @@ func toDouble(_ s: String) -> Double? {
 }
 
 #Preview {
-    var spend = Spend(name: "7/11", amount: 30)
+    let spend = Spend(name: "7/11", amount: 30)
     let binding = Binding<Spend>(
         get: { spend },
         set: { _ in () }

@@ -1,4 +1,5 @@
 import Foundation
+import Oklab
 import WidgetKit
 import SwiftUI
 
@@ -159,4 +160,26 @@ func viewBalance(_ amount: Double) -> some View {
 
 func balanceBackground(_ amount: Double, colorScheme: ColorScheme) -> Color {
     amount < 0 ? Color.red : Color.green
+}
+
+func balanceBackgroundGradient(_ amount: Double, colorScheme: ColorScheme) -> LinearGradient {
+    let lightness_delta: Float = colorScheme == .dark ? -0.1 : 0.1
+    
+    let grayify: Float = amount < 1 && amount > -1 ? 0.2 : 1
+    
+    let reds = [
+        OklabColorPolar(lightness: 0.65 + lightness_delta, chroma: 0.1825 * grayify, hueDegrees: 26.33),
+        OklabColorPolar(lightness: 0.65 + lightness_delta, chroma: 0.1825 * grayify, hueDegrees: 316.44)
+    ]
+    
+    let greens = [
+        OklabColorPolar(lightness: 0.65 + lightness_delta, chroma: 0.1178 * grayify, hueDegrees: 132.12),
+        OklabColorPolar(lightness: 0.65 + lightness_delta, chroma: 0.1178 * grayify, hueDegrees: 226.51)
+    ]
+    
+    let colors = (amount > 0 ? greens : reds).map({color in Color(color)})
+    
+    return LinearGradient(gradient: Gradient(colors: colors),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing)
 }

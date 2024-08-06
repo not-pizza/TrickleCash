@@ -51,12 +51,18 @@ extension View {
 struct TrickleWidgetEntryView: View {
     var entry: Provider.Entry
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
-        VStack {
-            Text("Trickle")
-            viewBalanceNoDecimals(entry.value)
+        let background = balanceBackgroundGradient(entry.value, colorScheme: colorScheme).ignoresSafeArea()
+        
+        return ZStack {
+            VStack {
+                Text("Trickle")
+                viewBalanceNoDecimals(entry.value)
+            }
         }
-        .widgetBackground(backgroundView: Color.clear)
+        .widgetBackground(backgroundView: background)
     }
 }
 
@@ -75,7 +81,7 @@ struct TrickleWidget: Widget {
 
 struct TrickleWidget_Previews: PreviewProvider {
     static var previews: some View {
-        TrickleWidgetEntryView(entry: SimpleEntry(date: Date(), value: 1234.56))
+        TrickleWidgetEntryView(entry: SimpleEntry(date: Date(), value: -20))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }
