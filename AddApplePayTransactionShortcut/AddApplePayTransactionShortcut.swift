@@ -64,13 +64,13 @@ struct AddApplePayTransactionShortcut: AppIntent {
     static var description = IntentDescription("Adds an Apple Pay transaction to Trickle's spending log")
     
     @Parameter(title: "Card or Pass")
-    var cardOrPass: String
+    var cardOrPass: String?
     
     @Parameter(title: "Merchant Name")
     var merchantName: String
     
     @Parameter(title: "Name")
-    var name: String
+    var name: String?
 
     @Parameter(title: "Amount")
     var amount: Double
@@ -83,8 +83,14 @@ struct AddApplePayTransactionShortcut: AppIntent {
     }
 
     func perform() async throws -> some IntentResult & ProvidesDialog & ShowsSnippetView {
-        let name = name.trimmingCharacters(in: .whitespaces) != "" ? name : merchantName
-        let spend = Spend(name: name, merchant: merchantName, paymentMethod: cardOrPass, amount: amount, dateAdded: Date(), addedFrom: .shortcut)
+        var transactionName = merchantName
+        if let name = name {
+            if name.trimmingCharacters(in: .whitespaces) != "" {
+                transactionName = name
+            }
+        }
+        
+        let spend = Spend(name: transactionName, merchant: merchantName, paymentMethod: cardOrPass, amount: amount, dateAdded: Date(), addedFrom: .shortcut)
         
         let time = Date();
         var appData = AppData.loadOrDefault();

@@ -22,12 +22,13 @@ struct SpendView: View {
         self._inputAmount = State(initialValue: amount)
     }
 
-    var nameView : some View { TextField("Name", text: $deduction.name)
+    var nameView: some View {
+        TextField("Name", text: $deduction.name)
             .textFieldStyle(.plain)
             .background(.clear)
     }
     
-    var amountView : some View {
+    var amountView: some View {
         TextField("Amount", text: $inputAmount)
             .keyboardType(.numbersAndPunctuation)
             .textFieldStyle(.plain)
@@ -43,20 +44,31 @@ struct SpendView: View {
     }
     
     var body: some View {
-        HStack {
-            nameView
-            Spacer()
-            Text("$")
-            if #available(iOS 16.0, *) {
-                amountView
-                    .bold()
-            }
-            else {
-                amountView
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .top) {
+                nameView
+                Spacer()
+                VStack(alignment: .leading) {
+                    HStack(alignment: .top) {
+                        Text("$")
+                        if #available(iOS 16.0, *) {
+                            amountView
+                                .bold()
+                        } else {
+                            amountView
+                        }
+                    }
+                    if let paymentMethod = deduction.paymentMethod {
+                        Text(paymentMethod)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
         }
     }
 }
+
 
 func toDouble(_ s: String) -> Double? {
     return try? Expression(s).evaluate()
