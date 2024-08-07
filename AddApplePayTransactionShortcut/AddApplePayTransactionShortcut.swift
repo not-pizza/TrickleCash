@@ -7,6 +7,7 @@
 
 import AppIntents
 import SwiftUI
+import Oklab
 
 struct TrickleBalanceAdjustmentView: View {
     let previousBalance: Double
@@ -14,33 +15,46 @@ struct TrickleBalanceAdjustmentView: View {
     let newBalance: Double
     let merchant: String
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(merchant)
-                    .font(.title2)
-                    .foregroundColor(.primary)
-            }
-            
-            Spacer()
-            
-            VStack(alignment: .trailing, spacing: 4) {
-                Text(formatCurrency(-spend.amount))
-                    .font(.title2)
-                    .foregroundColor(.red)
-                
-                HStack(spacing: 2) {
-                    Text(formatCurrencyNoDecimals(previousBalance))
-                        .strikethrough()
-                    Image(systemName: "arrow.right")
-                    Text(formatCurrencyNoDecimals(newBalance))
-                        .fontWeight(.bold)
+        var spendColor = OklabColor(swiftUI: Color.red)
+        spendColor.lightness += colorScheme == .dark ? 0.1 : -0.1
+        return ZStack {
+            balanceBackgroundGradient(newBalance, colorScheme: colorScheme, boost: 0.2)
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(merchant)
+                        .font(.title2)
+                        .foregroundColor(.primary)
+                    
+                    Text("Balance")
+                        .font(.title3)
+                        .foregroundColor(.primary)
                 }
-                .font(.title3)
-                .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(formatCurrency(-spend.amount))
+                        .font(.title2)
+                        .foregroundColor(Color(spendColor))
+                    
+                    HStack(spacing: 2) {
+                        Text(formatCurrencyNoDecimals(previousBalance))
+                            .strikethrough()
+                            .bold()
+                        Image(systemName: "arrow.right")
+                        Text(formatCurrencyNoDecimals(newBalance))
+                            .fontWeight(.bold)
+                    }
+                    .font(.title3)
+                    .foregroundColor(.secondary)
+                }
             }
+            .padding()
+            .cornerRadius(10)
         }
-        .padding()
         .cornerRadius(10)
     }
 }

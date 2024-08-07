@@ -162,8 +162,8 @@ func balanceBackground(_ amount: Double, colorScheme: ColorScheme) -> Color {
     amount < 0 ? Color.red : Color.green
 }
 
-func balanceBackgroundGradient(_ amount: Double, colorScheme: ColorScheme) -> LinearGradient {
-    let lightness_delta: Float = colorScheme == .dark ? -0.07 : 0.1
+func balanceBackgroundGradient(_ amount: Double, colorScheme: ColorScheme, boost: Float = 0) -> LinearGradient {
+    let lightness_delta: Float = colorScheme == .dark ? -(0.07 + boost) : (0.1 + boost)
     
     let grayify: Float = amount < 1 && amount > -1 ? 0.2 : 1
     
