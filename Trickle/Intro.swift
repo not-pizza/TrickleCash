@@ -15,9 +15,9 @@ struct SpendingAvailability: View {
     var body: some View {
         VStack(alignment: .center, spacing: 15) {
             Text("This means you can spend").bold()
-            Text("$\(monthlyRate, specifier: "%.0f") per month")
-            Text("$\(dailyRate, specifier: "%.0f") per day")
-            Text("1 cent every \(secondsPerCent, specifier: "%.0f") seconds")
+            Text("$\(monthlyRate, specifier: "%.0f") every month")
+            Text("$\(dailyRate, specifier: "%.0f") every day")
+            Text("1¢ every \(secondsPerCent, specifier: "%.0f") seconds")
         }
         .padding()
         .background(Color.secondary.opacity(0.2))
