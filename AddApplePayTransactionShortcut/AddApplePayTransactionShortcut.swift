@@ -30,10 +30,10 @@ struct TrickleBalanceAdjustmentView: View {
                     .foregroundColor(.red)
                 
                 HStack(spacing: 2) {
-                    Text(formatCurrency(previousBalance))
+                    Text(formatCurrencyNoDecimals(previousBalance))
                         .strikethrough()
                     Image(systemName: "arrow.right")
-                    Text(formatCurrency(newBalance))
+                    Text(formatCurrencyNoDecimals(newBalance))
                         .fontWeight(.bold)
                 }
                 .font(.title3)
@@ -84,4 +84,3 @@ struct AddApplePayTransactionShortcut: AppIntent {
         }
     }
 }
-
