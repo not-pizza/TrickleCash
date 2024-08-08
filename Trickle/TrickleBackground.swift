@@ -32,11 +32,15 @@ struct BackgroundView: View {
                     
                     
                     Spacer()
-                    Button(action: onSettingsTapped) {
+                    NavigationLink(
+                        destination: SettingsView(
+                            appData: $appData
+                        )) {
                         Image(systemName: "gear")
                             .foregroundColor(.primary)
                             .font(.system(size: 26))
                     }
+
                 }
                 .padding()
             }

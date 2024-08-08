@@ -36,6 +36,7 @@
 		ABB525332C62B99C00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525322C62B99C00A52574 /* Oklab */; };
 		ABD497652C6484BF00707842 /* TrickleBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497642C6484BF00707842 /* TrickleBackground.swift */; };
 		ABD497672C6484E400707842 /* TrickleForeground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497662C6484E400707842 /* TrickleForeground.swift */; };
+		ABD497692C64870900707842 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497682C64870900707842 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,6 +118,7 @@
 		ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularBalanceView.swift; sourceTree = "<group>"; };
 		ABD497642C6484BF00707842 /* TrickleBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleBackground.swift; sourceTree = "<group>"; };
 		ABD497662C6484E400707842 /* TrickleForeground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleForeground.swift; sourceTree = "<group>"; };
+		ABD497682C64870900707842 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +200,7 @@
 				ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */,
 				ABD497642C6484BF00707842 /* TrickleBackground.swift */,
 				ABD497662C6484E400707842 /* TrickleForeground.swift */,
+				ABD497682C64870900707842 /* SettingsView.swift */,
 			);
 			path = Trickle;
 			sourceTree = "<group>";
@@ -435,6 +438,7 @@
 				ABD497652C6484BF00707842 /* TrickleBackground.swift in Sources */,
 				AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */,
 				AB7B79262C6011FA003647EF /* Expression.swift in Sources */,
+				ABD497692C64870900707842 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
