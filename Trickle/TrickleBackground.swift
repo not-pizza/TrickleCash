@@ -49,3 +49,18 @@ struct BackgroundView: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 }
+
+#Preview {
+    BackgroundView(
+        appData: .constant(AppData(
+            monthlyRate: 1000,
+            startDate: Date().startOfDay,
+            events: [
+                .spend(Spend(name: "7/11", amount: 30))
+            ]
+        )),
+        onSettingsTapped: {},
+        forgroundShowingOffset: UIScreen.main.bounds.height / 5,
+        currentTime: Date()
+    )
+}

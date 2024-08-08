@@ -14,7 +14,7 @@ struct TrickleApp: App {
     var body: some Scene {
         WindowGroup {
             if finishedIntro {
-                ContentView()
+                ContentView(initialAppData: AppData.loadOrDefault())
             }
             else {
                 Intro (

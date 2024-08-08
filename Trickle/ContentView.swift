@@ -71,8 +71,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var tempMonthlyRate: String = ""
     
-    init(initialAppData: AppData? = nil) {
-        let initialAppData = initialAppData ?? AppData.loadOrDefault()
+    init(initialAppData: AppData) {
         _appData = State(initialValue: initialAppData)
     }
     

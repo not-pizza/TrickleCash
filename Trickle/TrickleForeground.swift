@@ -155,3 +155,21 @@ struct ForegroundView: View {
         }
     }
 }
+
+#Preview {
+    GeometryReader { geometry in
+        ForegroundView(
+            appData: .constant(AppData(
+                monthlyRate: 1000,
+                startDate: Date().startOfDay,
+                events: [
+                    .spend(Spend(name: "7/11", amount: 30))
+                ]
+            )),
+            offset: .constant(UIScreen.main.bounds.height / 5),
+            geometry: geometry,
+            foregroundHiddenOffset: UIScreen.main.bounds.height - 50,
+            foregroundShowingOffset: UIScreen.main.bounds.height / 5
+        )
+    }
+}
