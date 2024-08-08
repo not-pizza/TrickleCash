@@ -30,9 +30,12 @@
 		AB78A4D02C5DF9DB007C4787 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47D2C39CBC0007C4787 /* SwiftUI.framework */; };
 		AB7B79262C6011FA003647EF /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7B79252C6011FA003647EF /* Expression.swift */; };
 		AB7B79282C602FFB003647EF /* Intro.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7B79272C602FFB003647EF /* Intro.swift */; };
+		ABAAAC492C6483C4008EB27B /* CircularBalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */; };
 		ABB5252F2C62B98E00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB5252E2C62B98E00A52574 /* Oklab */; };
 		ABB525312C62B99700A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525302C62B99700A52574 /* Oklab */; };
 		ABB525332C62B99C00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525322C62B99C00A52574 /* Oklab */; };
+		ABD497652C6484BF00707842 /* TrickleBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497642C6484BF00707842 /* TrickleBackground.swift */; };
+		ABD497672C6484E400707842 /* TrickleForeground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497662C6484E400707842 /* TrickleForeground.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +114,9 @@
 		AB78A4CF2C5DE33F007C4787 /* AddApplePayTransactionShortcut.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AddApplePayTransactionShortcut.entitlements; sourceTree = "<group>"; };
 		AB7B79252C6011FA003647EF /* Expression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		AB7B79272C602FFB003647EF /* Intro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intro.swift; sourceTree = "<group>"; };
+		ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularBalanceView.swift; sourceTree = "<group>"; };
+		ABD497642C6484BF00707842 /* TrickleBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleBackground.swift; sourceTree = "<group>"; };
+		ABD497662C6484E400707842 /* TrickleForeground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleForeground.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +195,9 @@
 				AB1669322C5F03870048A993 /* SpendView.swift */,
 				AB7B79252C6011FA003647EF /* Expression.swift */,
 				AB7B79272C602FFB003647EF /* Intro.swift */,
+				ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */,
+				ABD497642C6484BF00707842 /* TrickleBackground.swift */,
+				ABD497662C6484E400707842 /* TrickleForeground.swift */,
 			);
 			path = Trickle;
 			sourceTree = "<group>";
@@ -418,9 +427,12 @@
 			files = (
 				AB1669332C5F03870048A993 /* SpendView.swift in Sources */,
 				AB78A4952C445787007C4787 /* Models.swift in Sources */,
+				ABAAAC492C6483C4008EB27B /* CircularBalanceView.swift in Sources */,
 				AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */,
 				AB1669312C5F035B0048A993 /* CalendarStrip.swift in Sources */,
+				ABD497672C6484E400707842 /* TrickleForeground.swift in Sources */,
 				AB7B79282C602FFB003647EF /* Intro.swift in Sources */,
+				ABD497652C6484BF00707842 /* TrickleBackground.swift in Sources */,
 				AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */,
 				AB7B79262C6011FA003647EF /* Expression.swift in Sources */,
 			);
