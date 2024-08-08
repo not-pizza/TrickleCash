@@ -1,10 +1,3 @@
-//
-//  SpendView.swift
-//  Trickle
-//
-//  Created by Andre Popovitch on 8/3/24.
-//
-
 import Foundation
 import SwiftUI
 
@@ -13,8 +6,12 @@ struct SpendView: View {
     @State private var inputAmount: String
     
     var isFocused: Bool
-    @FocusState private var isAmountFocused: Bool
+    @FocusState private var focusedField: Field?
 
+    enum Field: Hashable {
+        case amount
+        case name
+    }
 
     init(deduction: Binding<Spend>, isFocused _isFocused: Bool) {
         self._deduction = deduction
@@ -30,20 +27,26 @@ struct SpendView: View {
 
     var nameView: some View {
         TextField("Name", text: $deduction.name)
+            .focused($focusedField, equals: .name)
             .textFieldStyle(.plain)
             .background(.clear)
+            .submitLabel(.done)
+            .onSubmit {
+                focusedField = nil
+            }
     }
     
     var amountView: some View {
         TextField("Amount", text: $inputAmount)
-            .focused($isAmountFocused)
+            .focused($focusedField, equals: .amount)
             .onAppear {
                 if isFocused {
-                    isAmountFocused = true
+                    focusedField = .amount
                 }
             }
             .keyboardType(.numbersAndPunctuation)
             .textFieldStyle(.plain)
+            .submitLabel(.next)
             .onChange(of: inputAmount) { newValue in
                 deduction.amount = toDouble(newValue) ?? 0
             }
@@ -53,13 +56,14 @@ struct SpendView: View {
                     textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
                 }
             }
+            .onSubmit {
+                focusedField = .name
+            }
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .top) {
-                nameView
-                Spacer()
                 VStack(alignment: .leading) {
                     HStack(alignment: .top) {
                         Text("$")
@@ -76,11 +80,12 @@ struct SpendView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                Spacer()
+                nameView
             }
         }
     }
 }
-
 
 func toDouble(_ s: String) -> Double? {
     return try? Expression(s).evaluate()
