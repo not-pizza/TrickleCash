@@ -12,6 +12,7 @@ struct ForegroundView: View {
     @State private var selectedDate: Date = Date()
     @State private var isDragging = false
     @State private var hidden = false
+    @State private var focusedSpendId: UUID?
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.scenePhase) private var scenePhase
@@ -41,8 +42,11 @@ struct ForegroundView: View {
         let spendList = List {
             Section {
                 ForEach(spendEvents, id: \.wrappedValue.id) { spend in
-                    SpendView(deduction: spend)
-                        .transition(.move(edge: .top))
+                    SpendView(
+                        deduction: spend,
+                        isFocused: focusedSpendId == spend.wrappedValue.id
+                    )
+                    .transition(.move(edge: .top))
                 }
                 .onDelete(perform: { indexSet in
                     for index in indexSet {
@@ -90,7 +94,7 @@ struct ForegroundView: View {
         return VStack(spacing: 10) {
             Color.clear
                 .frame(width: 10, height: 10)
-            
+
 
             /*Button(action: {
                 hidden = !hidden
@@ -108,13 +112,13 @@ struct ForegroundView: View {
                 Image(systemName: "chevron.up") :
                 Image(systemName: "chevron.down")
             }*/
-            
+
             CalendarStrip(selectedDate: $selectedDate) { date in
                 selectedDate = date
             }
             
             Button(action: {
-                withAnimation(.spring()) { // Add animation wrapper
+                withAnimation(.spring()) {
                     let newSpend = Spend(
                         name: "",
                         amount: 0,
@@ -124,6 +128,7 @@ struct ForegroundView: View {
                             selectedDate
                     )
                     appData.events.append(.spend(newSpend))
+                    focusedSpendId = newSpend.id
                 }
             }) {
                 HStack {

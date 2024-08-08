@@ -11,8 +11,12 @@ import SwiftUI
 struct SpendView: View {
     @Binding var deduction: Spend
     @State private var inputAmount: String
+    
+    var isFocused: Bool
+    @FocusState private var isAmountFocused: Bool
 
-    init(deduction: Binding<Spend>) {
+
+    init(deduction: Binding<Spend>, isFocused _isFocused: Bool) {
         self._deduction = deduction
 
         var amount = String(format: "%.2f", deduction.wrappedValue.amount)
@@ -20,6 +24,8 @@ struct SpendView: View {
             amount = String(amount.dropLast(2))
         }
         self._inputAmount = State(initialValue: amount)
+        
+        isFocused = _isFocused
     }
 
     var nameView: some View {
@@ -30,6 +36,12 @@ struct SpendView: View {
     
     var amountView: some View {
         TextField("Amount", text: $inputAmount)
+            .focused($isAmountFocused)
+            .onAppear {
+                if isFocused {
+                    isAmountFocused = true
+                }
+            }
             .keyboardType(.numbersAndPunctuation)
             .textFieldStyle(.plain)
             .onChange(of: inputAmount) { newValue in
@@ -81,5 +93,5 @@ func toDouble(_ s: String) -> Double? {
         set: { _ in () }
     )
 
-    return SpendView(deduction: binding)
+    return SpendView(deduction: binding, isFocused: false)
 }
