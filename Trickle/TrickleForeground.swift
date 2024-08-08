@@ -1,10 +1,3 @@
-//
-//  TrickleForeground.swift
-//  Trickle
-//
-//  Created by Andre Popovitch on 8/7/24.
-//
-
 import Foundation
 import SwiftUI
 
@@ -49,6 +42,7 @@ struct ForegroundView: View {
             Section {
                 ForEach(spendEvents, id: \.wrappedValue.id) { spend in
                     SpendView(deduction: spend)
+                        .transition(.move(edge: .top))
                 }
                 .onDelete(perform: { indexSet in
                     for index in indexSet {
@@ -62,12 +56,11 @@ struct ForegroundView: View {
                     .background(.clear)
                     .foregroundColor(.clear)
                 )
-                
             }
             .listStyle(.inset)
         }
 
-        ZStack {
+        return ZStack {
             backgroundColor
                 .ignoresSafeArea()
 
@@ -80,7 +73,6 @@ struct ForegroundView: View {
                 else {
                     spendList
                 }
-                
             }
             .frame(maxHeight: .infinity, alignment: .bottom)
         }
@@ -94,12 +86,12 @@ struct ForegroundView: View {
         }
     }
     
-    
     var draggable: some View {
         return VStack(spacing: 10) {
             Color.clear
                 .frame(width: 10, height: 10)
             
+
             /*Button(action: {
                 hidden = !hidden
                 // TODO: deduplicate
@@ -122,15 +114,17 @@ struct ForegroundView: View {
             }
             
             Button(action: {
-                let newSpend = Spend(
-                    name: "",
-                    amount: 0,
-                    dateAdded:
-                        selectedDate.startOfDay == Date().startOfDay ?
-                        Date() :
-                        selectedDate
-                )
-                appData.events.append(.spend(newSpend))
+                withAnimation(.spring()) { // Add animation wrapper
+                    let newSpend = Spend(
+                        name: "",
+                        amount: 0,
+                        dateAdded:
+                            selectedDate.startOfDay == Date().startOfDay ?
+                            Date() :
+                            selectedDate
+                    )
+                    appData.events.append(.spend(newSpend))
+                }
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
@@ -141,7 +135,6 @@ struct ForegroundView: View {
             }
             .listRowBackground(Color.blue.opacity(0.1))
         }
-        // Adjust it if the screen size changes (e.g. keyboard appears or disappears
         .onChange(of: geometry.size.height) {new_height in
             let forgroundHiddenOffset: CGFloat = new_height - 50
             let forgroundShowingOffset: CGFloat = new_height / 5
