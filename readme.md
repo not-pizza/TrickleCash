@@ -7,3 +7,10 @@ Ever think:
 3. etc.
 
 Then Trickle Cash is the app for you!
+
+
+Acknowledgements:
+
+- [SwiftUI TextField Input View - Custom Keyboard for TextField - Xcode 14](https://www.youtube.com/watch?v=jNpdpO32Pjs) by KavSoft
+- [Oklab](https://github.com/importRyan/Oklab) by ImportRyan
+- [Expression](https://github.com/nicklockwood/Expression?tab=readme-ov-file) by NickLockwood

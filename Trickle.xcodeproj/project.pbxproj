@@ -37,6 +37,8 @@
 		ABD497652C6484BF00707842 /* TrickleBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497642C6484BF00707842 /* TrickleBackground.swift */; };
 		ABD497672C6484E400707842 /* TrickleForeground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497662C6484E400707842 /* TrickleForeground.swift */; };
 		ABD497692C64870900707842 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497682C64870900707842 /* SettingsView.swift */; };
+		ABD497722C649D9500707842 /* CustomTFKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497712C649D9400707842 /* CustomTFKeyboard.swift */; };
+		ABD497742C64AF6F00707842 /* CalculatorKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497732C64AF6F00707842 /* CalculatorKeyboard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,6 +121,8 @@
 		ABD497642C6484BF00707842 /* TrickleBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleBackground.swift; sourceTree = "<group>"; };
 		ABD497662C6484E400707842 /* TrickleForeground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleForeground.swift; sourceTree = "<group>"; };
 		ABD497682C64870900707842 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		ABD497712C649D9400707842 /* CustomTFKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTFKeyboard.swift; sourceTree = "<group>"; };
+		ABD497732C64AF6F00707842 /* CalculatorKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorKeyboard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +191,7 @@
 		AB2D2B932BFC4E5200F03DFD /* Trickle */ = {
 			isa = PBXGroup;
 			children = (
+				ABD4976E2C649BB300707842 /* CalculatorKeyboard */,
 				AB78A4922C39D66A007C4787 /* Trickle.entitlements */,
 				AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */,
 				AB2D2B962BFC4E5200F03DFD /* ContentView.swift */,
@@ -250,6 +255,15 @@
 				AB78A4C52C5DD5A3007C4787 /* Info.plist */,
 			);
 			path = AddApplePayTransactionShortcut;
+			sourceTree = "<group>";
+		};
+		ABD4976E2C649BB300707842 /* CalculatorKeyboard */ = {
+			isa = PBXGroup;
+			children = (
+				ABD497712C649D9400707842 /* CustomTFKeyboard.swift */,
+				ABD497732C64AF6F00707842 /* CalculatorKeyboard.swift */,
+			);
+			path = CalculatorKeyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -434,8 +448,10 @@
 				AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */,
 				AB1669312C5F035B0048A993 /* CalendarStrip.swift in Sources */,
 				ABD497672C6484E400707842 /* TrickleForeground.swift in Sources */,
+				ABD497742C64AF6F00707842 /* CalculatorKeyboard.swift in Sources */,
 				AB7B79282C602FFB003647EF /* Intro.swift in Sources */,
 				ABD497652C6484BF00707842 /* TrickleBackground.swift in Sources */,
+				ABD497722C649D9500707842 /* CustomTFKeyboard.swift in Sources */,
 				AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */,
 				AB7B79262C6011FA003647EF /* Expression.swift in Sources */,
 				ABD497692C64870900707842 /* SettingsView.swift in Sources */,

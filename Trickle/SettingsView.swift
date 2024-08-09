@@ -11,6 +11,7 @@ import SwiftUI
 struct SettingsView: View {
     @Binding var appData: AppData
     @State private var tempMonthlyRate: String
+    @FocusState private var focusedField: Bool
     
     init(appData: Binding<AppData>) {
         _appData = appData
@@ -27,6 +28,14 @@ struct SettingsView: View {
                         Text("Excluding bills and subscriptions")
                             .font(.subheadline)
                         TextField("Enter amount", text: $tempMonthlyRate)
+                            .inputView(
+                                CalculatorKeyboard.self,
+                                text: $tempMonthlyRate,
+                                onSubmit: {
+                                    focusedField = false
+                                }
+                            )
+                            .focused($focusedField)
                             .keyboardType(.decimalPad)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .onChange(of: tempMonthlyRate) { newTempMonthlyRate in

@@ -3,28 +3,22 @@ import SwiftUI
 
 struct SpendView: View {
     @Binding var deduction: Spend
-    @State private var inputAmount: String
-    
-    var isFocused: Bool
+    var takeFocusWhenAppearing: Bool
+    @State var inputAmount: String = ""
     @FocusState private var focusedField: Field?
 
     enum Field: Hashable {
         case amount
         case name
     }
-
-    init(deduction: Binding<Spend>, isFocused _isFocused: Bool) {
+    
+    init(deduction: Binding<Spend>, isFocused: Bool) {
         self._deduction = deduction
-
-        var amount = String(format: "%.2f", deduction.wrappedValue.amount)
-        if amount.hasSuffix(".0") {
-            amount = String(amount.dropLast(2))
-        }
+        let amount = String(format: "%.2f", deduction.wrappedValue.amount)
         self._inputAmount = State(initialValue: amount)
-        
-        isFocused = _isFocused
+        self.takeFocusWhenAppearing = isFocused
     }
-
+    
     var nameView: some View {
         TextField("Name", text: $deduction.name)
             .focused($focusedField, equals: .name)
@@ -37,20 +31,30 @@ struct SpendView: View {
     }
     
     var amountView: some View {
-        TextField("Amount", text: $inputAmount)
+        TextField("45.00", text: $inputAmount)
+            .inputView(
+                CalculatorKeyboard.self,
+                text: $inputAmount,
+                onSubmit: {
+                    focusedField = .name
+                    inputAmount = String(format: "%.2f", deduction.amount)
+                }
+            )
             .focused($focusedField, equals: .amount)
             .onAppear {
-                if isFocused {
+                if takeFocusWhenAppearing {
                     focusedField = .amount
                 }
             }
-            .keyboardType(.numbersAndPunctuation)
             .textFieldStyle(.plain)
-            .submitLabel(.next)
             .onChange(of: inputAmount) { newValue in
-                deduction.amount = toDouble(newValue) ?? 0
+                if newValue.trimmingCharacters(in: .whitespaces) == "" {
+                    deduction.amount = 0
+                }
+                else {
+                    deduction.amount = toDouble(newValue) ?? deduction.amount
+                }
             }
-            .background(.clear)
             .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
                 if let textField = obj.object as? UITextField {
                     textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
@@ -88,7 +92,9 @@ struct SpendView: View {
 }
 
 func toDouble(_ s: String) -> Double? {
-    return try? Expression(s).evaluate()
+    let replaced = s.replacingOccurrences(of: "×", with: "*")
+                    .replacingOccurrences(of: "÷", with: "/")
+    return try? Expression(replaced).evaluate()
 }
 
 #Preview {
@@ -97,6 +103,6 @@ func toDouble(_ s: String) -> Double? {
         get: { spend },
         set: { _ in () }
     )
-
+    
     return SpendView(deduction: binding, isFocused: false)
 }
