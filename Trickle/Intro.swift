@@ -32,6 +32,7 @@ struct Intro: View {
     @State private var currentPage: Int = 1 // New state variable to track the current page
     @State private var currentTime: Date = Date()
     @State private var startDate: Date = Date()
+    @FocusState private var focusedField: Bool
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -55,6 +56,25 @@ struct Intro: View {
             events: []
         )
     }
+    
+    var monthlyRateTextInput: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.secondary.opacity(0.2))
+            TextField("Enter amount", text: $monthlyRateString)
+                .inputView(
+                    CalculatorKeyboard.self,
+                    text: $monthlyRateString,
+                    onSubmit: {
+                        focusedField = false
+                        currentPage = 2
+                    }
+                )
+                .focused($focusedField)
+                .padding()
+        }
+    }
+    
     var body: some View {
         ZStack {
             LinearGradient(gradient: Gradient(colors: gradientColors),
@@ -81,11 +101,7 @@ struct Intro: View {
                                 
                                 HStack {
                                     Text("$")
-                                    TextField("Enter amount", text: $monthlyRateString)
-                                        .keyboardType(.decimalPad)
-                                        .padding()
-                                        .background(Color.white.opacity(0.2))
-                                        .cornerRadius(10)
+                                    monthlyRateTextInput
                                 }
                             }
                             .padding()
@@ -132,18 +148,20 @@ struct Intro: View {
                     Spacer()
                     
                     // Next/Finish button
-                    Button(action: {
-                        currentPage = min(currentPage + 1, 3)
-                        if currentPage == 3 {
-                            finishIntro(appData)
+                    if focusedField == false {
+                        Button(action: {
+                            currentPage = min(currentPage + 1, 3)
+                            if currentPage == 3 {
+                                finishIntro(appData)
+                            }
+                        }) {
+                            Text(currentPage == 3 ? "Finish" : "Next")
+                                .padding()
+                                .background(toDouble(monthlyRateString) == nil ? Color.gray : Color.primary)
+                                .cornerRadius(10)
                         }
-                    }) {
-                        Text(currentPage == 3 ? "Finish" : "Next")
-                            .padding()
-                            .background(toDouble(monthlyRateString) == nil ? Color.gray : Color.primary)
-                            .cornerRadius(10)
+                        .disabled(toDouble(monthlyRateString) == nil)
                     }
-                    .disabled(toDouble(monthlyRateString) == nil)
                 }
                 .padding()
             }
