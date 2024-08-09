@@ -13,9 +13,10 @@ struct SettingsView: View {
     @State private var tempMonthlyRate: String
     @FocusState private var focusedField: Bool
     
+    
     init(appData: Binding<AppData>) {
         _appData = appData
-        tempMonthlyRate = String(format: "%.2f", appData.monthlyRate.wrappedValue)
+        tempMonthlyRate = String(format: "%.2f", appData.wrappedValue.getMonthlyRate())
     }
     
     var body: some View {
@@ -40,8 +41,8 @@ struct SettingsView: View {
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .onChange(of: tempMonthlyRate) { newTempMonthlyRate in
                                 if let monthlyRate = toDouble(newTempMonthlyRate) {
-                                    appData.monthlyRate = monthlyRate
-                                    let _ = appData.save()
+                                    appData = appData
+                                        .setMonthlyRate(SetMonthlyRate(rate: monthlyRate ))
                                 }
                             }
                     }
@@ -49,7 +50,12 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Start Date")
                             .font(.headline)
-                        DatePicker("", selection: $appData.startDate, displayedComponents: .date)
+                        DatePicker("", selection: Binding(
+                            get: { appData.getStartDate() },
+                            set: { startDate in
+                                appData = appData.setStartDate(SetStartDate(startDate: startDate))
+                            }
+                        ), displayedComponents: .date)
                             .datePickerStyle(CompactDatePickerStyle())
                             .labelsHidden()
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -57,7 +63,7 @@ struct SettingsView: View {
                 }
                 .padding()
 
-                SpendingAvailability(monthlyRate: appData.monthlyRate)
+                SpendingAvailability(monthlyRate: appData.getMonthlyRate())
 
                 Spacer()
             }

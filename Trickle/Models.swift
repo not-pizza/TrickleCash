@@ -4,13 +4,51 @@ import WidgetKit
 import SwiftUI
 
 struct AppData: Codable, Equatable {
-    var monthlyRate: Double
-    var startDate: Date
+    private var monthlyRate: Double
+    private var startDate: Date
     var events: [Event]
     
+    init(monthlyRate: Double, startDate: Date, events: [Event]) {
+        self.monthlyRate = monthlyRate
+        self.startDate = startDate
+        self.events = events
+    }
+    
+    func getMonthlyRate(asOf date: Date = Date()) -> Double {
+        let relevantEvents = events.filter { event in
+            if case .setMonthlyRate(let rateEvent) = event, rateEvent.dateAdded <= date {
+                return true
+            }
+            return false
+        }.sorted { $0.date > $1.date }
+        
+        if let mostRecentEvent = relevantEvents.first, case .setMonthlyRate(let rateEvent) = mostRecentEvent {
+            return rateEvent.rate
+        }
+        
+        return monthlyRate
+    }
+    
+    func getStartDate(asOf date: Date = Date()) -> Date {
+        let relevantEvents = events.filter { event in
+            if case .setStartDate(let startDateEvent) = event, startDateEvent.dateAdded <= date {
+                return true
+            }
+            return false
+        }.sorted { $0.date > $1.date }
+        
+        if let mostRecentEvent = relevantEvents.first, case .setStartDate(let startDateEvent) = mostRecentEvent {
+            return startDateEvent.startDate
+        }
+        
+        return startDate
+    }
+    
     func getTrickleBalance(time: Date) -> Double {
-        let secondsElapsed = time.timeIntervalSince(startDate)
-        let perSecondRate = monthlyRate / (30.416 * 24 * 60 * 60)
+        let currentStartDate = getStartDate(asOf: time)
+        let currentMonthlyRate = getMonthlyRate(asOf: time)
+        let secondsElapsed = time.timeIntervalSince(currentStartDate)
+        let perSecondRate = currentMonthlyRate / (30.416 * 24 * 60 * 60)
         let trickleValue = perSecondRate * secondsElapsed
         let totalDeductions = events.reduce(0) { total, event in
             if case .spend(let spend) = event {
@@ -31,17 +69,29 @@ struct AppData: Codable, Equatable {
     }
     
     func addSpend(spend: Spend) -> Self {
-        var events = events
+        var events = self.events
         events.append(.spend(spend))
-        return Self(monthlyRate: monthlyRate, startDate: startDate, events: events)
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
     }
     
+    func setMonthlyRate(_ rate: SetMonthlyRate) -> Self {
+        var events = self.events
+        events.append(.setMonthlyRate(rate))
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+    }
+    
+    func setStartDate(_ startDate: SetStartDate) -> Self {
+        var events = self.events
+        events.append(.setStartDate(startDate))
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+    }
     
     func deleteEvent(id: UUID) -> Self {
         var events = self.events
         events.removeAll { $0.id == id }
         return Self(monthlyRate: monthlyRate, startDate: startDate, events: events)
     }
+
     
     
     func save() -> Self {
@@ -86,6 +136,32 @@ struct AppData: Codable, Equatable {
     }
 }
 
+struct SetMonthlyRate: Codable, Equatable, Identifiable {
+    var rate: Double
+    var dateAdded: Date = Date()
+    var id: UUID = UUID()
+    
+    var description: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return "SetMonthlyRate(rate: $\(String(format: "%.2f", rate)))"
+    }
+}
+
+struct SetStartDate: Codable, Equatable, Identifiable {
+    var startDate: Date
+    var dateAdded: Date = Date()
+    var id: UUID = UUID()
+    
+    var description: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return "SetStartDate(startDate: \(formatter.string(from: startDate)))"
+    }
+}
+
 struct Spend: Identifiable, Codable, Equatable {
     enum AddedFrom : Codable, Equatable {
         case shortcut
@@ -100,15 +176,50 @@ struct Spend: Identifiable, Codable, Equatable {
     
     // If unset, it means it was added by the app
     var addedFrom: AddedFrom?
+    
+    var description: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return "Spend(amount: $\(String(format: "%.2f", amount)), name: \"$\(name)\""
+    }
 }
 
 enum Event: Codable, Identifiable, Equatable {
     case spend(Spend)
+    case setMonthlyRate(SetMonthlyRate)
+    case setStartDate(SetStartDate)
     
     var id: UUID {
         switch self {
         case .spend(let spend):
             return spend.id
+        case .setMonthlyRate(let setMonthlyRate):
+            return setMonthlyRate.id
+        case .setStartDate(let setStartDate):
+            return setStartDate.id
+        }
+    }
+    
+    var date: Date {
+        switch self {
+        case .spend(let spend):
+            return spend.dateAdded
+        case .setMonthlyRate(let event):
+            return event.dateAdded
+        case .setStartDate(let event):
+            return event.dateAdded
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .spend(let spend):
+            return spend.description
+        case .setMonthlyRate(let event):
+            return event.description
+        case .setStartDate(let event):
+            return event.description
         }
     }
 }
@@ -123,6 +234,7 @@ enum UpdatableAppData: Codable {
         }
     }
 }
+
 
 func formatCurrencyNoDecimals(_ amount: Double) -> String {
     let formatter = NumberFormatter()

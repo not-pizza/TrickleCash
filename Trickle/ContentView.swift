@@ -77,9 +77,10 @@ struct ContentView: View {
     
     var body: some View {
         TrickleView(appData: $appData, openSettings: {
-            tempMonthlyRate = "\(String(format: "%.2f", appData.monthlyRate))"
+            tempMonthlyRate = "\(String(format: "%.2f", appData.getMonthlyRate()))"
         })
         .onChange(of: appData) { newAppData in
+            print("appdata changed!")
             let _ = newAppData.save()
         }
         .onAppear {
