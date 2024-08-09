@@ -113,9 +113,9 @@ struct ForegroundView: View {
                 Image(systemName: "chevron.down")
             }*/
 
-            CalendarStrip(selectedDate: $selectedDate) { date in
+            CalendarStrip(selectedDate: $selectedDate, onDateSelected: { date in
                 selectedDate = date
-            }
+            }, focusedSpendId: $focusedSpendId)
             
             Button(action: {
                 withAnimation(.spring()) {
