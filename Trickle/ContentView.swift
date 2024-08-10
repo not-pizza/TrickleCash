@@ -21,14 +21,15 @@ struct TrickleView: View {
     
     @State private var offset: CGFloat = 200
     
-    @State private var initialforegroundShowingOffset: CGFloat?
     @State private var setInitialforegroundShowingOffset: Bool = false
 
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 let foregroundHiddenOffset: CGFloat = geometry.size.height - 120
-                let foregroundShowingOffset: CGFloat = geometry.size.height / 5
+                
+                let initialforegroundShowingOffset = UIScreen.main.bounds.height / 6;
+                let foregroundShowingOffset: CGFloat = geometry.size.height / 4.5
                 
                 ZStack {
                     ForegroundView(
@@ -44,14 +45,10 @@ struct TrickleView: View {
                     BackgroundView(
                         appData: $appData,
                         onSettingsTapped: openSettings,
-                        foregroundShowingOffset: initialforegroundShowingOffset ?? foregroundShowingOffset,
+                        foregroundShowingOffset: initialforegroundShowingOffset,
                         currentTime: currentTime
                     ).zIndex(0)
-                }.onAppear(perform: {
-                    if !setInitialforegroundShowingOffset {
-                        initialforegroundShowingOffset = foregroundShowingOffset
-                    }
-                })
+                }
             }.onAppear() {
                 setupTimer()
             }
