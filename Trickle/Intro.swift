@@ -157,9 +157,9 @@ struct Intro: View {
                         }) {
                             Text(currentPage == 3 ? "Finish" : "Next")
                                 .padding()
-                                .background(toDouble(monthlyRateString) == nil ? Color.gray : Color.primary)
-                                .cornerRadius(10)
                         }
+                        .buttonStyle(.borderedProminent)
+                        .cornerRadius(10)
                         .disabled(toDouble(monthlyRateString) == nil)
                     }
                 }
