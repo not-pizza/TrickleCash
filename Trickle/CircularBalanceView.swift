@@ -23,23 +23,26 @@ public struct CircularBalanceView: View {
     
     public var body: some View {
         let balance = appData.getTrickleBalance(asOf: currentTime)
-        let progress = appData.getPercentThroughCurrentCent(time: currentTime)
-
+        let progress = min(appData.getPercentThroughCurrentCent(time: currentTime), 1.0)
         
         let lineWidth: CGFloat = 8
         return ZStack {
             Circle()
-                .stroke(lineWidth: lineWidth)
-                .opacity(0.3)
-                .foregroundColor(backgroundColor)
-            
-            Circle()
-                .trim(from: 0.0, to: CGFloat(min(progress, 1.0)))
-                .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-                .foregroundColor(backgroundColor)
+                .stroke(
+                    AngularGradient(
+                        gradient: Gradient(stops: [
+                            .init(color: backgroundColor, location: 0),
+                            .init(color: backgroundColor, location: max(progress-0.01, 0)),
+                            .init(color: backgroundColor.opacity(0.3), location: progress),
+                            .init(color: backgroundColor.opacity(0.3), location: 1)
+                        ]),
+                        center: .center
+                    ),
+                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round)
+                )
                 .rotationEffect(Angle(degrees: 270.0))
                 .animation(.linear, value: progress)
-            
+
             VStack {
                 viewBalance(balance)
                     .frame(width: frameSize * 0.8)
