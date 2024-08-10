@@ -22,7 +22,7 @@ public struct CircularBalanceView: View {
     }
     
     public var body: some View {
-        let balance = appData.getTrickleBalance(time: currentTime)
+        let balance = appData.getTrickleBalance(asOf: currentTime)
         let progress = appData.getPercentThroughCurrentCent(time: currentTime)
 
         

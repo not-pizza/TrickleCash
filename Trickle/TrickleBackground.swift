@@ -17,7 +17,7 @@ struct BackgroundView: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        let balance = appData.getTrickleBalance(time: currentTime)
+        let balance = appData.getTrickleBalance(asOf: currentTime)
         
         ZStack {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()

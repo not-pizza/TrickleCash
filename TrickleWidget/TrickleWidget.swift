@@ -8,7 +8,7 @@ struct Provider: TimelineProvider {
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
         let appData = AppData.loadOrDefault()
-        let entry = SimpleEntry(date: Date(), value: appData.getTrickleBalance(time: Date()))
+        let entry = SimpleEntry(date: Date(), value: appData.getTrickleBalance(asOf: Date()))
         completion(entry)
     }
 
@@ -20,7 +20,7 @@ struct Provider: TimelineProvider {
         var nextUpdateDate = currentDate
         let appData = AppData.loadOrDefault()
         while nextUpdateDate <= endDate {
-            let entry = SimpleEntry(date: nextUpdateDate, value: appData.getTrickleBalance(time: Date()))
+            let entry = SimpleEntry(date: nextUpdateDate, value: appData.getTrickleBalance(asOf: Date()))
             entries.append(entry)
             nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: nextUpdateDate)!
         }

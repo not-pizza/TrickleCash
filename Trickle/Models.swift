@@ -6,7 +6,7 @@ import SwiftUI
 struct AppData: Codable, Equatable {
     private var monthlyRate: Double
     private var startDate: Date
-    var events: [Event]
+    private var events: [Event]
     
     init(monthlyRate: Double, startDate: Date, events: [Event]) {
         self.monthlyRate = monthlyRate
@@ -44,23 +44,17 @@ struct AppData: Codable, Equatable {
         return startDate
     }
     
-    func getTrickleBalance(time: Date) -> Double {
-        let currentStartDate = getStartDate(asOf: time)
-        let currentMonthlyRate = getMonthlyRate(asOf: time)
-        let secondsElapsed = time.timeIntervalSince(currentStartDate)
-        let perSecondRate = currentMonthlyRate / (30.416 * 24 * 60 * 60)
-        let trickleValue = perSecondRate * secondsElapsed
-        let totalDeductions = events.reduce(0) { total, event in
-            if case .spend(let spend) = event {
-                return total + spend.amount
-            }
-            return total
-        }
-        return trickleValue - totalDeductions + 0.01
+    func getTrickleBalance(asOf time: Date) -> Double {
+        let totalIncome = self.calculateTotalIncome(asOf: time);
+        
+        let spendEvents = self.getSpendEventsAfterStartDate(asOf: time);
+        let totalDeductions = spendEvents.map({spend in spend.amount}).reduce(0, +)
+        
+        return totalIncome - totalDeductions + 0.01
     }
 
     func getPercentThroughCurrentCent(time: Date) -> Double {
-        let balance = getTrickleBalance(time: time)
+        let balance = getTrickleBalance(asOf: time)
         var percent = (balance - 0.005).truncatingRemainder(dividingBy: 0.01) * 100
         if balance < 0 {
             percent = 1 + percent
@@ -68,9 +62,25 @@ struct AppData: Codable, Equatable {
         return percent
     }
     
-    func addSpend(spend: Spend) -> Self {
+    func addSpend(_ spend: Spend) -> Self {
         var events = self.events
         events.append(.spend(spend))
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+    }
+    
+    func updateSpend(_ spend: Spend) -> Self {
+        self.updateEvent(newEvent: .spend(spend))
+    }
+    
+    func updateEvent(newEvent: Event) -> Self {
+        let events = self.events.map({event in
+            if event.id == newEvent.id {
+                newEvent
+            }
+            else {
+                event
+            }
+        })
         return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
     }
     
@@ -91,6 +101,17 @@ struct AppData: Codable, Equatable {
         events.removeAll { $0.id == id }
         return Self(monthlyRate: monthlyRate, startDate: startDate, events: events)
     }
+    
+    func getSpendEventsAfterStartDate(asOf date: Date = Date()) -> [Spend] {
+        let currentStartDate = getStartDate(asOf: date)
+        return events.compactMap { event in
+            if case .spend(let spend) = event, spend.dateAdded > currentStartDate && spend.dateAdded <= date {
+                return spend
+            }
+            return nil
+        }
+    }
+
 
     
     
@@ -133,6 +154,39 @@ struct AppData: Codable, Equatable {
             startDate: Date(),
             events: []
         )
+    }
+    
+    func calculateTotalIncome(asOf date: Date = Date()) -> Double {
+        let startDate = getStartDate(asOf: date)
+        var totalIncome = 0.0
+        var currentDailyRate = monthlyRate * 12 / 365
+        var lastRateChangeDate = startDate
+        
+        // Sort events by date
+        let sortedEvents = events.filter { $0.date <= date }.sorted { $0.date < $1.date }
+        
+        for event in sortedEvents {
+            switch event {
+            case .setMonthlyRate(let setMonthlyRate):
+                // Calculate income up to this rate change
+                let daysAtCurrentRate = setMonthlyRate.dateAdded.timeIntervalSince(lastRateChangeDate) / (24 * 60 * 60)
+                totalIncome += (currentDailyRate) * daysAtCurrentRate
+                
+                // Update rate and last change date
+                currentDailyRate = setMonthlyRate.rate * 12 / 365
+                lastRateChangeDate = setMonthlyRate.dateAdded
+                
+            case .setStartDate, .spend:
+                // These events don't affect income calculation
+                break
+            }
+        }
+        
+        // Calculate income from last rate change to the specified date
+        let daysAtCurrentRate = date.timeIntervalSince(lastRateChangeDate) / (24 * 60 * 60)
+        totalIncome += currentDailyRate * daysAtCurrentRate
+        
+        return totalIncome
     }
 }
 

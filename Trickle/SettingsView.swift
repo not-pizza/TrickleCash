@@ -53,7 +53,7 @@ struct SettingsView: View {
                         DatePicker("", selection: Binding(
                             get: { appData.getStartDate() },
                             set: { startDate in
-                                appData = appData.setStartDate(SetStartDate(startDate: startDate))
+                                appData = appData.setStartDate(SetStartDate(startDate: startDate.startOfDay))
                             }
                         ), displayedComponents: .date)
                             .datePickerStyle(CompactDatePickerStyle())

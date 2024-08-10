@@ -80,7 +80,6 @@ struct ContentView: View {
             tempMonthlyRate = "\(String(format: "%.2f", appData.getMonthlyRate()))"
         })
         .onChange(of: appData) { newAppData in
-            print("appdata changed!")
             let _ = newAppData.save()
         }
         .onAppear {
