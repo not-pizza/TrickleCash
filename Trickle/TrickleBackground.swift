@@ -35,23 +35,24 @@ struct BackgroundView: View {
             print("debt clock was nil")
         }
         
+        let debtClockHeight = 20.0
+        
         return ZStack {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
+            
+            let balanceHeight = (Double(foregroundShowingOffset) - 50.0) + (balance < 0 ? 0.0 : debtClockHeight + 10)
             
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Color.clear
-                        .frame(width: 24, height: 24)  // Dummy element
+                        .frame(width: 24, height: 24)
                     Spacer()
                     
                     VStack(spacing: 10) {
-                        CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: foregroundShowingOffset * 0.7)
+                        CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: balanceHeight)
                         if balance < 0 {
                             if let debtClock = debtClock {
-                                Text("Out of debt \(debtClock)")
-                            }
-                            else {
-                                Text("Error with debt clock, \(-balance / perSecondRate / 60 / 60 / 24)")
+                                Text("Out of debt \(debtClock)").frame(height: debtClockHeight)
                             }
                         }
                     }
