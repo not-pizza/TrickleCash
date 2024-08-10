@@ -22,15 +22,13 @@ struct ForegroundView: View {
     }
     
     private func spendEventBindings() -> [Binding<Spend>] {
-        var spendEvents = appData.events.indices.compactMap { index in
-            if case .spend(let spend) = appData.events[index] {
+        var spendEvents = appData.getSpendEventsAfterStartDate().compactMap { spend in
                 if Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate) {
                     return Binding(
                         get: { spend },
-                        set: { appData.events[index] = Event.spend($0) }
+                        set: { newSpend in appData = appData.updateSpend(newSpend) }
                     )
                 }
-            }
             return nil
         }
         spendEvents.reverse()
@@ -95,7 +93,6 @@ struct ForegroundView: View {
             Color.clear
                 .frame(width: 10, height: 10)
 
-
             /*Button(action: {
                 hidden = !hidden
                 // TODO: deduplicate
@@ -117,28 +114,31 @@ struct ForegroundView: View {
                 selectedDate = date
             }, focusedSpendId: $focusedSpendId)
             
-            Button(action: {
-                withAnimation(.spring()) {
-                    let newSpend = Spend(
-                        name: "",
-                        amount: 0,
-                        dateAdded:
-                            selectedDate.startOfDay == Date().startOfDay ?
-                            Date() :
-                            selectedDate
-                    )
-                    appData.events.append(.spend(newSpend))
-                    focusedSpendId = newSpend.id
+            if selectedDate.startOfDay >= appData.getStartDate()
+            {
+                Button(action: {
+                    withAnimation(.spring()) {
+                        let newSpend = Spend(
+                            name: "",
+                            amount: 0,
+                            dateAdded:
+                                selectedDate.startOfDay == Date().startOfDay ?
+                                Date() :
+                                selectedDate
+                        )
+                        appData = appData.addSpend(newSpend)
+                        focusedSpendId = newSpend.id
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Add spending")
+                    }
+                    .foregroundColor(.blue)
+                    .padding(.vertical, 8)
                 }
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Add spending")
-                }
-                .foregroundColor(.blue)
-                .padding(.vertical, 8)
+                .listRowBackground(Color.blue.opacity(0.1))
             }
-            .listRowBackground(Color.blue.opacity(0.1))
         }
         .onChange(of: geometry.size.height) {new_height in
             let forgroundHiddenOffset: CGFloat = new_height - 50
