@@ -27,7 +27,7 @@ struct TrickleView: View {
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
-                let forgroundHiddenOffset: CGFloat = geometry.size.height - 100
+                let forgroundHiddenOffset: CGFloat = geometry.size.height - 120
                 let forgroundShowingOffset: CGFloat = geometry.size.height / 5
                 
                 ZStack {
@@ -51,8 +51,7 @@ struct TrickleView: View {
                     if !setInitialForgroundShowingOffset {
                         initialForgroundShowingOffset = forgroundShowingOffset
                     }
-                }
-                )
+                })
             }.onAppear() {
                 setupTimer()
             }

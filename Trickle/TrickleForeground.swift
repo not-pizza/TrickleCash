@@ -114,7 +114,7 @@ struct ForegroundView: View {
                 selectedDate = date
             }, focusedSpendId: $focusedSpendId)
             
-            if selectedDate.startOfDay >= appData.getStartDate()
+            if selectedDate >= appData.getStartDate()
             {
                 Button(action: {
                     withAnimation(.spring()) {

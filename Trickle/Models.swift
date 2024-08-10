@@ -29,6 +29,11 @@ struct AppData: Codable, Equatable {
         return monthlyRate
     }
     
+    func getDailyRate(asOf date: Date = Date()) -> Double {
+        let monthlyRate = getMonthlyRate(asOf: date);
+        return monthlyRate * 12 / 365
+    }
+    
     func getStartDate(asOf date: Date = Date()) -> Date {
         let relevantEvents = events.filter { event in
             if case .setStartDate(let startDateEvent) = event, startDateEvent.dateAdded <= date {
@@ -112,9 +117,6 @@ struct AppData: Codable, Equatable {
         }
     }
 
-
-    
-    
     func save() -> Self {
         if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
             let updatableAppData = UpdatableAppData.v1(self)
