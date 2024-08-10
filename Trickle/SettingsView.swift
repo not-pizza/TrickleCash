@@ -1,10 +1,3 @@
-//
-//  SettingsView.swift
-//  Trickle
-//
-//  Created by Andre Popovitch on 8/7/24.
-//
-
 import Foundation
 import SwiftUI
 
@@ -12,7 +5,8 @@ struct SettingsView: View {
     @Binding var appData: AppData
     @State private var tempMonthlyRate: String
     @FocusState private var focusedField: Bool
-    
+    @State private var showUndoButton: Bool = false
+    @State private var previousStartDate: Date?
     
     init(appData: Binding<AppData>) {
         _appData = appData
@@ -46,19 +40,31 @@ struct SettingsView: View {
                                 }
                             }
                     }
-                                    
+                    
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Start Date")
                             .font(.headline)
-                        DatePicker("", selection: Binding(
-                            get: { appData.getStartDate() },
-                            set: { startDate in
-                                appData = appData.setStartDate(SetStartDate(startDate: startDate.startOfDay))
+                        Text("Current start date: \(formattedDate(appData.getStartDate()))")
+                            .font(.subheadline)
+                        
+                        if !showUndoButton {
+                            Button("Restart from today") {
+                                previousStartDate = appData.getStartDate()
+                                appData = appData.setStartDate(SetStartDate(startDate: Date().startOfDay))
+                                showUndoButton = true
                             }
-                        ), displayedComponents: .date)
-                            .datePickerStyle(CompactDatePickerStyle())
-                            .labelsHidden()
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .buttonStyle(.bordered)
+                        }
+                        
+                        if showUndoButton {
+                            Button("Undo restart") {
+                                if let previousDate = previousStartDate {
+                                    appData = appData.setStartDate(SetStartDate(startDate: previousDate))
+                                    showUndoButton = false
+                                }
+                            }
+                            .buttonStyle(.bordered)
+                        }
                     }
                 }
                 .padding()
@@ -69,5 +75,11 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+    }
+    
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
     }
 }
