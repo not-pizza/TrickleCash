@@ -141,13 +141,13 @@ struct ForegroundView: View {
             }
         }
         .onChange(of: geometry.size.height) {new_height in
-            let forgroundHiddenOffset: CGFloat = new_height - 50
-            let forgroundShowingOffset: CGFloat = new_height / 5
+            let foregroundHiddenOffset: CGFloat = new_height - 50
+            let foregroundShowingOffset: CGFloat = new_height / 5
             withAnimation(.spring()) {
                 if hidden {
-                    self.offset = forgroundHiddenOffset
+                    self.offset = foregroundHiddenOffset
                 } else {
-                    self.offset = forgroundShowingOffset
+                    self.offset = foregroundShowingOffset
                 }
             }
         }

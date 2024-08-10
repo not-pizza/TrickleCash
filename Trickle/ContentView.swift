@@ -21,22 +21,22 @@ struct TrickleView: View {
     
     @State private var offset: CGFloat = 200
     
-    @State private var initialForgroundShowingOffset: CGFloat?
-    @State private var setInitialForgroundShowingOffset: Bool = false
+    @State private var initialforegroundShowingOffset: CGFloat?
+    @State private var setInitialforegroundShowingOffset: Bool = false
 
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
-                let forgroundHiddenOffset: CGFloat = geometry.size.height - 120
-                let forgroundShowingOffset: CGFloat = geometry.size.height / 5
+                let foregroundHiddenOffset: CGFloat = geometry.size.height - 120
+                let foregroundShowingOffset: CGFloat = geometry.size.height / 5
                 
                 ZStack {
                     ForegroundView(
                         appData: $appData,
                         offset: $offset,
                         geometry: geometry,
-                        foregroundHiddenOffset: forgroundHiddenOffset,
-                        foregroundShowingOffset: forgroundShowingOffset
+                        foregroundHiddenOffset: foregroundHiddenOffset,
+                        foregroundShowingOffset: foregroundShowingOffset
                     )
                     .offset(y: max(offset, 0))
                     .zIndex(1)
@@ -44,12 +44,12 @@ struct TrickleView: View {
                     BackgroundView(
                         appData: $appData,
                         onSettingsTapped: openSettings,
-                        forgroundShowingOffset: initialForgroundShowingOffset ?? forgroundShowingOffset,
+                        foregroundShowingOffset: initialforegroundShowingOffset ?? foregroundShowingOffset,
                         currentTime: currentTime
                     ).zIndex(0)
                 }.onAppear(perform: {
-                    if !setInitialForgroundShowingOffset {
-                        initialForgroundShowingOffset = forgroundShowingOffset
+                    if !setInitialforegroundShowingOffset {
+                        initialforegroundShowingOffset = foregroundShowingOffset
                     }
                 })
             }.onAppear() {

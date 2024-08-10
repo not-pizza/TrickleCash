@@ -11,7 +11,7 @@ import SwiftUI
 struct BackgroundView: View {
     @Binding var appData: AppData
     var onSettingsTapped: () -> Void
-    var forgroundShowingOffset: CGFloat
+    var foregroundShowingOffset: CGFloat
     var currentTime: Date
     
     @Environment(\.colorScheme) var colorScheme
@@ -45,7 +45,7 @@ struct BackgroundView: View {
                     Spacer()
                     
                     VStack(spacing: 10) {
-                        CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: forgroundShowingOffset * 0.7)
+                        CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: foregroundShowingOffset * 0.7)
                         if balance < 0 {
                             if let debtClock = debtClock {
                                 Text("Out of debt \(debtClock)")
@@ -86,7 +86,7 @@ struct BackgroundView: View {
             ]
         )),
         onSettingsTapped: {},
-        forgroundShowingOffset: UIScreen.main.bounds.height / 5,
+        foregroundShowingOffset: UIScreen.main.bounds.height / 5,
         currentTime: Date()
     )
 }
