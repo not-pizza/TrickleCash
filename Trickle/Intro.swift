@@ -150,10 +150,10 @@ struct Intro: View {
                     // Next/Finish button
                     if focusedField == false {
                         Button(action: {
-                            currentPage = min(currentPage + 1, 3)
                             if currentPage == 3 {
                                 finishIntro(appData)
                             }
+                            currentPage = min(currentPage + 1, 3)
                         }) {
                             Text(currentPage == 3 ? "Finish" : "Next")
                                 .padding()

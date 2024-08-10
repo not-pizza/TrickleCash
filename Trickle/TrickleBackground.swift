@@ -37,7 +37,7 @@ struct BackgroundView: View {
         
         let debtClockHeight = 20.0
         
-        return ZStack {
+        return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
             
             let balanceHeight = (Double(foregroundShowingOffset) - 50.0) + (balance < 0 ? 0.0 : debtClockHeight + 10)
@@ -70,8 +70,9 @@ struct BackgroundView: View {
 
                 }
                 .padding()
+                .frame(height: foregroundShowingOffset, alignment: .top)
             }
-            .frame(maxHeight: .infinity, alignment: .top)
+            .frame(height: foregroundShowingOffset, alignment: .top)
         }
         .frame(maxHeight: .infinity, alignment: .top)
     }
