@@ -32,7 +32,7 @@ public struct CircularBalanceView: View {
                     AngularGradient(
                         gradient: Gradient(stops: [
                             .init(color: backgroundColor, location: 0),
-                            .init(color: backgroundColor, location: max(progress-0.01, 0)),
+                            .init(color: backgroundColor, location: max(progress-0.001, 0)),
                             .init(color: backgroundColor.opacity(0.3), location: progress),
                             .init(color: backgroundColor.opacity(0.3), location: 1)
                         ]),
