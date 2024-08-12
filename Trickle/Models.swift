@@ -4,9 +4,9 @@ import WidgetKit
 import SwiftUI
 
 struct AppData: Codable, Equatable {
-    private var monthlyRate: Double
-    private var startDate: Date
-    private var events: [Event]
+    var monthlyRate: Double
+    var startDate: Date
+    var events: [Event]
     
     init(monthlyRate: Double, startDate: Date, events: [Event]) {
         self.monthlyRate = monthlyRate
@@ -55,9 +55,9 @@ struct AppData: Codable, Equatable {
         let spendEvents = self.getSpendEventsAfterStartDate(asOf: time);
         let totalDeductions = spendEvents.map({spend in spend.amount}).reduce(0, +)
         
-        return totalIncome - totalDeductions + 0.01
+        return totalIncome.mainBalance - totalDeductions + 0.01
     }
-
+    
     func getPercentThroughCurrentCent(time: Date) -> Double {
         let balance = getTrickleBalance(asOf: time)
         var percent = (balance - 0.005).truncatingRemainder(dividingBy: 0.01) * 100
@@ -116,7 +116,7 @@ struct AppData: Codable, Equatable {
             return nil
         }
     }
-
+    
     func save() -> Self {
         if let defaults = UserDefaults(suiteName: "group.pizza.not.Trickle") {
             let updatableAppData = UpdatableAppData.v1(self)
@@ -158,38 +158,166 @@ struct AppData: Codable, Equatable {
         )
     }
     
-    func calculateTotalIncome(asOf date: Date = Date()) -> Double {
+    // TODO: replace `perSecondRate` with `timeToCompletion`
+    func calculateTotalIncome(asOf date: Date = Date()) -> (mainBalance: Double, buckets: [(bucket: Bucket, amount: Double, perSecondRate: Double)]) {
         let startDate = getStartDate(asOf: date)
-        var totalIncome = 0.0
-        var currentDailyRate = monthlyRate * 12 / 365
-        var lastRateChangeDate = startDate
+        var currentPerSecondRate = monthlyRate / secondsPerMonth
+        var lastEventDate = startDate
+        var buckets: [Bucket] = []
+        var bucketInfo: [UUID: (amount: Double, perSecondRate: Double)] = [:]
+        var mainBalance = 0.0
         
         // Sort events by date
         let sortedEvents = events.filter { $0.date <= date }.sorted { $0.date < $1.date }
+        let filteredEvents = Event.removeDeleted(sortedEvents)
         
-        for event in sortedEvents {
+        for event in filteredEvents {
+            // Calculate income up to this event change
+            let secondsAtCurrentRate = event.date.timeIntervalSince(lastEventDate)
+            let incomeForPeriod = currentPerSecondRate * secondsAtCurrentRate
+            distributeToBuckets(amount: incomeForPeriod, seconds: secondsAtCurrentRate)
+            handleFinishedBuckets()
+            
             switch event {
             case .setMonthlyRate(let setMonthlyRate):
-                // Calculate income up to this rate change
-                let daysAtCurrentRate = setMonthlyRate.dateAdded.timeIntervalSince(lastRateChangeDate) / (24 * 60 * 60)
-                totalIncome += (currentDailyRate) * daysAtCurrentRate
-                
                 // Update rate and last change date
-                currentDailyRate = setMonthlyRate.rate * 12 / 365
-                lastRateChangeDate = setMonthlyRate.dateAdded
+                currentPerSecondRate = setMonthlyRate.rate / secondsPerMonth
+                
+            case .createBucket(let bucket):
+                buckets.append(bucket)
+                bucketInfo[bucket.id] = (0.0, 0.0)
+                
+            case .updateBucket(let update):
+                if let index = buckets.firstIndex(where: { $0.id == update.bucketToUpdate.id }) {
+                    buckets[index] = update.bucketToUpdate
+                }
+                
+            case .deleteBucket(let delete):
+                fatalError("Encountered a .deleteBucket event - should never happen")
+                
+            case .dumpBucket(let dumpBucket):
+                if let index = buckets.firstIndex(where: {bucket in
+                    bucket.id == dumpBucket.bucketToDump
+                })
+                {
+                    let bucket = buckets[index]
+                    if bucket.allowsDump {
+                        mainBalance += bucketInfo[bucket.id]!.amount
+                        bucketInfo[bucket.id]!.amount = 0
+                        if !bucket.recur {
+                            bucketInfo.removeValue(forKey: bucket.id)
+                            buckets.remove(at: index)
+                        }
+                    }
+                }
                 
             case .setStartDate, .spend:
                 // These events don't affect income calculation
                 break
             }
+            
+            lastEventDate = event.date
         }
         
         // Calculate income from last rate change to the specified date
-        let daysAtCurrentRate = date.timeIntervalSince(lastRateChangeDate) / (24 * 60 * 60)
-        totalIncome += currentDailyRate * daysAtCurrentRate
+        let secondsAtCurrentRate = date.timeIntervalSince(lastEventDate)
+        let finalIncomeForPeriod = currentPerSecondRate * secondsAtCurrentRate
+        distributeToBuckets(amount: finalIncomeForPeriod, seconds: secondsAtCurrentRate)
+        handleFinishedBuckets()
         
-        return totalIncome
+        // Prepare the result
+        let bucketResults = buckets.map { bucket in
+            (bucket: bucket, amount: bucketInfo[bucket.id]?.amount ?? 0.0, perSecondRate: bucketInfo[bucket.id]?.perSecondRate ?? 0.0)
+        }
+        
+        return (mainBalance: mainBalance, buckets: bucketResults)
+        
+        func distributeToBuckets(amount: Double, seconds: Double) {
+            var remainingAmount = amount
+            
+            // First, handle byDuration buckets
+            // As they have priority over the main balance and the share buckets
+            let byDurationBuckets = buckets.filter {
+                if case .byDuration = $0.contributionMode { return true }
+                return false
+            }
+            let totalByDurationPerSecondRate = byDurationBuckets.reduce(0.0) { sum, bucket in
+                if case .byDuration(let interval) = bucket.contributionMode {
+                    return sum + (bucket.targetAmount / Double(interval))
+                }
+                return sum
+            }
+            let amountToDistributeToByDurationBuckets = min(amount, totalByDurationPerSecondRate * seconds)
+            let byDurationDistributees = byDurationBuckets.map({bucket in
+                guard case .byDuration(let interval) = bucket.contributionMode else {
+                    fatalError("This should never happen")
+                }
+                let share = bucket.targetAmount / Double(interval)
+                return (cap: (bucket.targetAmount - bucketInfo[bucket.id]!.amount) as Double?, share: share)
+            })
+            let byDurationBucketDistributions = Bucket.distributeAccordingToShares(amount: amountToDistributeToByDurationBuckets, distributees: byDurationDistributees)
+            remainingAmount = max(amount - amountToDistributeToByDurationBuckets + byDurationBucketDistributions.remainder, 0) // Shouldn't be less than 0 according to math, but sometimes floating point arithmetic thinks differently
+            for (index, distribution) in byDurationBucketDistributions.distributions.enumerated() {
+                let bucket = byDurationBuckets[index]
+                let info = bucketInfo[bucket.id]!
+                let newAmount = info.amount + distribution
+                let newPerSecondRate = distribution / seconds
+                bucketInfo[bucket.id] = (newAmount, newPerSecondRate)
+            }
+            
+            // Then, handle share buckets and main balance
+            let shareBuckets = buckets.filter {
+                if case .share = $0.contributionMode { return true }
+                return false
+            }
+            var shareDistributees = shareBuckets.map({bucket in
+                guard case .share(let share) = bucket.contributionMode else {
+                    fatalError("This should never happen")
+                }
+                return (cap: (bucket.targetAmount - bucketInfo[bucket.id]!.amount) as Double?, share: share)
+            })
+            // Reserve the first share distribution for the main balance
+            shareDistributees.insert((cap: nil as Double?, share: 10), at: 0)
+            let shareBucketDistributions = Bucket.distributeAccordingToShares(amount: remainingAmount, distributees: shareDistributees)
+            for (index, distribution) in shareBucketDistributions.distributions[1...].enumerated() {
+                let bucket = shareBuckets[index]
+                let info = bucketInfo[bucket.id]!
+                let newAmount = info.amount + distribution
+                let newPerSecondRate = distribution / seconds
+                bucketInfo[bucket.id] = (newAmount, newPerSecondRate)
+            }
+
+            // Remaining amount goes to main balance
+            mainBalance += shareBucketDistributions.distributions[0]
+        }
+        
+        func handleFinishedBuckets() {
+            buckets = buckets.filter({bucket in
+                let toKeep = handleFinishedBucket(bucket)
+                if !toKeep {
+                    bucketInfo.removeValue(forKey: bucket.id)
+                }
+                return toKeep
+            })
+        }
+        
+        // Returns true if we should keep the bucket
+        func handleFinishedBucket(_ bucket: Bucket) -> Bool {
+            switch bucket.whenFinished {
+            case .waitToDump:
+                // Do nothing, just wait
+                return true
+            case .autoDump:
+                mainBalance += bucketInfo[bucket.id]!.amount
+                bucketInfo[bucket.id]!.amount = 0
+                return bucket.recur
+            case .destroy:
+                bucketInfo[bucket.id]!.amount = 0
+                return bucket.recur
+            }
+        }
     }
+
 }
 
 struct SetMonthlyRate: Codable, Equatable, Identifiable {
@@ -246,6 +374,11 @@ enum Event: Codable, Identifiable, Equatable {
     case setMonthlyRate(SetMonthlyRate)
     case setStartDate(SetStartDate)
     
+    case createBucket(Bucket)
+    case updateBucket(UpdateBucket)
+    case dumpBucket(DumpBucket)
+    case deleteBucket(DeleteBucket)
+    
     var id: UUID {
         switch self {
         case .spend(let spend):
@@ -254,6 +387,14 @@ enum Event: Codable, Identifiable, Equatable {
             return setMonthlyRate.id
         case .setStartDate(let setStartDate):
             return setStartDate.id
+        case .createBucket(let bucket):
+            return bucket.id
+        case .updateBucket(let updateBucket):
+            return updateBucket.id
+        case .dumpBucket(let dumpBucket):
+            return dumpBucket.id
+        case .deleteBucket(let deleteBucket):
+            return deleteBucket.id
         }
     }
     
@@ -265,21 +406,166 @@ enum Event: Codable, Identifiable, Equatable {
             return event.dateAdded
         case .setStartDate(let event):
             return event.dateAdded
+        case .createBucket(let bucket):
+            return bucket.dateAdded
+        case .updateBucket(let updateBucket):
+            return updateBucket.dateAdded
+        case .dumpBucket(let dumpBucket):
+            return dumpBucket.dateAdded
+        case .deleteBucket(let deleteBucket):
+            return deleteBucket.dateAdded
         }
     }
     
-    var description: String {
-        switch self {
-        case .spend(let spend):
-            return spend.description
-        case .setMonthlyRate(let event):
-            return event.description
-        case .setStartDate(let event):
-            return event.description
+    static func removeDeleted(_ events: [Event]) -> [Event] {
+        var deletedBucketIDs = Set<UUID>()
+        var filteredEvents = [Event]()
+
+        // First pass: Identify deleted buckets
+        for event in events {
+            if case let .deleteBucket(deleteBucket) = event {
+                deletedBucketIDs.insert(deleteBucket.bucketToDelete)
+            }
+        }
+
+        // Second pass: Filter out events related to deleted buckets
+        for event in events {
+            switch event {
+            case .createBucket(let bucket):
+                if !deletedBucketIDs.contains(bucket.id) {
+                    filteredEvents.append(event)
+                }
+            case .updateBucket(let updateBucket):
+                if !deletedBucketIDs.contains(updateBucket.bucketToUpdate.id) {
+                    filteredEvents.append(event)
+                }
+            case .dumpBucket(let dumpBucket):
+                if !deletedBucketIDs.contains(dumpBucket.bucketToDump) {
+                    filteredEvents.append(event)
+                }
+            case .deleteBucket:
+                // Remove deleteBucket events
+                break
+            case .spend, .setMonthlyRate, .setStartDate:
+                // Keep other events
+                filteredEvents.append(event)
+            }
+        }
+
+        return filteredEvents
+    }
+
+}
+
+// Buckets
+struct UpdateBucket: Codable, Identifiable, Equatable {
+    var id: UUID = UUID()
+    var dateAdded: Date = Date()
+    
+    let bucketToUpdate: Bucket
+}
+
+struct DumpBucket: Codable, Identifiable, Equatable
+{
+    var id: UUID = UUID()
+    var dateAdded: Date = Date()
+    
+    let bucketToDump: UUID
+}
+
+struct DeleteBucket: Codable, Identifiable, Equatable
+{
+    var id: UUID = UUID()
+    var dateAdded: Date = Date()
+    
+    let bucketToDelete: UUID
+}
+
+struct Bucket: Codable, Equatable {
+    enum ContributionMode: Codable, Equatable {
+        case share(share: Double)
+        case byDuration(interval: TimeInterval)
+    }
+
+    enum FinishAction: Codable, Equatable {
+        case waitToDump
+        case autoDump
+        case destroy
+    }
+
+    var id: UUID = UUID()
+    var dateAdded: Date = Date()
+    let name: String
+    let targetAmount: Double
+    let contributionMode: ContributionMode
+    let whenFinished: FinishAction
+    let recur: Bool
+    
+    
+    static func distributeAccordingToShares(amount: Double, distributees: [(cap: Double?, share: Double)]) -> (remainder: Double, distributions: [Double]) {
+        var remainingAmount = amount
+        var distributions = [Double](repeating: 0, count: distributees.count)
+        var remainingDistributees = distributees.enumerated().map { (index: $0, cap: $1.cap, share: $1.share) }
+
+        while remainingAmount > Double.ulpOfOne && !remainingDistributees.isEmpty {
+            let totalShares = remainingDistributees.reduce(0) { $0 + $1.share }
+            let cappedDistributees = remainingDistributees.compactMap({
+                if let cap = $0.cap {
+                    return (index: $0.index, cap: cap, share: $0.share)
+                } else {
+                    return nil
+                }
+            })
+            
+            var toDistributeThisRound: Double
+            if let soonestCap = cappedDistributees.min(by: {
+                ($0.cap - distributions[$0.index]) / $0.share < ($1.cap - distributions[$1.index]) / $0.share })
+            {
+                toDistributeThisRound = min(remainingAmount, soonestCap.cap / (soonestCap.share / totalShares))
+            }
+            else
+            {
+                toDistributeThisRound = remainingAmount
+            }
+
+            let amountPerShare = toDistributeThisRound / totalShares
+
+            remainingDistributees = remainingDistributees.filter { distributee in
+                let shareAmount = distributee.share * amountPerShare
+
+                if let cap = distributee.cap {
+                    let remainingCap = cap - distributions[distributee.index]
+                    let actualDistribution = min(shareAmount, remainingCap)
+                    distributions[distributee.index] += actualDistribution
+                    remainingAmount -= actualDistribution
+                    
+                    if actualDistribution >= remainingCap {
+                        return false
+                    }
+                } else {
+                    let actualDistribution = shareAmount
+                    distributions[distributee.index] += actualDistribution
+                    remainingAmount -= actualDistribution
+                }
+
+                return true
+            }
+        }
+
+        return (remainder: remainingAmount, distributions: distributions)
+    }
+    
+    var allowsDump: Bool {
+        switch self.whenFinished {
+        case .destroy:
+            return false
+        case .waitToDump, .autoDump:
+            return true
         }
     }
 }
 
+// Where all our main app data is stored
 enum UpdatableAppData: Codable {
     case v1(AppData)
     
@@ -291,79 +577,3 @@ enum UpdatableAppData: Codable {
     }
 }
 
-
-func formatCurrencyNoDecimals(_ amount: Double) -> String {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .currency
-    formatter.currencyCode = "USD"
-    formatter.maximumFractionDigits = 0
-    return formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
-}
-
-func formatCurrency(_ amount: Double) -> String {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .currency
-    formatter.currencyCode = "USD"
-    if amount > 9999 || amount < -999 {
-        formatter.maximumFractionDigits = 0
-    }
-    return formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
-}
-
-func viewBalance(_ amount: String) -> some View {
-    return Text(amount)
-            .font(.title2)
-            .monospacedDigit()
-            .bold()
-            .lineLimit(1)
-}
-
-func viewBalanceNoDecimals(_ amount: Double) -> some View {
-    viewBalance(formatCurrencyNoDecimals(amount))
-}
-
-func viewBalance(_ amount: Double) -> some View {
-    viewBalance(formatCurrency(amount))
-}
-
-func balanceBackground(_ amount: Double, colorScheme: ColorScheme) -> Color {
-    amount < 0 ? Color.red : Color.green
-}
-
-func balanceBackgroundGradient(_ amount: Double, colorScheme: ColorScheme, boost: Float = 0) -> LinearGradient {
-    let lightness_delta: Float = colorScheme == .dark ? -(0.07 + boost) : (0.1 + boost)
-    
-    let grayify: Float = amount < 1 && amount > -1 ? 0.2 : 1
-    
-    let reds = [
-        OklabColorPolar(
-            lightness: 0.65 + lightness_delta,
-            chroma: 0.2017 * grayify,
-            hueDegrees: 26.33
-        ),
-        OklabColorPolar(
-            lightness: 0.65 + lightness_delta,
-            chroma: 0.2017 * grayify,
-            hueDegrees: 316.44
-        )
-    ]
-    
-    let greens = [
-        OklabColorPolar(
-            lightness: 0.65 + lightness_delta,
-            chroma: 0.1678 * grayify,
-            hueDegrees: 132.12
-        ),
-        OklabColorPolar(
-            lightness: 0.65 + lightness_delta,
-            chroma: 0.1678 * grayify,
-            hueDegrees: 226.51
-        )
-    ]
-    
-    let colors = (amount > 0 ? greens : reds).map({color in Color(color)})
-    
-    return LinearGradient(gradient: Gradient(colors: colors),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing)
-}

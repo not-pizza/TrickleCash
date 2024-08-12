@@ -18,10 +18,8 @@ struct TrickleView: View {
     var openSettings: () -> Void
     
     @State private var currentTime: Date = Date()
-    
     @State private var offset: CGFloat = 200
-    
-    @State private var setInitialforegroundShowingOffset: Bool = false
+    @State private var hidden = false
 
     var body: some View {
         NavigationView {
@@ -30,17 +28,45 @@ struct TrickleView: View {
                 
                 let initialforegroundShowingOffset = UIScreen.main.bounds.height / 6;
                 let foregroundShowingOffset: CGFloat = geometry.size.height / 4.5
+
                 
                 ZStack {
-                    ForegroundView(
-                        appData: $appData,
-                        offset: $offset,
-                        geometry: geometry,
-                        foregroundHiddenOffset: foregroundHiddenOffset,
-                        foregroundShowingOffset: foregroundShowingOffset
-                    )
+                    VStack(alignment: .leading) {
+                        ForegroundView(
+                            appData: $appData,
+                            offset: $offset,
+                            geometry: geometry,
+                            foregroundHiddenOffset: foregroundHiddenOffset,
+                            foregroundShowingOffset: foregroundShowingOffset,
+                            hidden: $hidden
+                        )
+                    }
                     .offset(y: max(offset, 0))
                     .zIndex(1)
+                    // Adjust it if the screen size changes (e.g. keyboard appears or disappears
+                    .onChange(of: hidden) {new_hidden in
+                        let forgroundHiddenOffset: CGFloat = geometry.size.height - 100
+                        let forgroundShowingOffset: CGFloat = geometry.size.height / 5
+                        withAnimation(.spring()) {
+                            if new_hidden {
+                                self.offset = forgroundHiddenOffset
+                            } else {
+                                self.offset = forgroundShowingOffset
+                            }
+                        }
+                    }
+                    .onChange(of: geometry.size.height) {new_height in
+                        let forgroundHiddenOffset: CGFloat = new_height - 100
+                        let forgroundShowingOffset: CGFloat = new_height / 5
+                        withAnimation(.spring()) {
+                            if hidden {
+                                self.offset = forgroundHiddenOffset
+                            } else {
+                                self.offset = forgroundShowingOffset
+                            }
+                        }
+                    }
+                    
                     
                     BackgroundView(
                         appData: $appData,

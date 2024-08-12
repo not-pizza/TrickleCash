@@ -7,11 +7,11 @@ struct ForegroundView: View {
     var geometry: GeometryProxy
     var foregroundHiddenOffset: Double
     var foregroundShowingOffset: Double
+    @Binding var hidden: Bool
     
     @State private var startingOffset: CGFloat = 0
     @State private var selectedDate: Date = Date()
     @State private var isDragging = false
-    @State private var hidden = false
     @State private var focusedSpendId: UUID?
     
     @Environment(\.colorScheme) var colorScheme
@@ -62,53 +62,48 @@ struct ForegroundView: View {
             .listStyle(.inset)
         }
 
-        return ZStack {
-            backgroundColor
-                .ignoresSafeArea()
-
-            VStack {
-                draggable
+        return VStack {
+            Button(action: {hidden = !hidden}) {
+                HStack {
+                    Spacer()
+                    Image(systemName: hidden ? "chevron.up" : "chevron.down")
+                    Spacer()
+                }
+                .frame(height: 30)
+            }.foregroundStyle(Color.primary)
+            
+            ZStack {
+                backgroundColor
+                    .ignoresSafeArea()
                 
-                if #available(iOS 16.0, *) {
-                    spendList.scrollContentBackground(.hidden)
+                VStack {
+                    topBar
+                    if #available(iOS 16.0, *) {
+                        spendList.scrollContentBackground(.hidden)
+                    }
+                    else {
+                        spendList
+                    }
                 }
-                else {
-                    spendList
-                }
+                .frame(maxHeight: .infinity, alignment: .bottom)
             }
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .frame(maxHeight: .infinity, alignment: .bottom)
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .frame(maxHeight: .infinity, alignment: .bottom)
-        .ignoresSafeArea(.all)
-        .onChange(of: scenePhase) { newPhase in
-            if newPhase == .active {
-                selectedDate = Date()
+            .ignoresSafeArea(.all)
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    selectedDate = Date()
+                }
+            }.onChange(of: hidden) { _ in
+                focusedSpendId = nil
             }
         }
     }
     
-    var draggable: some View {
+    var topBar: some View {
         return VStack(spacing: 10) {
             Color.clear
                 .frame(width: 10, height: 10)
-
-            /*Button(action: {
-                hidden = !hidden
-                // TODO: deduplicate
-                withAnimation(.spring()) {
-                    if hidden {
-                        endEditing()
-                        self.offset = foregroundHiddenOffset
-                    } else {
-                        self.offset = foregroundShowingOffset
-                    }
-                }
-            }) {
-                hidden ?
-                Image(systemName: "chevron.up") :
-                Image(systemName: "chevron.down")
-            }*/
 
             CalendarStrip(selectedDate: $selectedDate, onDateSelected: { date in
                 selectedDate = date
@@ -140,17 +135,6 @@ struct ForegroundView: View {
                 .listRowBackground(Color.blue.opacity(0.1))
             }
         }
-        .onChange(of: geometry.size.height) {new_height in
-            let foregroundHiddenOffset: CGFloat = new_height - 50
-            let foregroundShowingOffset: CGFloat = new_height / 5
-            withAnimation(.spring()) {
-                if hidden {
-                    self.offset = foregroundHiddenOffset
-                } else {
-                    self.offset = foregroundShowingOffset
-                }
-            }
-        }
     }
 }
 
@@ -170,7 +154,8 @@ struct ForegroundView: View {
                 offset: .constant(UIScreen.main.bounds.height / 5),
                 geometry: geometry,
                 foregroundHiddenOffset: UIScreen.main.bounds.height - 50,
-                foregroundShowingOffset: UIScreen.main.bounds.height / 5
+                foregroundShowingOffset: UIScreen.main.bounds.height / 5,
+                hidden: .constant(false)
             ).offset(y: 150)
         }
     }

@@ -34,6 +34,11 @@
 		ABB5252F2C62B98E00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB5252E2C62B98E00A52574 /* Oklab */; };
 		ABB525312C62B99700A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525302C62B99700A52574 /* Oklab */; };
 		ABB525332C62B99C00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525322C62B99C00A52574 /* Oklab */; };
+		ABBF52A02C68A4860076329D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABBF529F2C68A4860076329D /* Utils.swift */; };
+		ABBF52A12C68A4860076329D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABBF529F2C68A4860076329D /* Utils.swift */; };
+		ABBF52A22C68A4860076329D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABBF529F2C68A4860076329D /* Utils.swift */; };
+		ABBF52A32C68A4860076329D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABBF529F2C68A4860076329D /* Utils.swift */; };
+		ABBF52A52C68ADBD0076329D /* BucketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABBF52A42C68ADBD0076329D /* BucketTests.swift */; };
 		ABD497652C6484BF00707842 /* TrickleBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497642C6484BF00707842 /* TrickleBackground.swift */; };
 		ABD497672C6484E400707842 /* TrickleForeground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497662C6484E400707842 /* TrickleForeground.swift */; };
 		ABD497692C64870900707842 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD497682C64870900707842 /* SettingsView.swift */; };
@@ -118,6 +123,8 @@
 		AB7B79252C6011FA003647EF /* Expression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		AB7B79272C602FFB003647EF /* Intro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intro.swift; sourceTree = "<group>"; };
 		ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularBalanceView.swift; sourceTree = "<group>"; };
+		ABBF529F2C68A4860076329D /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		ABBF52A42C68ADBD0076329D /* BucketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketTests.swift; sourceTree = "<group>"; };
 		ABD497642C6484BF00707842 /* TrickleBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleBackground.swift; sourceTree = "<group>"; };
 		ABD497662C6484E400707842 /* TrickleForeground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleForeground.swift; sourceTree = "<group>"; };
 		ABD497682C64870900707842 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -206,6 +213,7 @@
 				ABD497642C6484BF00707842 /* TrickleBackground.swift */,
 				ABD497662C6484E400707842 /* TrickleForeground.swift */,
 				ABD497682C64870900707842 /* SettingsView.swift */,
+				ABBF529F2C68A4860076329D /* Utils.swift */,
 			);
 			path = Trickle;
 			sourceTree = "<group>";
@@ -222,6 +230,7 @@
 			isa = PBXGroup;
 			children = (
 				AB2D2BA52BFC4E5400F03DFD /* TrickleTests.swift */,
+				ABBF52A42C68ADBD0076329D /* BucketTests.swift */,
 			);
 			path = TrickleTests;
 			sourceTree = "<group>";
@@ -445,6 +454,7 @@
 				AB1669332C5F03870048A993 /* SpendView.swift in Sources */,
 				AB78A4952C445787007C4787 /* Models.swift in Sources */,
 				ABAAAC492C6483C4008EB27B /* CircularBalanceView.swift in Sources */,
+				ABBF52A02C68A4860076329D /* Utils.swift in Sources */,
 				AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */,
 				AB1669312C5F035B0048A993 /* CalendarStrip.swift in Sources */,
 				ABD497672C6484E400707842 /* TrickleForeground.swift in Sources */,
@@ -463,6 +473,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB2D2BA62BFC4E5400F03DFD /* TrickleTests.swift in Sources */,
+				ABBF52A12C68A4860076329D /* Utils.swift in Sources */,
+				ABBF52A52C68ADBD0076329D /* BucketTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,6 +485,7 @@
 				AB78A4852C39CBC0007C4787 /* TrickleWidget.swift in Sources */,
 				AB78A4812C39CBC0007C4787 /* TrickleWidgetBundle.swift in Sources */,
 				AB78A4962C445888007C4787 /* Models.swift in Sources */,
+				ABBF52A22C68A4860076329D /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,6 +496,7 @@
 				AB78A4CD2C5DDC55007C4787 /* Models.swift in Sources */,
 				AB78A4C42C5DD5A3007C4787 /* AddApplePayTransactionShortcut.swift in Sources */,
 				AB78A4C22C5DD5A3007C4787 /* AddApplePayTransactionShortcutExtension.swift in Sources */,
+				ABBF52A32C68A4860076329D /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -701,6 +715,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				MARKETING_VERSION = 1.0;
@@ -720,6 +735,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				MARKETING_VERSION = 1.0;
