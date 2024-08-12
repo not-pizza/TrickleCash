@@ -192,7 +192,7 @@ struct AppData: Codable, Equatable {
                     buckets[index] = update.bucketToUpdate
                 }
                 
-            case .deleteBucket(let delete):
+            case .deleteBucket(_):
                 fatalError("Encountered a .deleteBucket event - should never happen")
                 
             case .dumpBucket(let dumpBucket):
@@ -293,7 +293,7 @@ struct AppData: Codable, Equatable {
         
         func handleFinishedBuckets() {
             buckets = buckets.filter({bucket in
-                let toKeep = handleFinishedBucket(bucket)
+                let toKeep = finishBucketIfNecessary(bucket)
                 if !toKeep {
                     bucketInfo.removeValue(forKey: bucket.id)
                 }
@@ -302,7 +302,7 @@ struct AppData: Codable, Equatable {
         }
         
         // Returns true if we should keep the bucket
-        func handleFinishedBucket(_ bucket: Bucket) -> Bool {
+        func finishBucketIfNecessary(_ bucket: Bucket) -> Bool {
             switch bucket.whenFinished {
             case .waitToDump:
                 // Do nothing, just wait
