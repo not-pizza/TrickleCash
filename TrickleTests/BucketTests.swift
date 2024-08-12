@@ -34,10 +34,10 @@ class BucketTests: XCTestCase {
     func testBucketCreation() {
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
         
-        let bucket = Bucket(dateAdded: appData.startDate, name: "Savings", targetAmount: 1000, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: false)
+        let bucket = Bucket(name: "Savings", targetAmount: 1000, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: false)
         
         appData.events = [
-            .createBucket(bucket)
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket))
         ]
         
         let result = appData.calculateTotalIncome(asOf: oneMonthLater)
@@ -50,20 +50,20 @@ class BucketTests: XCTestCase {
     func testBucketFilling() {
         let threeMonthsLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth * 3), to: appData.startDate)!
         
-        let bucket = Bucket(dateAdded: appData.startDate, name: "Savings", targetAmount: 500, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: false)
+        let bucket = Bucket(name: "Savings", targetAmount: 500, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: false)
         
+        let addBucketEvent = AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket)
         appData.events = [
-            .createBucket(bucket)
+            .addBucket(addBucketEvent)
         ]
         let result = appData.calculateTotalIncome(asOf: threeMonthsLater)
         XCTAssertEqual(result.mainBalance, 8500, accuracy: 0.01) // 9000 - 500
         XCTAssertEqual(result.buckets.count, 1)
         XCTAssertEqual(result.buckets[0].amount, 500, accuracy: 0.01) // Bucket should be full
         
-        
         appData.events = [
-            .createBucket(bucket),
-            .dumpBucket(DumpBucket(dateAdded: threeMonthsLater, bucketToDump: bucket.id))
+            .addBucket(addBucketEvent),
+            .dumpBucket(DumpBucket(dateAdded: threeMonthsLater, bucketToDump: addBucketEvent.id))
         ]
         let result2 = appData.calculateTotalIncome(asOf: threeMonthsLater)
         XCTAssertEqual(result2.mainBalance, 9000, accuracy: 0.01) // 9000 - 500 + 500
@@ -75,10 +75,11 @@ class BucketTests: XCTestCase {
         let twoMonthsLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth * 2), to: appData.startDate)!
         let threeMonthsLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth * 3), to: appData.startDate)!
         
-        let bucket = Bucket(dateAdded: oneMonthLater, name: "Savings", targetAmount: 500, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: true)
+        let bucket = Bucket(name: "Savings", targetAmount: 500, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: true)
         
+        let addBucketEvent = AddBucket(dateAdded: oneMonthLater, bucketToAdd: bucket)
         appData.events = [
-            .createBucket(bucket),
+            .addBucket(addBucketEvent),
         ]
         
         let result1 = appData.calculateTotalIncome(asOf: twoMonthsLater)
@@ -87,8 +88,8 @@ class BucketTests: XCTestCase {
         XCTAssertEqual(result1.buckets[0].amount, 272.72, accuracy: 0.01)
         
         appData.events = [
-            .createBucket(bucket),
-            .dumpBucket(DumpBucket(dateAdded: twoMonthsLater, bucketToDump: bucket.id))
+            .addBucket(addBucketEvent),
+            .dumpBucket(DumpBucket(dateAdded: twoMonthsLater, bucketToDump: addBucketEvent.id))
         ]
         
         let result2 = appData.calculateTotalIncome(asOf: threeMonthsLater)
@@ -102,10 +103,10 @@ class BucketTests: XCTestCase {
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
         let oneMonthLaterMinusOneSecond = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth - 1), to: appData.startDate)!
         
-        let bucket = Bucket(dateAdded: appData.startDate, name: "Savings", targetAmount: 300, contributionMode: .share(share: 10), whenFinished: .autoDump, recur: true)
+        let bucket = Bucket(name: "Savings", targetAmount: 300, contributionMode: .share(share: 10), whenFinished: .autoDump, recur: true)
         
         appData.events = [
-            .createBucket(bucket),
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket)),
         ]
         
         do {
@@ -132,10 +133,10 @@ class BucketTests: XCTestCase {
     func testByDurationBucket() {
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
 
-        let bucket = Bucket(dateAdded: appData.startDate, name: "Weekly Savings", targetAmount: 1000, contributionMode: .byDuration(interval: 7 * 24 * 60 * 60), whenFinished: .waitToDump, recur: false)
+        let bucket = Bucket(name: "Weekly Savings", targetAmount: 1000, contributionMode: .byDuration(startDate: appData.startDate, interval: 7 * 24 * 60 * 60), whenFinished: .waitToDump, recur: false)
         
         appData.events = [
-            .createBucket(bucket)
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket))
         ]
         
         let result = appData.calculateTotalIncome(asOf: oneMonthLater)
@@ -150,12 +151,12 @@ class BucketTests: XCTestCase {
         let twoWeeksLater = Calendar.current.date(byAdding: .second, value: Int(2 * secondsPerWeek), to: appData.startDate)!
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
 
-        let weeklyBucket = Bucket(dateAdded: appData.startDate, name: "Weekly Savings", targetAmount: 1000, contributionMode: .byDuration(interval: 7 * 24 * 60 * 60), whenFinished: .waitToDump, recur: false)
-        let biweeklyBucket = Bucket(dateAdded: appData.startDate, name: "Biweekly Savings", targetAmount: 1000, contributionMode: .byDuration(interval: 14 * 24 * 60 * 60), whenFinished: .waitToDump, recur: false)
+        let weeklyBucket = Bucket(name: "Weekly Savings", targetAmount: 1000, contributionMode: .byDuration(startDate: appData.startDate, interval: 7 * 24 * 60 * 60), whenFinished: .waitToDump, recur: false)
+        let biweeklyBucket = Bucket(name: "Biweekly Savings", targetAmount: 1000, contributionMode: .byDuration(startDate: appData.startDate, interval: 14 * 24 * 60 * 60), whenFinished: .waitToDump, recur: false)
         
         appData.events = [
-            .createBucket(weeklyBucket),
-            .createBucket(biweeklyBucket)
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: weeklyBucket)),
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: biweeklyBucket))
         ]
         
         
@@ -190,12 +191,12 @@ class BucketTests: XCTestCase {
     func testByDurationBucketScaling() {
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
 
-        let s1 = Bucket(dateAdded: appData.startDate, name: "S1", targetAmount: 5000, contributionMode: .byDuration(interval: secondsPerMonth / 4), whenFinished: .waitToDump, recur: false)
-        let s2 = Bucket(dateAdded: appData.startDate, name: "S2", targetAmount: 5000, contributionMode: .byDuration(interval: secondsPerMonth / 2), whenFinished: .waitToDump, recur: false)
+        let s1 = Bucket(name: "S1", targetAmount: 5000, contributionMode: .byDuration(startDate: appData.startDate, interval: secondsPerMonth / 4), whenFinished: .waitToDump, recur: false)
+        let s2 = Bucket(name: "S2", targetAmount: 5000, contributionMode: .byDuration(startDate: appData.startDate, interval: secondsPerMonth / 2), whenFinished: .waitToDump, recur: false)
         
         appData.events = [
-            .createBucket(s1),
-            .createBucket(s2)
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: s1)),
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: s2))
         ]
         
         let result = appData.calculateTotalIncome(asOf: oneMonthLater)
@@ -215,12 +216,12 @@ class BucketTests: XCTestCase {
     func testByDurationAndShareBuckets() {
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
 
-        let weeklyBucket = Bucket(dateAdded: appData.startDate, name: "Weekly Savings", targetAmount: 2000, contributionMode: .byDuration(interval: secondsPerWeek), whenFinished: .waitToDump, recur: false)
-        let shareBucket = Bucket(dateAdded: appData.startDate, name: "Share Savings", targetAmount: 2000, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: false)
+        let weeklyBucket = Bucket(name: "Weekly Savings", targetAmount: 2000, contributionMode: .byDuration(startDate: appData.startDate, interval: secondsPerWeek), whenFinished: .waitToDump, recur: false)
+        let shareBucket = Bucket(name: "Share Savings", targetAmount: 2000, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: false)
         
         appData.events = [
-            .createBucket(weeklyBucket),
-            .createBucket(shareBucket)
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: weeklyBucket)),
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: shareBucket))
         ]
         
         let result = appData.calculateTotalIncome(asOf: oneMonthLater)

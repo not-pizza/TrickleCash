@@ -163,7 +163,7 @@ struct AppData: Codable, Equatable {
         let startDate = getStartDate(asOf: date)
         var currentPerSecondRate = monthlyRate / secondsPerMonth
         var lastEventDate = startDate
-        var buckets: [Bucket] = []
+        var buckets: [UUID: Bucket] = [:]
         var bucketInfo: [UUID: (amount: Double, perSecondRate: Double)] = [:]
         var mainBalance = 0.0
         
@@ -175,7 +175,7 @@ struct AppData: Codable, Equatable {
             // Calculate income up to this event change
             let secondsAtCurrentRate = event.date.timeIntervalSince(lastEventDate)
             let incomeForPeriod = currentPerSecondRate * secondsAtCurrentRate
-            distributeToBuckets(amount: incomeForPeriod, seconds: secondsAtCurrentRate)
+            distributeToBuckets(amount: incomeForPeriod, duration: secondsAtCurrentRate)
             handleFinishedBuckets()
             
             switch event {
@@ -183,30 +183,27 @@ struct AppData: Codable, Equatable {
                 // Update rate and last change date
                 currentPerSecondRate = setMonthlyRate.rate / secondsPerMonth
                 
-            case .createBucket(let bucket):
-                buckets.append(bucket)
-                bucketInfo[bucket.id] = (0.0, 0.0)
+            case .addBucket(let addBucket):
+                buckets[addBucket.id] = addBucket.bucketToAdd
+                bucketInfo[addBucket.id] = (0.0, 0.0)
                 
             case .updateBucket(let update):
-                if let index = buckets.firstIndex(where: { $0.id == update.bucketToUpdate.id }) {
-                    buckets[index] = update.bucketToUpdate
+                if buckets[update.bucketToUpdate] != nil {
+                    buckets[update.bucketToUpdate] = update.newBucket
                 }
                 
             case .deleteBucket(_):
                 fatalError("Encountered a .deleteBucket event - should never happen")
                 
             case .dumpBucket(let dumpBucket):
-                if let index = buckets.firstIndex(where: {bucket in
-                    bucket.id == dumpBucket.bucketToDump
-                })
+                if let bucket = buckets[dumpBucket.bucketToDump]
                 {
-                    let bucket = buckets[index]
                     if bucket.allowsDump {
-                        mainBalance += bucketInfo[bucket.id]!.amount
-                        bucketInfo[bucket.id]!.amount = 0
+                        mainBalance += bucketInfo[dumpBucket.bucketToDump]!.amount
+                        bucketInfo[dumpBucket.bucketToDump]!.amount = 0
                         if !bucket.recur {
-                            bucketInfo.removeValue(forKey: bucket.id)
-                            buckets.remove(at: index)
+                            bucketInfo.removeValue(forKey: dumpBucket.bucketToDump)
+                            buckets.removeValue(forKey: dumpBucket.bucketToDump)
                         }
                     }
                 }
@@ -222,12 +219,12 @@ struct AppData: Codable, Equatable {
         // Calculate income from last rate change to the specified date
         let secondsAtCurrentRate = date.timeIntervalSince(lastEventDate)
         let finalIncomeForPeriod = currentPerSecondRate * secondsAtCurrentRate
-        distributeToBuckets(amount: finalIncomeForPeriod, seconds: secondsAtCurrentRate)
+        distributeToBuckets(amount: finalIncomeForPeriod, duration: secondsAtCurrentRate)
         handleFinishedBuckets()
         
         // Prepare the result
-        let bucketResults = buckets.map { bucket in
-            (bucket: bucket, amount: bucketInfo[bucket.id]?.amount ?? 0.0, perSecondRate: bucketInfo[bucket.id]?.perSecondRate ?? 0.0)
+        let bucketResults = buckets.map { (id, bucket) in
+            (bucket: bucket, amount: bucketInfo[id]?.amount ?? 0.0, perSecondRate: bucketInfo[id]?.perSecondRate ?? 0.0)
         }
         
         return (mainBalance: mainBalance, buckets: bucketResults)
@@ -238,48 +235,49 @@ struct AppData: Codable, Equatable {
             // First, handle byDuration buckets
             // As they have priority over the main balance and the share buckets
             do {
-                let byDurationBuckets = buckets.filter {
-                    if case .byDuration = $0.contributionMode { return true }
+                let byDurationBuckets: [(UUID, Bucket)] = Array(buckets.filter { (_, bucket) in
+                    if case .byDuration = bucket.contributionMode { return true }
                     return false
-                }
+                })
                 let totalByDurationPerSecondRate = byDurationBuckets.reduce(0.0) { sum, bucket in
-                    if case .byDuration(let interval) = bucket.contributionMode {
+                    let (_, bucket) = bucket
+                    if case .byDuration(_, let interval) = bucket.contributionMode {
                         return sum + (bucket.targetAmount / Double(interval))
                     }
                     return sum
                 }
                 let amountToDistributeToByDurationBuckets = min(amount, totalByDurationPerSecondRate * duration)
-                let byDurationDistributees = byDurationBuckets.map({bucket in
-                    guard case .byDuration(let interval) = bucket.contributionMode else {
+                let byDurationDistributees = byDurationBuckets.map({(id, bucket) in
+                    guard case .byDuration(_, let interval) = bucket.contributionMode else {
                         fatalError("This should never happen")
                     }
                     let share = bucket.targetAmount / Double(interval)
-                    return (cap: (bucket.targetAmount - bucketInfo[bucket.id]!.amount) as Double?, loop: bucket.recur, share: share)
+                    return (cap: (bucket.targetAmount - bucketInfo[id]!.amount) as Double?, share: share)
                 })
                 
                 let byDurationBucketDistributions = Bucket.distributeAccordingToShares(amount: amountToDistributeToByDurationBuckets, distributees: byDurationDistributees)
                 remainingAmount = max(amount - amountToDistributeToByDurationBuckets + byDurationBucketDistributions.remainder, 0) // Shouldn't be less than 0 according to math, but sometimes floating point arithmetic thinks differently
                 
                 for (index, distribution) in byDurationBucketDistributions.distributions.enumerated() {
-                    let bucket = byDurationBuckets[index]
-                    let info = bucketInfo[bucket.id]!
+                    let (id, bucket) = byDurationBuckets[index]
+                    let info = bucketInfo[id]!
                     let newAmount = info.amount + distribution
-                    let newPerSecondRate = distribution / seconds
-                    bucketInfo[bucket.id] = (newAmount, newPerSecondRate)
+                    let newPerSecondRate = distribution / duration
+                    bucketInfo[id] = (newAmount, newPerSecondRate)
                 }
             }
             
             // Then, handle share buckets and main balance
             do {
-                let shareBuckets = buckets.filter {
-                    if case .share = $0.contributionMode { return true }
+                let shareBuckets = Array(buckets.filter { (_, bucket) in
+                    if case .share = bucket.contributionMode { return true }
                     return false
-                }
-                var shareDistributees = shareBuckets.map({bucket in
+                })
+                var shareDistributees = shareBuckets.map({(id, bucket) in
                     guard case .share(let share) = bucket.contributionMode else {
                         fatalError("This should never happen")
                     }
-                    return (cap: (bucket.targetAmount - bucketInfo[bucket.id]!.amount) as Double?, share: share)
+                    return (cap: (bucket.targetAmount - bucketInfo[id]!.amount) as Double?, share: share)
                 })
                 
                 // Reserve the first share distribution for the main balance
@@ -287,36 +285,36 @@ struct AppData: Codable, Equatable {
                 let shareBucketDistributions = Bucket.distributeAccordingToShares(amount: remainingAmount, distributees: shareDistributees)
                 
                 for (index, distribution) in shareBucketDistributions.distributions[1...].enumerated() {
-                    let bucket = shareBuckets[index]
-                    let info = bucketInfo[bucket.id]!
+                    let (id, bucket) = shareBuckets[index]
+                    let info = bucketInfo[id]!
                     let newAmount = info.amount + distribution
-                    let newPerSecondRate = distribution / seconds
-                    bucketInfo[bucket.id] = (newAmount, newPerSecondRate)
+                    let newPerSecondRate = distribution / duration
+                    bucketInfo[id] = (newAmount, newPerSecondRate)
                 }
+                
+                // Remaining amount goes to main balance
+                mainBalance += shareBucketDistributions.distributions[0]
             }
-
-            // Remaining amount goes to main balance
-            mainBalance += shareBucketDistributions.distributions[0]
         }
         
         func handleFinishedBuckets() {
-            buckets = buckets.compactMap({bucket in
-                let onFinish = finishBucketIfNecessary(bucket)
+            buckets = Dictionary(uniqueKeysWithValues: buckets.compactMap({(id, bucket) in
+                let onFinish = finishBucketIfNecessary(id, bucket)
                 if let onFinish = onFinish {
                     switch onFinish {
                     case .replace(let bucket):
-                        bucketInfo[bucket.id] = (0.0, 0.0)
-                        return bucket
+                        bucketInfo[id] = (0.0, 0.0)
+                        return (id, bucket)
                     case .delete:
-                        bucketInfo.removeValue(forKey: bucket.id)
+                        bucketInfo.removeValue(forKey: id)
                         return nil
                     }
                 }
                 // Bucket isn't finished yet, don't do anything to it
                 else {
-                    return bucket
+                    return (id, bucket)
                 }
-            })
+            }))
         }
         
         enum BucketFinished {
@@ -326,8 +324,8 @@ struct AppData: Codable, Equatable {
         
         // Returns true if we should keep the bucket
         // TODO: take the current time and return the time the bucket finished as well (only different for .byDuration buckets)
-        func finishBucketIfNecessary(_ bucket: Bucket) -> BucketFinished? {
-            if bucketInfo[bucket.id]!.amount >= bucket.targetAmount /* TODO: .byDuration buckets should only be finished if the date is after their startTime+duration */
+        func finishBucketIfNecessary(_ id: UUID, _ bucket: (Bucket)) -> BucketFinished? {
+            if bucketInfo[id]!.amount >= bucket.targetAmount /* TODO: .byDuration buckets should only be finished if the date is after their startTime+duration */
             {
                 switch bucket.whenFinished {
                     
@@ -335,7 +333,7 @@ struct AppData: Codable, Equatable {
                     // waitToDump buckets are always finished manually
                     return nil
                 case .autoDump:
-                    mainBalance += bucketInfo[bucket.id]!.amount
+                    mainBalance += bucketInfo[id]!.amount
                 case .destroy:
                     break
                 }
@@ -353,7 +351,6 @@ struct AppData: Codable, Equatable {
             }
         }
     }
-
 }
 
 struct SetMonthlyRate: Codable, Equatable, Identifiable {
@@ -410,7 +407,7 @@ enum Event: Codable, Identifiable, Equatable {
     case setMonthlyRate(SetMonthlyRate)
     case setStartDate(SetStartDate)
     
-    case createBucket(AddBucket)
+    case addBucket(AddBucket)
     case updateBucket(UpdateBucket)
     case dumpBucket(DumpBucket)
     case deleteBucket(DeleteBucket)
@@ -423,8 +420,8 @@ enum Event: Codable, Identifiable, Equatable {
             return setMonthlyRate.id
         case .setStartDate(let setStartDate):
             return setStartDate.id
-        case .createBucket(let bucket):
-            return bucket.id
+        case .addBucket(let addBucket):
+            return addBucket.id
         case .updateBucket(let updateBucket):
             return updateBucket.id
         case .dumpBucket(let dumpBucket):
@@ -442,7 +439,7 @@ enum Event: Codable, Identifiable, Equatable {
             return event.dateAdded
         case .setStartDate(let event):
             return event.dateAdded
-        case .createBucket(let bucket):
+        case .addBucket(let bucket):
             return bucket.dateAdded
         case .updateBucket(let updateBucket):
             return updateBucket.dateAdded
@@ -467,12 +464,12 @@ enum Event: Codable, Identifiable, Equatable {
         // Second pass: Filter out events related to deleted buckets
         for event in events {
             switch event {
-            case .createBucket(let bucket):
+            case .addBucket(let bucket):
                 if !deletedBucketIDs.contains(bucket.id) {
                     filteredEvents.append(event)
                 }
             case .updateBucket(let updateBucket):
-                if !deletedBucketIDs.contains(updateBucket.bucketToUpdate.id) {
+                if !deletedBucketIDs.contains(updateBucket.bucketToUpdate) {
                     filteredEvents.append(event)
                 }
             case .dumpBucket(let dumpBucket):
@@ -505,7 +502,8 @@ struct UpdateBucket: Codable, Identifiable, Equatable {
     var id: UUID = UUID()
     var dateAdded: Date = Date()
     
-    let bucketToUpdate: Bucket
+    let bucketToUpdate: UUID
+    let newBucket: Bucket
 }
 
 struct DumpBucket: Codable, Identifiable, Equatable
@@ -536,7 +534,6 @@ struct Bucket: Codable, Equatable {
         case destroy
     }
 
-    var id: UUID = UUID()
     let name: String
     let targetAmount: Double
     let contributionMode: ContributionMode
@@ -545,13 +542,13 @@ struct Bucket: Codable, Equatable {
     
     enum FillMode {
         case loop(Double)
-        case stop(Double)
+        case max(Double)
         
         var cap: Double {
             switch self {
             case .loop(let d):
                 return d
-            case .stop(let d):
+            case .max(let d):
                 return d
             }
         }
@@ -562,8 +559,9 @@ struct Bucket: Codable, Equatable {
     static func distributeAccordingToShares(amount: Double, duration: TimeInterval, distributees: [(fill: FillMode?, starting: TimeInterval, share: Double)])
     -> (
         remainder: Double, /* Any amount that has not been allocated. If any distributee is has a */
-        distributions: [(time: TimeInterval, balances: [Double])] /* one entry for every time there is a slope change, and two entries for discontinuities (which occur for FillMode.loop) */
-    ) { */
+        distributions: [(time: TimeInterval, balances: [Double])] /* one entry for every time there is a slope change) */
+    ) { 
+    */ 
      static func distributeAccordingToShares(amount: Double, distributees: [(cap: Double?, share: Double)]) -> (remainder: Double, distributions: [Double]) {
         var remainingAmount = amount
         var distributions = [Double](repeating: 0, count: distributees.count)
