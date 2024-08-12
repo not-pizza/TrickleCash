@@ -70,7 +70,7 @@ class BucketTests: XCTestCase {
         XCTAssertEqual(result2.buckets.count, 0)
     }
     
-    func testBucketDumpMidFill() {
+    func testBucketDumpDoesntRemvoeRecuringBucket() {
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
         let twoMonthsLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth * 2), to: appData.startDate)!
         let threeMonthsLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth * 3), to: appData.startDate)!
@@ -90,12 +90,43 @@ class BucketTests: XCTestCase {
             .createBucket(bucket),
             .dumpBucket(DumpBucket(dateAdded: twoMonthsLater, bucketToDump: bucket.id))
         ]
-
+        
         let result2 = appData.calculateTotalIncome(asOf: threeMonthsLater)
         
         XCTAssertEqual(result2.mainBalance, 8727.27, accuracy: 0.01) // - 500 (new bucket) + 272.73 (dumped)
         XCTAssertEqual(result2.buckets.count, 1)
         XCTAssertEqual(result2.buckets[0].amount, 272.73, accuracy: 0.01) // New bucket filling up again
+    }
+
+    func testRecurringBucketRefillsEvenWithoutEvent() {
+        let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
+        let oneMonthLaterMinusOneSecond = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth - 1), to: appData.startDate)!
+        
+        let bucket = Bucket(dateAdded: appData.startDate, name: "Savings", targetAmount: 300, contributionMode: .share(share: 10), whenFinished: .autoDump, recur: true)
+        
+        appData.events = [
+            .createBucket(bucket),
+        ]
+        
+        do {
+            let result = appData.calculateTotalIncome(asOf: oneMonthLaterMinusOneSecond)
+            XCTAssertEqual(result.buckets.count, 1)
+            XCTAssertEqual(result.mainBalance + result.buckets[0].amount, 3000, accuracy: 0.01)
+            
+            // The bucket hasn't recurred yet so it hasn't gotten added to the main balance
+            XCTAssertEqual(result.mainBalance, 2700, accuracy: 0.01)
+            XCTAssertEqual(result.buckets[0].amount, 300, accuracy: 0.01)
+        }
+        
+        do {
+            let result = appData.calculateTotalIncome(asOf: oneMonthLater)
+            XCTAssertEqual(result.buckets.count, 1)
+            XCTAssertEqual(result.mainBalance + result.buckets[0].amount, 3000, accuracy: 0.01)
+            
+            // The bucket hasn't recurred yet so it hasn't gotten added to the main balance
+            XCTAssertEqual(result.mainBalance, 3000, accuracy: 0.01)
+            XCTAssertEqual(result.buckets[0].amount, 0, accuracy: 0.01)
+        }
     }
     
     func testByDurationBucket() {
@@ -274,7 +305,6 @@ class DistributeAccordingToSharesTests: XCTestCase {
             XCTAssertEqual(distribution.cumulativeAmount, 16.667, accuracy: 0.001)
         }
     }
-    
     
     func testInsufficientAmount() {
         let amount = 10.0
