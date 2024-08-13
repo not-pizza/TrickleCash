@@ -211,82 +211,105 @@ class BucketTests: XCTestCase {
 
 
 class DistributeAccordingToSharesTests: XCTestCase {
-    
     func testEqualSharesNoCaps() {
         let amount = 100.0
-        let distributees = [(cap: nil as Double?, share: 1.0), (cap: nil, share: 1.0), (cap: nil, share: 1.0)]
-        let result = Bucket.distributeAccordingToShares(amount: amount, distributees: distributees)
+        let distributees = [
+            Distributee(cap: nil, share: 1.0),
+            Distributee(cap: nil, share: 1.0),
+            Distributee(cap: nil, share: 1.0)
+        ]
+        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
         
         XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
         XCTAssertEqual(result.distributions.count, 3)
         for distribution in result.distributions {
-            XCTAssertEqual(distribution, 33.333, accuracy: 0.001)
+            XCTAssertEqual(distribution.cumulativeAmount, 33.333, accuracy: 0.001)
         }
     }
     
     func testUnequalSharesNoCaps() {
         let amount = 100.0
-        let distributees = [(cap: nil as Double?, share: 1.0), (cap: nil, share: 2.0), (cap: nil, share: 3.0)]
-        let result = Bucket.distributeAccordingToShares(amount: amount, distributees: distributees)
+        let distributees = [
+            Distributee(cap: nil, share: 1.0),
+            Distributee(cap: nil, share: 2.0),
+            Distributee(cap: nil, share: 3.0)
+        ]
+        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
+
         
         XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
         XCTAssertEqual(result.distributions.count, 3)
-        XCTAssertEqual(result.distributions[0], 16.667, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[1], 33.333, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[2], 50.0, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[0].cumulativeAmount, 16.667, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[1].cumulativeAmount, 33.333, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[2].cumulativeAmount, 50.0, accuracy: 0.001)
     }
     
     func testWithCaps() {
         let amount = 100.0
-        let distributees = [(cap: 20.0 as Double?, share: 1.0), (cap: 30.0, share: 1.0), (cap: nil, share: 1.0)]
-        let result = Bucket.distributeAccordingToShares(amount: amount, distributees: distributees)
-        
+        let distributees = [
+            Distributee(cap: 20.0, share: 1.0),
+            Distributee(cap: 30.0, share: 1.0),
+            Distributee(cap: nil, share: 1.0)
+        ]
+        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
+
         XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
         XCTAssertEqual(result.distributions.count, 3)
-        XCTAssertEqual(result.distributions[0], 20.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[1], 30.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[2], 50.0, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[0].cumulativeAmount, 20.0, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[1].cumulativeAmount, 30.0, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[2].cumulativeAmount, 50.0, accuracy: 0.001)
     }
     
     func testExceedingAmount() {
         let amount = 50.0
-        let distributees = [(cap: 20.0 as Double?, share: 1.0), (cap: 30.0, share: 1.0), (cap: nil, share: 1.0)]
-        let result = Bucket.distributeAccordingToShares(amount: amount, distributees: distributees)
-        
+        let distributees = [
+            Distributee(cap: 20.0, share: 1.0),
+            Distributee(cap: 30.0, share: 1.0),
+            Distributee(cap: nil, share: 1.0)
+        ]
+        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
         XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
         XCTAssertEqual(result.distributions.count, 3)
         for distribution in result.distributions {
-            XCTAssertEqual(distribution, 16.667, accuracy: 0.001)
+            XCTAssertEqual(distribution.cumulativeAmount, 16.667, accuracy: 0.001)
         }
     }
     
     
     func testInsufficientAmount() {
         let amount = 10.0
-        let distributees = [(cap: 20.0 as Double?, share: 1.0), (cap: 30.0, share: 2.0), (cap: nil, share: 3.0)]
-        let result = Bucket.distributeAccordingToShares(amount: amount, distributees: distributees)
-        
+        let distributees = [
+            Distributee(cap: 20.0, share: 1.0),
+            Distributee(cap: 30.0, share: 2.0),
+            Distributee(cap: nil, share: 3.0)
+        ]
+        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
+
         XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
         XCTAssertEqual(result.distributions.count, 3)
-        XCTAssertEqual(result.distributions[0], 1.667, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[1], 3.333, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[2], 5.0, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[0].cumulativeAmount, 1.667, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[1].cumulativeAmount, 3.333, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[2].cumulativeAmount, 5.0, accuracy: 0.001)
     }
     
     func testZeroAmount() {
         let amount = 0.0
-        let distributees = [(cap: nil as Double?, share: 1.0), (cap: nil, share: 1.0)]
-        let result = Bucket.distributeAccordingToShares(amount: amount, distributees: distributees)
-        
+        let distributees = [
+            Distributee(cap: nil, share: 1.0),
+            Distributee(cap: nil, share: 1.0)
+        ]
+        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
+
         XCTAssertEqual(result.remainder, 0.0)
-        XCTAssertEqual(result.distributions, [0.0, 0.0])
+        XCTAssertEqual(result.distributions[0].cumulativeAmount, 0.0, accuracy: 0.001)
+        XCTAssertEqual(result.distributions[1].cumulativeAmount, 0.0, accuracy: 0.001)
     }
     
     func testNoDistributees() {
         let amount = 100.0
-        let distributees: [(cap: Double?, share: Double)] = []
-        let result = Bucket.distributeAccordingToShares(amount: amount, distributees: distributees)
-        
+        let distributees: [Distributee] = []
+        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
+
         XCTAssertEqual(result.remainder, 100.0)
         XCTAssertEqual(result.distributions, [])
     }
