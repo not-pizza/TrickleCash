@@ -252,17 +252,17 @@ struct AppData: Codable, Equatable {
                         fatalError("This should never happen")
                     }
                     let share = bucket.targetAmount / Double(interval)
-                    return (cap: (bucket.targetAmount - bucketInfo[id]!.amount) as Double?, share: share)
+                    return Distributee(cap: (bucket.targetAmount - bucketInfo[id]!.amount) as Double?, share: share)
                 })
                 
-                let byDurationBucketDistributions = Bucket.distributeAccordingToShares(amount: amountToDistributeToByDurationBuckets, distributees: byDurationDistributees)
+                let byDurationBucketDistributions = DistributionSequence.distribute(amount: amountToDistributeToByDurationBuckets, distributees: byDurationDistributees)
                 remainingAmount = max(amount - amountToDistributeToByDurationBuckets + byDurationBucketDistributions.remainder, 0) // Shouldn't be less than 0 according to math, but sometimes floating point arithmetic thinks differently
                 
                 for (index, distribution) in byDurationBucketDistributions.distributions.enumerated() {
                     let (id, bucket) = byDurationBuckets[index]
                     let info = bucketInfo[id]!
-                    let newAmount = info.amount + distribution
-                    let newPerSecondRate = distribution / duration
+                    let newAmount = info.amount + distribution.cumulativeAmount
+                    let newPerSecondRate = distribution.cumulativeAmount / duration
                     bucketInfo[id] = (newAmount, newPerSecondRate)
                 }
             }
@@ -277,23 +277,23 @@ struct AppData: Codable, Equatable {
                     guard case .share(let share) = bucket.contributionMode else {
                         fatalError("This should never happen")
                     }
-                    return (cap: (bucket.targetAmount - bucketInfo[id]!.amount) as Double?, share: share)
+                    return Distributee(cap: (bucket.targetAmount - bucketInfo[id]!.amount) as Double?, share: share)
                 })
                 
                 // Reserve the first share distribution for the main balance
-                shareDistributees.insert((cap: nil as Double?, share: 10), at: 0)
-                let shareBucketDistributions = Bucket.distributeAccordingToShares(amount: remainingAmount, distributees: shareDistributees)
+                shareDistributees.insert(Distributee(cap: nil as Double?, share: 10), at: 0)
+                let shareBucketDistributions = DistributionSequence.distribute(amount: remainingAmount, distributees: shareDistributees)
                 
                 for (index, distribution) in shareBucketDistributions.distributions[1...].enumerated() {
                     let (id, bucket) = shareBuckets[index]
                     let info = bucketInfo[id]!
-                    let newAmount = info.amount + distribution
-                    let newPerSecondRate = distribution / duration
+                    let newAmount = info.amount + distribution.cumulativeAmount
+                    let newPerSecondRate = distribution.cumulativeAmount / duration
                     bucketInfo[id] = (newAmount, newPerSecondRate)
                 }
                 
                 // Remaining amount goes to main balance
-                mainBalance += shareBucketDistributions.distributions[0]
+                mainBalance += shareBucketDistributions.distributions[0].cumulativeAmount
             }
         }
         
@@ -554,67 +554,6 @@ struct Bucket: Codable, Equatable {
         }
     }
     
-    /* 
-    this might need to be:
-    static func distributeAccordingToShares(amount: Double, duration: TimeInterval, distributees: [(fill: FillMode?, starting: TimeInterval, share: Double)])
-    -> (
-        remainder: Double, /* Any amount that has not been allocated. If any distributee is has a */
-        distributions: [(time: TimeInterval, balances: [Double])] /* one entry for every time there is a slope change) */
-    ) { 
-    */ 
-     static func distributeAccordingToShares(amount: Double, distributees: [(cap: Double?, share: Double)]) -> (remainder: Double, distributions: [Double]) {
-        var remainingAmount = amount
-        var distributions = [Double](repeating: 0, count: distributees.count)
-        var remainingDistributees = distributees.enumerated().map { (index: $0, cap: $1.cap, share: $1.share) }
-
-        while remainingAmount > Double.ulpOfOne && !remainingDistributees.isEmpty {
-            let totalShares = remainingDistributees.reduce(0) { $0 + $1.share }
-            let cappedDistributees = remainingDistributees.compactMap({
-                if let cap = $0.cap {
-                    return (index: $0.index, cap: cap, share: $0.share)
-                } else {
-                    return nil
-                }
-            })
-            
-            var toDistributeThisRound: Double
-            if let soonestCap = cappedDistributees.min(by: {
-                ($0.cap - distributions[$0.index]) / $0.share < ($1.cap - distributions[$1.index]) / $0.share })
-            {
-                toDistributeThisRound = min(remainingAmount, soonestCap.cap / (soonestCap.share / totalShares))
-            }
-            else
-            {
-                toDistributeThisRound = remainingAmount
-            }
-
-            let amountPerShare = toDistributeThisRound / totalShares
-
-            remainingDistributees = remainingDistributees.filter { distributee in
-                let shareAmount = distributee.share * amountPerShare
-
-                if let cap = distributee.cap {
-                    let remainingCap = cap - distributions[distributee.index]
-                    let actualDistribution = min(shareAmount, remainingCap)
-                    distributions[distributee.index] += actualDistribution
-                    remainingAmount -= actualDistribution
-                    
-                    if actualDistribution >= remainingCap {
-                        return false
-                    }
-                } else {
-                    let actualDistribution = shareAmount
-                    distributions[distributee.index] += actualDistribution
-                    remainingAmount -= actualDistribution
-                }
-
-                return true
-            }
-        }
-
-        return (remainder: remainingAmount, distributions: distributions)
-    }
-    
     var allowsDump: Bool {
         switch self.whenFinished {
         case .destroy:
@@ -649,6 +588,14 @@ struct DistributionSequence: Sequence {
         return DistributionIterator(distributees: distributees)
     }
     
+    /*
+    this might need to be:
+    static func distribute(amount: Double, duration: TimeInterval, distributees: [(fill: FillMode?, starting: TimeInterval, share: Double)])
+    -> (
+        remainder: Double, /* Any amount that has not been allocated. If any distributee is has a */
+        distributions: [(time: TimeInterval, balances: [Double])] /* one entry for every time there is a slope change) */
+    ) {
+    */
     static func distribute(amount: Double, distributees: [Distributee]) -> (remainder: Double, distributions: [Distribution]) {
         let sequence = DistributionSequence(distributees: distributees)
         let mostRecentSlopeChangeAtAmount = lastTrueElement(
