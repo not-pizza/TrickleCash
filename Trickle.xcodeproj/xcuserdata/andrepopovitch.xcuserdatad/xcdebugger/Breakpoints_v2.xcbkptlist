@@ -62,10 +62,10 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "454"
-            endingLineNumber = "454"
-            landmarkName = "DeleteBucket"
-            landmarkType = "14">
+            startingLineNumber = "447"
+            endingLineNumber = "447"
+            landmarkName = "FinishAction"
+            landmarkType = "13">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -78,10 +78,10 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "436"
-            endingLineNumber = "436"
-            landmarkName = "UpdateBucket"
-            landmarkType = "14">
+            startingLineNumber = "429"
+            endingLineNumber = "429"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -94,9 +94,9 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "437"
-            endingLineNumber = "437"
-            landmarkName = "UpdateBucket"
+            startingLineNumber = "430"
+            endingLineNumber = "430"
+            landmarkName = "DumpBucket"
             landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
@@ -144,7 +144,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "97"
             endingLineNumber = "97"
-            landmarkName = "testBucketDumpDoesntRemvoeRecuringBucket()"
+            landmarkName = "testBucketDumpDoesntRemoveRecuringBucket()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -160,7 +160,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "95"
             endingLineNumber = "95"
-            landmarkName = "testBucketDumpDoesntRemvoeRecuringBucket()"
+            landmarkName = "testBucketDumpDoesntRemoveRecuringBucket()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -224,7 +224,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "85"
             endingLineNumber = "85"
-            landmarkName = "testBucketDumpDoesntRemvoeRecuringBucket()"
+            landmarkName = "testBucketDumpDoesntRemoveRecuringBucket()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -254,9 +254,9 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "430"
-            endingLineNumber = "430"
-            landmarkName = "AddBucket"
+            startingLineNumber = "423"
+            endingLineNumber = "423"
+            landmarkName = "UpdateBucket"
             landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>

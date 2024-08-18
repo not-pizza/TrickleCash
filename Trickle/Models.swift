@@ -174,7 +174,8 @@ struct AppData: Codable, Equatable {
             // Calculate income up to this event change
             let secondsAtCurrentRate = event.date.timeIntervalSince(lastEventDate)
             let incomeForPeriod = currentPerSecondRate * secondsAtCurrentRate
-            distributeToBuckets(amount: incomeForPeriod, duration: secondsAtCurrentRate)
+            let distributedToBuckets = distributeToBuckets(duration: secondsAtCurrentRate)
+            mainBalance += incomeForPeriod - distributedToBuckets
             
             switch event {
             case .setMonthlyRate(let setMonthlyRate):
@@ -195,12 +196,15 @@ struct AppData: Codable, Equatable {
             case .dumpBucket(let dumpBucket):
                 if let (bucket, amount) = buckets[dumpBucket.bucketToDump]
                 {
-                    if bucket.allowsDump {
+                    let (newBucket, dumpIntoBalance) = bucket.dump(tryingAutomatically: false)
+                    if dumpIntoBalance {
                         mainBalance += amount
-                        buckets[dumpBucket.bucketToDump]!.amount = 0
-                        if !bucket.recur {
-                            buckets.removeValue(forKey: dumpBucket.bucketToDump)
-                        }
+                    }
+                    if let newBucket = newBucket {
+                        buckets[dumpBucket.bucketToDump] = (newBucket, 0)
+                    }
+                    else {
+                        buckets.removeValue(forKey: dumpBucket.bucketToDump)
                     }
                 }
                 
@@ -214,72 +218,58 @@ struct AppData: Codable, Equatable {
         
         // Calculate income from last rate change to the specified date
         let secondsAtCurrentRate = date.timeIntervalSince(lastEventDate)
-        let finalIncomeForPeriod = currentPerSecondRate * secondsAtCurrentRate
-        distributeToBuckets(amount: finalIncomeForPeriod, duration: secondsAtCurrentRate)
+        let incomeForPeriod = currentPerSecondRate * secondsAtCurrentRate
+        let distributedToBuckets = distributeToBuckets(duration: secondsAtCurrentRate)
+        mainBalance += incomeForPeriod - distributedToBuckets
         
         return (mainBalance: mainBalance, buckets: Array(buckets.values))
         
-        func distributeToBuckets(amount: Double, duration: TimeInterval) {
-            var distributed = 0.0;
-            buckets = buckets.compactMapValues({b in
-                let (bucket, previousAmount) = b
-                let amountInDuration = bucket.income * duration
-                if amountInDuration + previousAmount < bucket.targetAmount {
-                    distributed += amountInDuration
-                    return (bucket, amountInDuration + previousAmount)
-                }
-                else {
-                    // Fill up the bucket
-                    // TODO: buggy for recurring buckets
-                    let toDistribute = bucket.targetAmount - previousAmount
-                    distributed += toDistribute
-                    let bucketFilledAfter = toDistribute / bucket.income
-                    mainBalance += amountInDuration - toDistribute
-                    let (newBucket, dumpIntoBalance) = finishBucket(bucket: bucket, amount: bucket.targetAmount)
-                    if dumpIntoBalance {
-                        mainBalance += bucket.targetAmount
+        func distributeToBuckets(duration: TimeInterval) -> Double {
+            var distributed = 0.0
+            var remainingDuration = duration
+            
+            buckets = buckets.compactMapValues { (bucket, previousAmount) in
+                var current = (bucket: bucket, amount: previousAmount)
+                
+                while remainingDuration > 0 {
+                    let amountInDuration = current.bucket.income * remainingDuration
+                    let amountNeeded = current.bucket.targetAmount - current.amount
+                    
+                    if amountInDuration <= amountNeeded {
+                        // Not enough to fill the bucket
+                        current.amount += amountInDuration
+                        distributed += amountInDuration
+                        remainingDuration = 0
+                    } else {
+                        // Enough to fill the bucket
+                        let timeToFill = amountNeeded / current.bucket.income
+                        current.amount = current.bucket.targetAmount
+                        distributed += amountNeeded
+                        remainingDuration -= timeToFill
+                        
+                        let (new, dumpIntoBalance) = current.bucket.dump(tryingAutomatically: true)
+                        
+                        if dumpIntoBalance {
+                            mainBalance += current.bucket.targetAmount
+                        }
+                        
+                        if let new = new {
+                            current = (new, 0)
+                        }
+                        else {
+                            return nil
+                        }
                     }
-                    return newBucket
                 }
-            })
-            mainBalance += amount - distributed
+                
+                return current
+            }
+            
+            return distributed
         }
-        
         enum BucketFinished {
             case replace(Bucket)
             case delete
-        }
-        
-        func finishBucket(bucket: Bucket, amount: Double) -> (newBucket: (bucket: Bucket, amount: Double)?, dumpIntoBalance: Bool) {
-            
-            var dumpIntoBalance = false;
-            
-            switch bucket.whenFinished {
-            
-                
-            case .waitToDump:
-                // waitToDump buckets are always finished manually
-                return (newBucket: (bucket, amount), dumpIntoBalance: false)
-            case .autoDump:
-                dumpIntoBalance = true
-            case .destroy:
-                break
-            }
-            
-            if let recurrancePeriod = bucket.recur {
-                let newBucket = Bucket(
-                    name: bucket.name,
-                    targetAmount: bucket.targetAmount,
-                    income: bucket.targetAmount / recurrancePeriod,
-                    whenFinished: bucket.whenFinished,
-                    recur: bucket.recur
-                )
-                return (newBucket: (bucket, 0), dumpIntoBalance)
-            }
-            else {
-                return (newBucket: nil, dumpIntoBalance)
-            }
-            
         }
     }
 }
@@ -474,6 +464,38 @@ struct Bucket: Codable, Equatable {
             return true
         }
     }
+    
+    func dump(tryingAutomatically: Bool) -> (newBucket: Bucket?, dumpIntoBalance: Bool) {
+        
+        var dumpIntoBalance = false;
+        
+        switch self.whenFinished {
+        
+            
+        case .waitToDump:
+            dumpIntoBalance = !tryingAutomatically
+        case .autoDump:
+            dumpIntoBalance = true
+        case .destroy:
+            break
+        }
+        
+        if let recurrancePeriod = self.recur {
+            let newBucket = Bucket(
+                name: self.name,
+                targetAmount: self.targetAmount,
+                income: self.targetAmount / recurrancePeriod,
+                whenFinished: self.whenFinished,
+                recur: self.recur
+            )
+            return (newBucket: newBucket, dumpIntoBalance)
+        }
+        else {
+            return (newBucket: nil, dumpIntoBalance)
+        }
+        
+    }
+
 }
 
 // Where all our main app data is stored
