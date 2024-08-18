@@ -225,9 +225,9 @@ struct AppData: Codable, Equatable {
         
         func distributeToBuckets(duration: TimeInterval) -> Double {
             var distributed = 0.0
-            var remainingDuration = duration
             
             buckets = buckets.compactMapValues { (bucket, previousAmount) in
+                var remainingDuration = duration
                 var current = (bucket: bucket, amount: previousAmount)
                 
                 while remainingDuration > 0 {

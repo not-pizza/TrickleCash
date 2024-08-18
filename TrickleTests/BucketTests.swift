@@ -129,4 +129,23 @@ class BucketTests: XCTestCase {
             XCTAssertEqual(result.buckets[0].amount, 0, accuracy: 0.01)
         }
     }
+    
+    func testMultipleBuckets() {
+        let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
+
+        let bucket1 = Bucket(name: "Savings", targetAmount: 1000, income: 500 / secondsPerMonth, whenFinished: .waitToDump, recur: nil)
+        let bucket2 = Bucket(name: "Emergency Fund", targetAmount: 500, income: 250 / secondsPerMonth, whenFinished: .waitToDump, recur: nil)
+        
+        appData.events = [
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket1)),
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket2))
+        ]
+        
+        let result = appData.calculateTotalIncome(asOf: oneMonthLater)
+        
+        XCTAssertEqual(result.mainBalance, 2250, accuracy: 0.01)
+        XCTAssertEqual(result.buckets.count, 2)
+        XCTAssertEqual(result.buckets[0].amount, 500, accuracy: 0.01)
+        XCTAssertEqual(result.buckets[1].amount, 250, accuracy: 0.01)
+    }
 }
