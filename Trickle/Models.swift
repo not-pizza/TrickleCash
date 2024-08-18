@@ -195,12 +195,19 @@ struct AppData: Codable, Equatable {
             case .dumpBucket(let dumpBucket):
                 if let (bucket, amount) = buckets[dumpBucket.bucketToDump]
                 {
-                    let (newBucket, dumpIntoBalance) = bucket.dump(tryingAutomatically: false)
-                    if dumpIntoBalance {
+                    let (newBucket, doWithCash) = bucket.dump(dumpingManually: true)
+                    switch doWithCash {
+                    case .transfer:
                         mainBalance += amount
+                        buckets[dumpBucket.bucketToDump]!.amount = 0
+                    case .destroy:
+                        buckets[dumpBucket.bucketToDump]!.amount = 0
+                    case nil:
+                        break
                     }
+                    
                     if let newBucket = newBucket {
-                        buckets[dumpBucket.bucketToDump] = (newBucket, 0)
+                        buckets[dumpBucket.bucketToDump]!.bucket = newBucket
                     }
                     else {
                         buckets.removeValue(forKey: dumpBucket.bucketToDump)
@@ -246,14 +253,20 @@ struct AppData: Codable, Equatable {
                         distributed += amountNeeded
                         remainingDuration -= timeToFill
                         
-                        let (new, dumpIntoBalance) = current.bucket.dump(tryingAutomatically: true)
-                        
-                        if dumpIntoBalance {
-                            mainBalance += current.bucket.targetAmount
+                        let (new, doWithCash) = current.bucket.dump(dumpingManually: false)
+                        switch doWithCash {
+                        case .transfer:
+                            mainBalance += current.amount
+                            current.amount = 0
+                        case .destroy:
+                            current.amount = 0
+                        case nil:
+                            remainingDuration = 0
+                            break
                         }
                         
                         if let new = new {
-                            current = (new, 0)
+                            return (new, current.amount)
                         }
                         else {
                             return nil
@@ -464,37 +477,37 @@ struct Bucket: Codable, Equatable {
         }
     }
     
-    func dump(tryingAutomatically: Bool) -> (newBucket: Bucket?, dumpIntoBalance: Bool) {
-        
-        var dumpIntoBalance = false;
-        
-        switch self.whenFinished {
-        
-            
-        case .waitToDump:
-            dumpIntoBalance = !tryingAutomatically
-        case .autoDump:
-            dumpIntoBalance = true
-        case .destroy:
-            break
-        }
-        
+    enum DoWithCash {
+        case transfer
+        case destroy
+    }
+    
+    func dump(dumpingManually: Bool) -> (
+        newBucket: Bucket?,
+        result: DoWithCash?
+    ) {
+        var newBucket: Bucket? = nil
         if let recurrancePeriod = self.recur {
-            let newBucket = Bucket(
+            newBucket = Bucket(
                 name: self.name,
                 targetAmount: self.targetAmount,
                 income: self.targetAmount / recurrancePeriod,
                 whenFinished: self.whenFinished,
                 recur: self.recur
             )
-            return (newBucket: newBucket, dumpIntoBalance)
         }
-        else {
-            return (newBucket: nil, dumpIntoBalance)
+    
+        switch (self.whenFinished, dumpingManually) {
+        case (.waitToDump, false):
+            return (newBucket: self, result: nil)
+        case (.waitToDump, true):
+            return (newBucket: newBucket, result: .transfer)
+        case (.autoDump, _):
+            return (newBucket: newBucket, result: .transfer)
+        case (.destroy, _):
+            return (newBucket: newBucket, result: .destroy)
         }
-        
     }
-
 }
 
 // Where all our main app data is stored

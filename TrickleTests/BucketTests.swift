@@ -148,4 +148,34 @@ class BucketTests: XCTestCase {
         XCTAssertEqual(result.buckets[0].amount, 500, accuracy: 0.01)
         XCTAssertEqual(result.buckets[1].amount, 250, accuracy: 0.01)
     }
+    
+    func testExcessBucketIncome() {
+        let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
+        let twoMonthsLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth * 2), to: appData.startDate)!
+
+        // Create buckets with combined income greater than monthly rate
+        let bucket1 = Bucket(name: "Savings", targetAmount: 2000, income: 2000 / secondsPerMonth, whenFinished: .waitToDump, recur: nil)
+        let bucket2 = Bucket(name: "Emergency Fund", targetAmount: 1500, income: 1500 / secondsPerMonth, whenFinished: .waitToDump, recur: nil)
+        
+        appData.events = [
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket1)),
+            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket2))
+        ]
+        
+        // Check after one month
+        let result1 = appData.calculateTotalIncome(asOf: oneMonthLater)
+        
+        XCTAssertEqual(result1.mainBalance, -500, accuracy: 0.01)
+        XCTAssertEqual(result1.buckets.count, 2)
+        XCTAssertEqual(Set(result1.buckets.map({i in i.amount.rounded()})), [2000, 1500])
+        XCTAssertEqual(result1.mainBalance + result1.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
+        
+        // Check after two months
+        let result2 = appData.calculateTotalIncome(asOf: twoMonthsLater)
+        
+        XCTAssertEqual(result2.mainBalance, 6000 - 3500, accuracy: 0.01)
+        XCTAssertEqual(result2.buckets.count, 2)
+        XCTAssertEqual(Set(result1.buckets.map({i in i.amount.rounded()})), [2000, 1500])
+        XCTAssertEqual(result2.mainBalance + result2.buckets.reduce(0) {acc, i in acc + i.amount}, 6000, accuracy: 0.01)
+    }
 }
