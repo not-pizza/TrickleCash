@@ -266,7 +266,7 @@ struct AppData: Codable, Equatable {
                         }
                         
                         if let new = new {
-                            return (new, current.amount)
+                            current = (new, current.amount)
                         }
                         else {
                             return nil
