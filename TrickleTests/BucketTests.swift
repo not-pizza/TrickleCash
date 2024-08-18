@@ -34,7 +34,7 @@ class BucketTests: XCTestCase {
     func testBucketCreation() {
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
         
-        let bucket = Bucket(name: "Savings", targetAmount: 1000, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: false)
+        let bucket = Bucket(name: "Savings", targetAmount: 1000, income: 500 / secondsPerMonth, whenFinished: .waitToDump, recur: false)
         
         appData.events = [
             .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket))
@@ -42,15 +42,15 @@ class BucketTests: XCTestCase {
         
         let result = appData.calculateTotalIncome(asOf: oneMonthLater)
         
-        XCTAssertEqual(result.mainBalance, 3000 * 10.0 / 11.0, accuracy: 0.01) // 10/11 of 3000
+        XCTAssertEqual(result.mainBalance, 2500, accuracy: 0.01)
         XCTAssertEqual(result.buckets.count, 1)
-        XCTAssertEqual(result.buckets[0].amount, 3000 - 3000 * 10.0 / 11.0, accuracy: 0.01) // 1/11 of 3000
+        XCTAssertEqual(result.buckets[0].amount, 500, accuracy: 0.01)
     }
     
-    func testBucketFilling() {
+    func testBucketDumping() {
         let threeMonthsLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth * 3), to: appData.startDate)!
         
-        let bucket = Bucket(name: "Savings", targetAmount: 500, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: false)
+        let bucket = Bucket(name: "Savings", targetAmount: 500, income: 500 / secondsPerMonth / 3, whenFinished: .waitToDump, recur: false)
         
         let addBucketEvent = AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket)
         appData.events = [
@@ -70,12 +70,12 @@ class BucketTests: XCTestCase {
         XCTAssertEqual(result2.buckets.count, 0)
     }
     
-    func testBucketDumpDoesntRemvoeRecuringBucket() {
+    func testBucketDumpDoesntRemoveRecuringBucket() {
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
         let twoMonthsLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth * 2), to: appData.startDate)!
         let threeMonthsLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth * 3), to: appData.startDate)!
         
-        let bucket = Bucket(name: "Savings", targetAmount: 500, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: true)
+        let bucket = Bucket(name: "Savings", targetAmount: 300, income: 300 / secondsPerMonth * (2/3), whenFinished: .waitToDump, recur: true)
         
         let addBucketEvent = AddBucket(dateAdded: oneMonthLater, bucketToAdd: bucket)
         appData.events = [
@@ -85,7 +85,7 @@ class BucketTests: XCTestCase {
         let result1 = appData.calculateTotalIncome(asOf: twoMonthsLater)
         XCTAssertEqual(result1.buckets.count, 1)
         XCTAssertEqual(result1.mainBalance + result1.buckets[0].amount, 6000, accuracy: 0.01) // We should have made 6000 over 2 months
-        XCTAssertEqual(result1.buckets[0].amount, 272.72, accuracy: 0.01)
+        XCTAssertEqual(result1.buckets[0].amount, 200, accuracy: 0.01)
         
         appData.events = [
             .addBucket(addBucketEvent),
@@ -103,7 +103,7 @@ class BucketTests: XCTestCase {
         let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
         let oneMonthLaterMinusOneSecond = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth - 1), to: appData.startDate)!
         
-        let bucket = Bucket(name: "Savings", targetAmount: 300, contributionMode: .share(share: 10), whenFinished: .autoDump, recur: true)
+        let bucket = Bucket(name: "Savings", targetAmount: 300, income: 300 / secondsPerMonth, whenFinished: .autoDump, recur: true)
         
         appData.events = [
             .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket)),
@@ -128,220 +128,5 @@ class BucketTests: XCTestCase {
             XCTAssertEqual(result.mainBalance, 3000, accuracy: 0.01)
             XCTAssertEqual(result.buckets[0].amount, 0, accuracy: 0.01)
         }
-    }
-    
-    func testByDurationBucket() {
-        let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
-
-        let bucket = Bucket(name: "Weekly Savings", targetAmount: 1000, contributionMode: .byDuration(startDate: appData.startDate, interval: 7 * 24 * 60 * 60), whenFinished: .waitToDump, recur: false)
-        
-        appData.events = [
-            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket))
-        ]
-        
-        let result = appData.calculateTotalIncome(asOf: oneMonthLater)
-        
-        XCTAssertEqual(result.mainBalance, 2000, accuracy: 0.01)
-        XCTAssertEqual(result.buckets.count, 1)
-        XCTAssertEqual(result.buckets[0].amount, 1000, accuracy: 0.01) // Bucket should be full
-    }
-    
-    func testMultipleByDurationBuckets() {
-        let oneWeekLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerWeek), to: appData.startDate)!
-        let twoWeeksLater = Calendar.current.date(byAdding: .second, value: Int(2 * secondsPerWeek), to: appData.startDate)!
-        let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
-
-        let weeklyBucket = Bucket(name: "Weekly Savings", targetAmount: 1000, contributionMode: .byDuration(startDate: appData.startDate, interval: 7 * 24 * 60 * 60), whenFinished: .waitToDump, recur: false)
-        let biweeklyBucket = Bucket(name: "Biweekly Savings", targetAmount: 1000, contributionMode: .byDuration(startDate: appData.startDate, interval: 14 * 24 * 60 * 60), whenFinished: .waitToDump, recur: false)
-        
-        appData.events = [
-            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: weeklyBucket)),
-            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: biweeklyBucket))
-        ]
-        
-        
-        do {
-            let resultOneWeek = appData.calculateTotalIncome(asOf: oneWeekLater)
-            
-            XCTAssertEqual(resultOneWeek.mainBalance, 0, accuracy: 0.01)
-        }
-        
-        do {
-            let resultTwoWeeks = appData.calculateTotalIncome(asOf: twoWeeksLater)
-            
-            XCTAssertEqual(resultTwoWeeks.mainBalance, 0, accuracy: 0.01)
-        }
-        
-        do {
-            let resultOneMonth = appData.calculateTotalIncome(asOf: oneMonthLater)
-            let weeklyBucketResult = resultOneMonth.buckets.first { $0.bucket.name == "Weekly Savings" }!
-            let biweeklyBucketResult = resultOneMonth.buckets.first { $0.bucket.name == "Biweekly Savings" }!
-
-            XCTAssertEqual(resultOneMonth.mainBalance, 1000, accuracy: 0.01)
-            XCTAssertEqual(resultOneMonth.buckets.count, 2)
-            
-            XCTAssertNotNil(weeklyBucketResult)
-            XCTAssertEqual(weeklyBucketResult.amount, 1000, accuracy: 0.01) // Should be full
-            
-            XCTAssertNotNil(biweeklyBucketResult)
-            XCTAssertEqual(biweeklyBucketResult.amount, 1000, accuracy: 0.01) // Should be full
-        }
-    }
-    
-    func testByDurationBucketScaling() {
-        let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
-
-        let s1 = Bucket(name: "S1", targetAmount: 5000, contributionMode: .byDuration(startDate: appData.startDate, interval: secondsPerMonth / 4), whenFinished: .waitToDump, recur: false)
-        let s2 = Bucket(name: "S2", targetAmount: 5000, contributionMode: .byDuration(startDate: appData.startDate, interval: secondsPerMonth / 2), whenFinished: .waitToDump, recur: false)
-        
-        appData.events = [
-            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: s1)),
-            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: s2))
-        ]
-        
-        let result = appData.calculateTotalIncome(asOf: oneMonthLater)
-        
-        XCTAssertEqual(result.mainBalance, 0, accuracy: 0.01) // All income should go to buckets
-        XCTAssertEqual(result.buckets.count, 2)
-        
-        let s1Result = result.buckets.first { $0.bucket.name == "S1" }!
-        XCTAssertNotNil(s1Result)
-        XCTAssertEqual(s1Result.amount, 2000, accuracy: 0.01) // 2/3 of monthly income
-        
-        let s2Result = result.buckets.first { $0.bucket.name == "S2" }!
-        XCTAssertNotNil(s2Result)
-        XCTAssertEqual(s2Result.amount, 1000, accuracy: 0.01) // 1/3 of monthly income
-    }
-    
-    func testByDurationAndShareBuckets() {
-        let oneMonthLater = Calendar.current.date(byAdding: .second, value: Int(secondsPerMonth), to: appData.startDate)!
-
-        let weeklyBucket = Bucket(name: "Weekly Savings", targetAmount: 2000, contributionMode: .byDuration(startDate: appData.startDate, interval: secondsPerWeek), whenFinished: .waitToDump, recur: false)
-        let shareBucket = Bucket(name: "Share Savings", targetAmount: 2000, contributionMode: .share(share: 1), whenFinished: .waitToDump, recur: false)
-        
-        appData.events = [
-            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: weeklyBucket)),
-            .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: shareBucket))
-        ]
-        
-        let result = appData.calculateTotalIncome(asOf: oneMonthLater)
-        
-        XCTAssertEqual(result.buckets.count, 2)
-        
-        let weeklyBucketResult = result.buckets.first { $0.bucket.name == "Weekly Savings" }
-        XCTAssertNotNil(weeklyBucketResult)
-        XCTAssertEqual(weeklyBucketResult!.amount, 2000, accuracy: 0.01) // Should be full
-        
-        let shareBucketResult = result.buckets.first { $0.bucket.name == "Share Savings" }
-        XCTAssertNotNil(shareBucketResult)
-        XCTAssertEqual(shareBucketResult!.amount, 90.91, accuracy: 0.01) // (3000 - 2000) / 11
-        
-        XCTAssertEqual(result.mainBalance, 909.09, accuracy: 0.01) // 10 * (3000 - 2000) / 11
-    }
-
-}
-
-
-class DistributeAccordingToSharesTests: XCTestCase {
-    func testEqualSharesNoCaps() {
-        let amount = 100.0
-        let distributees = [
-            Distributee(cap: nil, share: 1.0),
-            Distributee(cap: nil, share: 1.0),
-            Distributee(cap: nil, share: 1.0)
-        ]
-        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
-        
-        XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions.count, 3)
-        for distribution in result.distributions {
-            XCTAssertEqual(distribution.cumulativeAmount, 33.333, accuracy: 0.001)
-        }
-    }
-    
-    func testUnequalSharesNoCaps() {
-        let amount = 100.0
-        let distributees = [
-            Distributee(cap: nil, share: 1.0),
-            Distributee(cap: nil, share: 2.0),
-            Distributee(cap: nil, share: 3.0)
-        ]
-        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
-
-        
-        XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions.count, 3)
-        XCTAssertEqual(result.distributions[0].cumulativeAmount, 16.667, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[1].cumulativeAmount, 33.333, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[2].cumulativeAmount, 50.0, accuracy: 0.001)
-    }
-    
-    func testWithCaps() {
-        let amount = 100.0
-        let distributees = [
-            Distributee(cap: 20.0, share: 1.0),
-            Distributee(cap: 30.0, share: 1.0),
-            Distributee(cap: nil, share: 1.0)
-        ]
-        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
-
-        XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions.count, 3)
-        XCTAssertEqual(result.distributions[0].cumulativeAmount, 20.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[1].cumulativeAmount, 30.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[2].cumulativeAmount, 50.0, accuracy: 0.001)
-    }
-    
-    func testExceedingAmount() {
-        let amount = 50.0
-        let distributees = [
-            Distributee(cap: 20.0, share: 1.0),
-            Distributee(cap: 30.0, share: 1.0),
-            Distributee(cap: nil, share: 1.0)
-        ]
-        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
-        XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions.count, 3)
-        for distribution in result.distributions {
-            XCTAssertEqual(distribution.cumulativeAmount, 16.667, accuracy: 0.001)
-        }
-    }
-    
-    func testInsufficientAmount() {
-        let amount = 10.0
-        let distributees = [
-            Distributee(cap: 20.0, share: 1.0),
-            Distributee(cap: 30.0, share: 2.0),
-            Distributee(cap: nil, share: 3.0)
-        ]
-        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
-
-        XCTAssertEqual(result.remainder, 0.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions.count, 3)
-        XCTAssertEqual(result.distributions[0].cumulativeAmount, 1.667, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[1].cumulativeAmount, 3.333, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[2].cumulativeAmount, 5.0, accuracy: 0.001)
-    }
-    
-    func testZeroAmount() {
-        let amount = 0.0
-        let distributees = [
-            Distributee(cap: nil, share: 1.0),
-            Distributee(cap: nil, share: 1.0)
-        ]
-        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
-
-        XCTAssertEqual(result.remainder, 0.0)
-        XCTAssertEqual(result.distributions[0].cumulativeAmount, 0.0, accuracy: 0.001)
-        XCTAssertEqual(result.distributions[1].cumulativeAmount, 0.0, accuracy: 0.001)
-    }
-    
-    func testNoDistributees() {
-        let amount = 100.0
-        let distributees: [Distributee] = []
-        let result = DistributionSequence.distribute(amount: amount, distributees: distributees)
-
-        XCTAssertEqual(result.remainder, 100.0)
-        XCTAssertEqual(result.distributions, [])
     }
 }
