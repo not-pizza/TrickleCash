@@ -46,8 +46,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "163"
-            endingLineNumber = "163"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
             landmarkName = "calculateTotalIncome(asOf:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "447"
-            endingLineNumber = "447"
+            startingLineNumber = "446"
+            endingLineNumber = "446"
             landmarkName = "FinishAction"
             landmarkType = "13">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "429"
-            endingLineNumber = "429"
+            startingLineNumber = "428"
+            endingLineNumber = "428"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -94,8 +94,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "430"
-            endingLineNumber = "430"
+            startingLineNumber = "429"
+            endingLineNumber = "429"
             landmarkName = "DumpBucket"
             landmarkType = "14">
          </BreakpointContent>
@@ -238,8 +238,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
             landmarkName = "calculateTotalIncome(asOf:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -254,8 +254,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "423"
-            endingLineNumber = "423"
+            startingLineNumber = "422"
+            endingLineNumber = "422"
             landmarkName = "UpdateBucket"
             landmarkType = "14">
          </BreakpointContent>

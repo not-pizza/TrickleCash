@@ -158,7 +158,6 @@ struct AppData: Codable, Equatable {
         )
     }
     
-    // TODO: replace `perSecondRate` with `timeToCompletion`
     func calculateTotalIncome(asOf date: Date = Date()) -> (mainBalance: Double, buckets: [(bucket: Bucket, amount: Double)]) {
         let startDate = getStartDate(asOf: date)
         var currentPerSecondRate = monthlyRate / secondsPerMonth
