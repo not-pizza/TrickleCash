@@ -7,9 +7,10 @@ struct BucketView: View {
     let currentTime: Date
     
     @State private var animationProgress: CGFloat = 0
+    @State private var isEditingBucket = false
     
     var body: some View {
-        return VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(bucket.name)
                     .font(.headline)
@@ -57,8 +58,11 @@ struct BucketView: View {
                 print("dump selected")
             }
             Button("Edit") {
-                print("Option 2 selected")
+                isEditingBucket = true
             }
+        }
+        .sheet(isPresented: $isEditingBucket) {
+            EditBucketView(bucket: $bucket)
         }
     }
     
@@ -92,7 +96,7 @@ struct BucketView_Previews: PreviewProvider {
                     bucket: .constant(Bucket(
                         name: "Vacation Fund",
                         targetAmount: 1000,
-                        income: 10,
+                        income: 10 / secondsPerMonth,
                         whenFinished: .autoDump,
                         recur: 30 * 24 * 60 * 60
                     )),
