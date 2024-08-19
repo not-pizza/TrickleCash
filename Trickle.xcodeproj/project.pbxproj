@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		AB1669312C5F035B0048A993 /* CalendarStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1669302C5F035B0048A993 /* CalendarStrip.swift */; };
 		AB1669332C5F03870048A993 /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1669322C5F03870048A993 /* SpendView.swift */; };
+		AB2BE5B12C72CF3800578B18 /* BucketVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */; };
 		AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */; };
 		AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B962BFC4E5200F03DFD /* ContentView.swift */; };
 		AB2D2B992BFC4E5300F03DFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */; };
@@ -98,6 +99,7 @@
 /* Begin PBXFileReference section */
 		AB1669302C5F035B0048A993 /* CalendarStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStrip.swift; sourceTree = "<group>"; };
 		AB1669322C5F03870048A993 /* SpendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendView.swift; sourceTree = "<group>"; };
+		AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketVIew.swift; sourceTree = "<group>"; };
 		AB2D2B912BFC4E5200F03DFD /* Trickle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trickle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleApp.swift; sourceTree = "<group>"; };
 		AB2D2B962BFC4E5200F03DFD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 				ABD497662C6484E400707842 /* TrickleForeground.swift */,
 				ABD497682C64870900707842 /* SettingsView.swift */,
 				ABBF529F2C68A4860076329D /* Utils.swift */,
+				AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */,
 			);
 			path = Trickle;
 			sourceTree = "<group>";
@@ -463,6 +466,7 @@
 				ABD497652C6484BF00707842 /* TrickleBackground.swift in Sources */,
 				ABD497722C649D9500707842 /* CustomTFKeyboard.swift in Sources */,
 				AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */,
+				AB2BE5B12C72CF3800578B18 /* BucketVIew.swift in Sources */,
 				AB7B79262C6011FA003647EF /* Expression.swift in Sources */,
 				ABD497692C64870900707842 /* SettingsView.swift in Sources */,
 			);

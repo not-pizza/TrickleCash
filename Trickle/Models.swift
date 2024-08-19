@@ -68,6 +68,24 @@ struct AppData: Codable, Equatable {
         self.updateEvent(newEvent: .spend(spend))
     }
     
+    func dumpBucket(_ id: UUID) -> Self {
+        var events = self.events
+        events.append(.dumpBucket(DumpBucket(bucketToDump: bucket.id)))
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+    }
+    
+    func addBucket(_ bucket: Bucket) -> Self {
+        var events = self.events
+        events.append(.addBucket(AddBucket(bucketToAdd: bucket)))
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+    }
+    
+    func updateBucket(_ id: UUID, _ bucket: Bucket) -> Self {
+        var events = self.events
+        events.append(.updateBucket(UpdateBucket(bucketToUpdate: id, newBucket: bucket)))
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+    }
+    
     func updateEvent(newEvent: Event) -> Self {
         let events = self.events.map({event in
             if event.id == newEvent.id {
@@ -224,7 +242,7 @@ struct AppData: Codable, Equatable {
         let distributedToBuckets = distributeToBuckets(duration: secondsAtCurrentRate)
         mainBalance += incomeForPeriod - distributedToBuckets
         
-        let bucketInfos = Set(buckets.values.map({bucket in AppState.BucketInfo(bucket: bucket.bucket, amount: bucket.amount)}))
+        let bucketInfos = buckets.mapValues({bucket in AppState.BucketInfo(bucket: bucket.bucket, amount: bucket.amount)})
         
         return AppState(
             balance: mainBalance,
@@ -296,7 +314,7 @@ struct AppState {
     
     let balance: Double
     let spends: [Spend]
-    let buckets: Set<BucketInfo>
+    let buckets: [UUID : BucketInfo]
 }
 
 struct SetMonthlyRate: Codable, Equatable, Identifiable {
@@ -480,15 +498,6 @@ struct Bucket: Codable, Equatable, Hashable {
     let income: Double
     let whenFinished: FinishAction
     let recur: TimeInterval?
-    
-    var allowsDump: Bool {
-        switch self.whenFinished {
-        case .destroy:
-            return false
-        case .waitToDump, .autoDump:
-            return true
-        }
-    }
     
     enum DoWithCash {
         case transfer

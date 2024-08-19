@@ -49,6 +49,22 @@ struct BackgroundView: View {
         
         let debtClockHeight = 20.0
         
+        let buckets = Array(appState.buckets).map({(id, bucketInfo) in
+            let bucketBinding: Binding<Bucket> = Binding (get: {
+                bucketInfo.bucket
+            }, set: { newBucket in
+                appData = appData.updateBucket(
+                    id,
+                    newBucket
+                )
+            })
+            return (
+                id: id,
+                amount: bucketInfo.amount,
+                bucket: bucketBinding
+            )
+        })
+        
         return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
             
@@ -109,12 +125,17 @@ struct BackgroundView: View {
                     }
                     .padding(.horizontal)
                     
-                    Spacer()
+                    Spacer().frame(height: 30)
                     
-                    Text("Existing buckets:")
-                        .font(.headline)
-                        .padding(.horizontal)
-                    
+                    ForEach(buckets, id: \.id) { bucket in
+
+                        BucketView(
+                            id: bucket.id,
+                            amount: bucket.amount,
+                            bucket: bucket.bucket,
+                            currentTime: currentTime
+                        )
+                    }
                 }
             }
 
@@ -148,7 +169,16 @@ struct AddBucketButtonStyle: ButtonStyle {
             monthlyRate: 1000,
             startDate: Date().startOfDay,
             events: [
-                .spend(Spend(name: "7/11", amount: 30))
+                .spend(Spend(name: "7/11", amount: 30)),
+                .addBucket(
+                    AddBucket(bucketToAdd: Bucket(
+                        name: "iPhone 15",
+                        targetAmount: 1000,
+                        income: 200 / secondsPerMonth,
+                        whenFinished: .waitToDump,
+                        recur: nil
+                    ))
+                )
             ]
         )),
         onSettingsTapped: {},
