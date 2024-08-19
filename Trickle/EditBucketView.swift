@@ -106,7 +106,7 @@ struct EditBucketView: View {
         let timeInterval = completionDate.timeIntervalSince(Date())
         bucket = Bucket(
             name: bucket.name,
-            targetAmount: (incomePerMonth / secondsPerMonth) * timeInterval,
+            targetAmount: (incomePerMonth / secondsPerMonth),
             income: bucket.income,
             whenFinished: bucket.whenFinished,
             recur: bucket.recur
@@ -118,7 +118,7 @@ struct EditBucketView: View {
         bucket = Bucket(
             name: bucket.name,
             targetAmount: bucket.targetAmount,
-            income: (bucket.targetAmount / timeInterval) * secondsPerMonth,
+            income: (bucket.targetAmount / timeInterval),
             whenFinished: bucket.whenFinished,
             recur: bucket.recur
         )

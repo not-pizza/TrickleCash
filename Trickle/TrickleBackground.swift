@@ -33,13 +33,13 @@ struct BackgroundView: View {
         
         let debtClockHeight = 20.0
         
-        let buckets = Array(appState.buckets).map { (id, bucketInfo) in
+        var buckets = Array(appState.buckets).map({ (id, bucketInfo) in
             (
                 id: id,
                 amount: bucketInfo.amount,
                 bucket: bucketInfo.bucket
             )
-        }
+        }).sorted {$0.amount < $1.amount}
         
         return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
