@@ -1,12 +1,9 @@
-//
-//  TrickleBackground.swift
-//  Trickle
-//
-//  Created by Andre Popovitch on 8/7/24.
-//
-
-import Foundation
 import SwiftUI
+
+fileprivate struct IdentifiedBucket: Identifiable {
+    let id: UUID
+    let bucket: Bucket
+}
 
 struct BackgroundView: View {
     @Binding var appData: AppData
@@ -14,16 +11,9 @@ struct BackgroundView: View {
     var foregroundShowingOffset: CGFloat
     var currentTime: Date
 
-    @State private var showingAddBucketSheet = false
-    @State private var newBucketName = ""
-    @State private var newBucketAmount = ""
-    
-    enum BucketType {
-        case saveUp
-        case setAsideForWeekend
-        case paymentPlan
-    }
-
+    @State private var editingBucket: IdentifiedBucket?
+    @State private var addingNewBucket: Bucket = Bucket(name: "", targetAmount: 100, income: 10 / secondsPerMonth, whenFinished: .waitToDump, recur: nil)
+    @State private var isAddingNewBucket = false
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -39,31 +29,17 @@ struct BackgroundView: View {
         let perSecondRate = appData.getDailyRate(asOf: currentTime) / 24 / 60 / 60
         
         let timeAtZero = Calendar.current.date(byAdding: .second, value: Int(-balance / perSecondRate), to: currentTime)
-        if timeAtZero == nil {
-            print("Time at zero was nil")
-        }
         let debtClock = timeAtZero?.formatted(formatStyle)
-        if debtClock == nil {
-            print("debt clock was nil")
-        }
         
         let debtClockHeight = 20.0
         
-        let buckets = Array(appState.buckets).map({(id, bucketInfo) in
-            let bucketBinding: Binding<Bucket> = Binding (get: {
-                bucketInfo.bucket
-            }, set: { newBucket in
-                appData = appData.updateBucket(
-                    id,
-                    newBucket
-                )
-            })
-            return (
+        let buckets = Array(appState.buckets).map { (id, bucketInfo) in
+            (
                 id: id,
                 amount: bucketInfo.amount,
-                bucket: bucketBinding
+                bucket: bucketInfo.bucket
             )
-        })
+        }
         
         return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
@@ -108,11 +84,12 @@ struct BackgroundView: View {
                 Spacer().frame(height: 60)
                 
                 // Buckets
+                
                 ScrollView {
                     Spacer().frame(height: 1)
                     VStack {
-                        Button(action:
-                        {
+                        Button(action: {
+                            isAddingNewBucket = true
                         }) {
                             HStack {
                                 Spacer()
@@ -131,18 +108,37 @@ struct BackgroundView: View {
                         BucketView(
                             id: bucket.id,
                             amount: bucket.amount,
-                            bucket: bucket.bucket,
+                            bucket: Binding(
+                                get: { bucket.bucket },
+                                set: { newBucket in
+                                    appData = appData.updateBucket(bucket.id, newBucket)
+                                }
+                            ),
                             currentTime: currentTime
                         )
+                        .onTapGesture {
+                            editingBucket = IdentifiedBucket(id: bucket.id, bucket: bucket.bucket)
+                        }
                     }
                 }
             }
-
         }
         .frame(maxHeight: .infinity, alignment: .top)
+        .sheet(isPresented: $isAddingNewBucket) {
+            EditBucketView(bucket: $addingNewBucket, save: {
+                newBucket in
+                appData = appData.addBucket(newBucket)
+                addingNewBucket = Bucket(
+                    name: "",
+                    targetAmount: 100,
+                    income: 10 / secondsPerMonth,
+                    whenFinished: .waitToDump,
+                    recur: nil
+                )
+            })
+        }
     }
 }
-
 struct AddBucketButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration

@@ -404,5 +404,51 @@
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "596D772D-27E4-40E6-B336-B9BA5E6344C0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Trickle/EditBucketView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "13"
+            endingLineNumber = "13"
+            landmarkName = "init(bucket:save:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "596D772D-27E4-40E6-B336-B9BA5E6344C0 - c1feab307a980aec"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Trickle.EditBucketView.init(bucket: SwiftUI.Binding&lt;Swift.Optional&lt;Trickle.Bucket&gt;&gt;) -&gt; Trickle.EditBucketView"
+                  moduleName = "Trickle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/andrepopovitch/coding/TrickleCash/Trickle/EditBucketView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "11"
+                  endingLineNumber = "11">
+               </Location>
+               <Location
+                  uuid = "596D772D-27E4-40E6-B336-B9BA5E6344C0 - 409ccfa069d3bbc1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Trickle.EditBucketView.init(bucket: SwiftUI.Binding&lt;Trickle.Bucket&gt;, save: (Trickle.Bucket) -&gt; ()) -&gt; Trickle.EditBucketView"
+                  moduleName = "Trickle"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/andrepopovitch/coding/TrickleCash/Trickle/EditBucketView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "13"
+                  endingLineNumber = "13">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

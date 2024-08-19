@@ -493,11 +493,12 @@ struct Bucket: Codable, Equatable, Hashable {
         case destroy
     }
 
-    let name: String
-    let targetAmount: Double
-    let income: Double
-    let whenFinished: FinishAction
-    let recur: TimeInterval?
+    var name: String
+    var targetAmount: Double
+    var income: Double
+    var whenFinished: FinishAction
+    var recur: TimeInterval?
+    var locked: Bool = false;
     
     enum DoWithCash {
         case transfer

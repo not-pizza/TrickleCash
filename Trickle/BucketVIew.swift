@@ -8,6 +8,15 @@ struct BucketView: View {
     
     @State private var animationProgress: CGFloat = 0
     @State private var isEditingBucket = false
+    @State private var tempBucket: Bucket
+    
+    init(id: UUID, amount: Double, bucket: Binding<Bucket>, currentTime: Date) {
+        self.id = id
+        self.amount = amount
+        self._bucket = bucket
+        self.currentTime = currentTime
+        self._tempBucket = State(initialValue: bucket.wrappedValue)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -62,7 +71,15 @@ struct BucketView: View {
             }
         }
         .sheet(isPresented: $isEditingBucket) {
-            EditBucketView(bucket: $bucket)
+            let bucketBinding: Binding<Bucket> = Binding {
+                bucket
+            } set: { newBucket in
+                bucket = newBucket
+            }
+
+            EditBucketView(bucket: bucketBinding, save: {newBucket in
+                bucket = newBucket
+            })
         }
     }
     
