@@ -36,13 +36,7 @@ struct EditBucketView: View {
                     Text("Bucket size")
                         .font(.headline)
                     TextField("Target Amount", text: $targetAmountInput)
-                        .inputView(
-                            CalculatorKeyboard.self,
-                            text: $targetAmountInput,
-                            onSubmit: {
-                                targetAmountInput = String(format: "%.2f", bucket.targetAmount)
-                            }
-                        )
+                        .keyboardType(.decimalPad)
                         .onChange(of: targetAmountInput) { _ in updateCalculations() }
                 }
                 
