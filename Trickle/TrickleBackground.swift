@@ -34,7 +34,8 @@ struct BackgroundView: View {
     }
     
     var body: some View {
-        let balance = appData.getTrickleBalance(asOf: currentTime)
+        let appState = appData.getAppState(asOf: currentTime)
+        let balance = appState.balance
         let perSecondRate = appData.getDailyRate(asOf: currentTime) / 24 / 60 / 60
         
         let timeAtZero = Calendar.current.date(byAdding: .second, value: Int(-balance / perSecondRate), to: currentTime)
@@ -90,6 +91,7 @@ struct BackgroundView: View {
                 
                 Spacer().frame(height: 60)
                 
+                // Buckets
                 ScrollView {
                     Spacer().frame(height: 1)
                     VStack {
@@ -98,37 +100,12 @@ struct BackgroundView: View {
                         }) {
                             HStack {
                                 Spacer()
-                                Text("Save up Money")
+                                Text("Add bucket")
                                 Spacer()
                             }
                             .frame(height: 30)
                         }
                         .buttonStyle(AddBucketButtonStyle())
-                        
-                        Button(action:
-                        {
-                        }) {
-                            HStack {
-                                Spacer()
-                                Text("Set Aside for the Weekend")
-                                Spacer()
-                            }
-                            .frame(height: 30)
-                        }
-                        .buttonStyle(AddBucketButtonStyle())
-                            
-                        Button(action:
-                        {
-                        }) {
-                            HStack {
-                                Spacer()
-                                Text("Payment plan")
-                                Spacer()
-                            }
-                            .frame(height: 30)
-                        }
-                        .buttonStyle(AddBucketButtonStyle())
-                            
                     }
                     .padding(.horizontal)
                     

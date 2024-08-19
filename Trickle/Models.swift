@@ -49,17 +49,8 @@ struct AppData: Codable, Equatable {
         return startDate
     }
     
-    func getTrickleBalance(asOf time: Date) -> Double {
-        let totalIncome = self.calculateTotalIncome(asOf: time);
-        
-        let spendEvents = self.getSpendEventsAfterStartDate(asOf: time);
-        let totalDeductions = spendEvents.map({spend in spend.amount}).reduce(0, +)
-        
-        return totalIncome.mainBalance - totalDeductions + 0.01
-    }
-    
     func getPercentThroughCurrentCent(time: Date) -> Double {
-        let balance = getTrickleBalance(asOf: time)
+        let balance = self.getAppState(asOf: time).balance
         var percent = (balance - 0.005).truncatingRemainder(dividingBy: 0.01) * 100
         if balance < 0 {
             percent = 1 + percent
@@ -158,11 +149,12 @@ struct AppData: Codable, Equatable {
         )
     }
     
-    func calculateTotalIncome(asOf date: Date = Date()) -> (mainBalance: Double, buckets: [(bucket: Bucket, amount: Double)]) {
+    func getAppState(asOf date: Date = Date()) -> AppState {
         let startDate = getStartDate(asOf: date)
         var currentPerSecondRate = monthlyRate / secondsPerMonth
         var lastEventDate = startDate
         var buckets: [UUID: (bucket: Bucket, amount: Double)] = [:]
+        var spends: [Spend] = []
         var mainBalance = 0.0
         
         // Sort events by date
@@ -213,8 +205,12 @@ struct AppData: Codable, Equatable {
                         buckets.removeValue(forKey: dumpBucket.bucketToDump)
                     }
                 }
+            
+            case .spend(let spend):
+                mainBalance -= spend.amount
+                spends.append(spend)
                 
-            case .setStartDate, .spend:
+            case .setStartDate:
                 // These events don't affect income calculation
                 break
             }
@@ -228,7 +224,13 @@ struct AppData: Codable, Equatable {
         let distributedToBuckets = distributeToBuckets(duration: secondsAtCurrentRate)
         mainBalance += incomeForPeriod - distributedToBuckets
         
-        return (mainBalance: mainBalance, buckets: Array(buckets.values))
+        let bucketInfos = Set(buckets.values.map({bucket in AppState.BucketInfo(bucket: bucket.bucket, amount: bucket.amount)}))
+        
+        return AppState(
+            balance: mainBalance,
+            spends: spends,
+            buckets: bucketInfos
+        )
         
         func distributeToBuckets(duration: TimeInterval) -> Double {
             var distributed = 0.0
@@ -284,6 +286,17 @@ struct AppData: Codable, Equatable {
             case delete
         }
     }
+}
+
+struct AppState {
+    struct BucketInfo: Equatable, Hashable {
+        let bucket: Bucket
+        let amount: Double
+    }
+    
+    let balance: Double
+    let spends: [Spend]
+    let buckets: Set<BucketInfo>
 }
 
 struct SetMonthlyRate: Codable, Equatable, Identifiable {
@@ -455,7 +468,7 @@ struct DeleteBucket: Codable, Identifiable, Equatable
     let bucketToDelete: UUID
 }
 
-struct Bucket: Codable, Equatable {
+struct Bucket: Codable, Equatable, Hashable {
     enum FinishAction: Codable, Equatable {
         case waitToDump
         case autoDump

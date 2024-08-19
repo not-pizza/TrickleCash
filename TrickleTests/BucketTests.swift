@@ -25,9 +25,9 @@ class BucketTests: XCTestCase {
         appData.events = [
         ]
         
-        let result = appData.calculateTotalIncome(asOf: oneMonthLater)
+        let result = appData.getAppState(asOf: oneMonthLater)
         
-        XCTAssertEqual(result.mainBalance, 3000, accuracy: 0.01)
+        XCTAssertEqual(result.balance, 3000, accuracy: 0.01)
         XCTAssertTrue(result.buckets.isEmpty)
     }
     
@@ -40,11 +40,11 @@ class BucketTests: XCTestCase {
             .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket))
         ]
         
-        let result = appData.calculateTotalIncome(asOf: oneMonthLater)
+        let result = appData.getAppState(asOf: oneMonthLater)
         
-        XCTAssertEqual(result.mainBalance, 2500, accuracy: 0.01)
+        XCTAssertEqual(result.balance, 2500, accuracy: 0.01)
         XCTAssertEqual(result.buckets.count, 1)
-        XCTAssertEqual(result.buckets[0].amount, 500, accuracy: 0.01)
+        XCTAssertEqual(Set(result.buckets.map({i in i.amount.rounded()})), [500])
     }
     
     func testBucketDumping() {
@@ -56,17 +56,17 @@ class BucketTests: XCTestCase {
         appData.events = [
             .addBucket(addBucketEvent)
         ]
-        let result = appData.calculateTotalIncome(asOf: threeMonthsLater)
-        XCTAssertEqual(result.mainBalance, 8500, accuracy: 0.01) // 9000 - 500
+        let result = appData.getAppState(asOf: threeMonthsLater)
+        XCTAssertEqual(result.balance, 8500, accuracy: 0.01) // 9000 - 500
         XCTAssertEqual(result.buckets.count, 1)
-        XCTAssertEqual(result.buckets[0].amount, 500, accuracy: 0.01) // Bucket should be full
+        XCTAssertEqual(Set(result.buckets.map({i in i.amount.rounded()})), [500]) // Bucket should be full
         
         appData.events = [
             .addBucket(addBucketEvent),
             .dumpBucket(DumpBucket(dateAdded: threeMonthsLater, bucketToDump: addBucketEvent.id))
         ]
-        let result2 = appData.calculateTotalIncome(asOf: threeMonthsLater)
-        XCTAssertEqual(result2.mainBalance, 9000, accuracy: 0.01) // 9000 - 500 + 500
+        let result2 = appData.getAppState(asOf: threeMonthsLater)
+        XCTAssertEqual(result2.balance, 9000, accuracy: 0.01) // 9000 - 500 + 500
         XCTAssertEqual(result2.buckets.count, 0)
     }
     
@@ -82,21 +82,21 @@ class BucketTests: XCTestCase {
             .addBucket(addBucketEvent),
         ]
         
-        let result1 = appData.calculateTotalIncome(asOf: twoMonthsLater)
+        let result1 = appData.getAppState(asOf: twoMonthsLater)
         XCTAssertEqual(result1.buckets.count, 1)
-        XCTAssertEqual(result1.mainBalance + result1.buckets[0].amount, 6000, accuracy: 0.01) // We should have made 6000 over 2 months
-        XCTAssertEqual(result1.buckets[0].amount, 200, accuracy: 0.01)
+        XCTAssertEqual(result1.balance + result1.buckets.reduce(0) {acc, i in acc + i.amount}, 6000, accuracy: 0.01) // We should have made 6000 over 2 months
+        XCTAssertEqual(Set(result1.buckets.map({i in i.amount.rounded()})), [200])
         
         appData.events = [
             .addBucket(addBucketEvent),
             .dumpBucket(DumpBucket(dateAdded: twoMonthsLater, bucketToDump: addBucketEvent.id))
         ]
         
-        let result2 = appData.calculateTotalIncome(asOf: threeMonthsLater)
-        XCTAssertEqual(result2.mainBalance + result2.buckets[0].amount, 9000, accuracy: 0.01) // We should have made 9000 over 4 months
-        XCTAssertEqual(result2.mainBalance, 8800, accuracy: 0.01) // 9000 - 100 that went into the new bucket
+        let result2 = appData.getAppState(asOf: threeMonthsLater)
+        XCTAssertEqual(result2.balance + result2.buckets.reduce(0) {acc, i in acc + i.amount}, 9000, accuracy: 0.01) // We should have made 9000 over 4 months
+        XCTAssertEqual(result2.balance, 8800, accuracy: 0.01) // 9000 - 100 that went into the new bucket
         XCTAssertEqual(result2.buckets.count, 1)
-        XCTAssertEqual(result2.buckets[0].amount, 200, accuracy: 0.01) // New bucket filling up again
+        XCTAssertEqual(Set(result2.buckets.map({i in i.amount.rounded()})), [200]) // New bucket filling up again
     }
 
     func testRecurringBucketRefillsEvenWithoutEvent() {
@@ -110,23 +110,23 @@ class BucketTests: XCTestCase {
         ]
         
         do {
-            let result = appData.calculateTotalIncome(asOf: oneMonthLaterMinusOneSecond)
+            let result = appData.getAppState(asOf: oneMonthLaterMinusOneSecond)
             XCTAssertEqual(result.buckets.count, 1)
-            XCTAssertEqual(result.mainBalance + result.buckets[0].amount, 3000, accuracy: 0.01)
+            XCTAssertEqual(result.balance + result.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
             
             // The bucket hasn't recurred yet so it hasn't gotten added to the main balance
-            XCTAssertEqual(result.mainBalance, 2700, accuracy: 0.01)
-            XCTAssertEqual(result.buckets[0].amount, 300, accuracy: 0.01)
+            XCTAssertEqual(result.balance, 2700, accuracy: 0.01)
+            XCTAssertEqual(Set(result.buckets.map({i in i.amount.rounded()})), [300])
         }
         
         do {
-            let result = appData.calculateTotalIncome(asOf: oneMonthLater + 1)
+            let result = appData.getAppState(asOf: oneMonthLater + 1)
             XCTAssertEqual(result.buckets.count, 1)
-            XCTAssertEqual(result.mainBalance + result.buckets[0].amount, 3000, accuracy: 0.01)
+            XCTAssertEqual(result.balance + result.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
             
             // The bucket just recurred
-            XCTAssertEqual(result.mainBalance, 3000, accuracy: 0.01)
-            XCTAssertEqual(result.buckets[0].amount, 0, accuracy: 0.01)
+            XCTAssertEqual(result.balance, 3000, accuracy: 0.01)
+            XCTAssertEqual(Set(result.buckets.map({i in i.amount.rounded()})), [0])
         }
     }
     
@@ -141,9 +141,9 @@ class BucketTests: XCTestCase {
             .addBucket(AddBucket(dateAdded: appData.startDate, bucketToAdd: bucket2))
         ]
         
-        let result = appData.calculateTotalIncome(asOf: oneMonthLater)
+        let result = appData.getAppState(asOf: oneMonthLater)
         
-        XCTAssertEqual(result.mainBalance, 2250, accuracy: 0.01)
+        XCTAssertEqual(result.balance, 2250, accuracy: 0.01)
         XCTAssertEqual(result.buckets.count, 2)
         XCTAssertEqual(Set(result.buckets.map({i in i.amount.rounded()})), [500, 250])
     }
@@ -162,20 +162,20 @@ class BucketTests: XCTestCase {
         ]
         
         // Check after one month
-        let result1 = appData.calculateTotalIncome(asOf: oneMonthLater)
+        let result1 = appData.getAppState(asOf: oneMonthLater)
         
-        XCTAssertEqual(result1.mainBalance, -500, accuracy: 0.01)
+        XCTAssertEqual(result1.balance, -500, accuracy: 0.01)
         XCTAssertEqual(result1.buckets.count, 2)
         XCTAssertEqual(Set(result1.buckets.map({i in i.amount.rounded()})), [2000, 1500])
-        XCTAssertEqual(result1.mainBalance + result1.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
+        XCTAssertEqual(result1.balance + result1.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
         
         // Check after two months
-        let result2 = appData.calculateTotalIncome(asOf: twoMonthsLater)
+        let result2 = appData.getAppState(asOf: twoMonthsLater)
         
-        XCTAssertEqual(result2.mainBalance, 6000 - 3500, accuracy: 0.01)
+        XCTAssertEqual(result2.balance, 6000 - 3500, accuracy: 0.01)
         XCTAssertEqual(result2.buckets.count, 2)
         XCTAssertEqual(Set(result1.buckets.map({i in i.amount.rounded()})), [2000, 1500])
-        XCTAssertEqual(result2.mainBalance + result2.buckets.reduce(0) {acc, i in acc + i.amount}, 6000, accuracy: 0.01)
+        XCTAssertEqual(result2.balance + result2.buckets.reduce(0) {acc, i in acc + i.amount}, 6000, accuracy: 0.01)
     }
     
     func testDestroyBucketBehavior() {
@@ -190,19 +190,19 @@ class BucketTests: XCTestCase {
         ]
         
         // Check after one month (bucket should be full)
-        let result1 = appData.calculateTotalIncome(asOf: oneMonthLater)
+        let result1 = appData.getAppState(asOf: oneMonthLater)
         
-        XCTAssertEqual(result1.mainBalance, 2000, accuracy: 0.01)
+        XCTAssertEqual(result1.balance, 2000, accuracy: 0.01)
         XCTAssertEqual(result1.buckets.count, 1)
-        XCTAssertEqual(result1.buckets[0].amount, 1000, accuracy: 0.01)
-        XCTAssertEqual(result1.mainBalance + result1.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
+        XCTAssertEqual(Set(result1.buckets.map({i in i.amount.rounded()})), [1000])
+        XCTAssertEqual(result1.balance + result1.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
         
         // Check after two months (bucket should be destroyed)
-        let result2 = appData.calculateTotalIncome(asOf: twoMonthsLater)
+        let result2 = appData.getAppState(asOf: twoMonthsLater)
         
-        XCTAssertEqual(result2.mainBalance, 5000, accuracy: 0.01)
+        XCTAssertEqual(result2.balance, 5000, accuracy: 0.01)
         XCTAssertEqual(result2.buckets.count, 0)
-        XCTAssertEqual(result2.mainBalance, 5000, accuracy: 0.01) // Only 5000, not 6000, because 1000 was destroyed
+        XCTAssertEqual(result2.balance, 5000, accuracy: 0.01) // Only 5000, not 6000, because 1000 was destroyed
     }
     
     func testRecurringAutoDumpBucketBehavior() {
@@ -218,39 +218,39 @@ class BucketTests: XCTestCase {
         ]
         
         // Check after half a month (bucket should fill up and dump)
-        let result1 = appData.calculateTotalIncome(asOf: halfMonthLater - 1)
-        XCTAssertEqual(result1.mainBalance + result1.buckets.reduce(0) {acc, i in acc + i.amount}, 1500, accuracy: 0.01)
-        XCTAssertEqual(result1.mainBalance, 0, accuracy: 0.01)
+        let result1 = appData.getAppState(asOf: halfMonthLater - 1)
+        XCTAssertEqual(result1.balance + result1.buckets.reduce(0) {acc, i in acc + i.amount}, 1500, accuracy: 0.01)
+        XCTAssertEqual(result1.balance, 0, accuracy: 0.01)
         XCTAssertEqual(result1.buckets.count, 1)
-        XCTAssertEqual(result1.buckets[0].amount, 1500, accuracy: 0.01)
-        let result1b = appData.calculateTotalIncome(asOf: halfMonthLater + 1)
-        XCTAssertEqual(result1b.mainBalance + result1b.buckets.reduce(0) {acc, i in acc + i.amount}, 1500, accuracy: 0.01)
-        XCTAssertEqual(result1b.mainBalance, 1500, accuracy: 0.01)
+        XCTAssertEqual(Set(result1.buckets.map({i in i.amount.rounded()})), [1500])
+        let result1b = appData.getAppState(asOf: halfMonthLater + 1)
+        XCTAssertEqual(result1b.balance + result1b.buckets.reduce(0) {acc, i in acc + i.amount}, 1500, accuracy: 0.01)
+        XCTAssertEqual(result1b.balance, 1500, accuracy: 0.01)
         XCTAssertEqual(result1b.buckets.count, 1)
-        XCTAssertEqual(result1b.buckets[0].amount, 0, accuracy: 0.01)
+        XCTAssertEqual(Set(result1b.buckets.map({i in i.amount.rounded()})), [0])
         
         // Check after one month (bucket should fill up and dump)
-        let result2 = appData.calculateTotalIncome(asOf: oneMonthLater - 1)
-        XCTAssertEqual(result2.mainBalance + result2.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
-        XCTAssertEqual(result2.mainBalance, 1500 * 3/2, accuracy: 0.01)
+        let result2 = appData.getAppState(asOf: oneMonthLater - 1)
+        XCTAssertEqual(result2.balance + result2.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
+        XCTAssertEqual(result2.balance, 1500 * 3/2, accuracy: 0.01)
         XCTAssertEqual(result2.buckets.count, 1)
-        XCTAssertEqual(result2.buckets[0].amount, 1500 * 1/2, accuracy: 0.01)
-        let result2b = appData.calculateTotalIncome(asOf: oneMonthLater + 1)
-        XCTAssertEqual(result2b.mainBalance + result2b.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
-        XCTAssertEqual(result2b.mainBalance, 1500 * 3/2, accuracy: 0.01)
+        XCTAssertEqual(Set(result2.buckets.map({i in i.amount.rounded()})), [(1500 * 1/2).rounded()])
+        let result2b = appData.getAppState(asOf: oneMonthLater + 1)
+        XCTAssertEqual(result2b.balance + result2b.buckets.reduce(0) {acc, i in acc + i.amount}, 3000, accuracy: 0.01)
+        XCTAssertEqual(result2b.balance, 1500 * 3/2, accuracy: 0.01)
         XCTAssertEqual(result2b.buckets.count, 1)
-        XCTAssertEqual(result2b.buckets[0].amount, 1500 * 1/2, accuracy: 0.01)
+        XCTAssertEqual(Set(result2b.buckets.map({i in i.amount.rounded()})), [(1500 * 1/2).rounded()])
         
         // Check after one and a half months (bucket should fill up and dump)
-        let result3 = appData.calculateTotalIncome(asOf: oneAndHalfMonthsLater - 1)
-        XCTAssertEqual(result3.mainBalance + result3.buckets.reduce(0) {acc, i in acc + i.amount}, 4500, accuracy: 0.01)
-        XCTAssertEqual(result3.mainBalance, 3000, accuracy: 0.01)
+        let result3 = appData.getAppState(asOf: oneAndHalfMonthsLater - 1)
+        XCTAssertEqual(result3.balance + result3.buckets.reduce(0) {acc, i in acc + i.amount}, 4500, accuracy: 0.01)
+        XCTAssertEqual(result3.balance, 3000, accuracy: 0.01)
         XCTAssertEqual(result3.buckets.count, 1)
-        XCTAssertEqual(result3.buckets[0].amount, 1500, accuracy: 0.01)
-        let result3b = appData.calculateTotalIncome(asOf: oneAndHalfMonthsLater + 1)
-        XCTAssertEqual(result3b.mainBalance + result3b.buckets.reduce(0) {acc, i in acc + i.amount}, 4500, accuracy: 0.01)
-        XCTAssertEqual(result3b.mainBalance, 4500, accuracy: 0.01)
+        XCTAssertEqual(Set(result3.buckets.map({i in i.amount.rounded()})), [1500])
+        let result3b = appData.getAppState(asOf: oneAndHalfMonthsLater + 1)
+        XCTAssertEqual(result3b.balance + result3b.buckets.reduce(0) {acc, i in acc + i.amount}, 4500, accuracy: 0.01)
+        XCTAssertEqual(result3b.balance, 4500, accuracy: 0.01)
         XCTAssertEqual(result3b.buckets.count, 1)
-        XCTAssertEqual(result3b.buckets[0].amount, 0, accuracy: 0.01)
+        XCTAssertEqual(Set(result3b.buckets.map({i in i.amount.rounded()})), [0])
     }
 }

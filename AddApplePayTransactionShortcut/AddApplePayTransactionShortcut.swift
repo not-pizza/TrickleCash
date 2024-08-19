@@ -94,9 +94,9 @@ struct AddApplePayTransactionShortcut: AppIntent {
         
         let time = Date();
         var appData = AppData.loadOrDefault();
-        let previousBalance = appData.getTrickleBalance(asOf: time)
+        let previousBalance = appData.getAppState(asOf: time).balance
         appData = appData.addSpend(spend).save()
-        let newBalance = appData.getTrickleBalance(asOf: time)
+        let newBalance = appData.getAppState(asOf: time).balance
 
         
         return .result(dialog: "Saved to Trickle 🤑") {
