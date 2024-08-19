@@ -53,10 +53,10 @@ struct BucketView: View {
             }
         }
         .contextMenu {
-            Button("Option 1") {
-                print("Option 1 selected")
+            Button("Dump into Trickle") {
+                print("dump selected")
             }
-            Button("Option 2") {
+            Button("Edit") {
                 print("Option 2 selected")
             }
         }

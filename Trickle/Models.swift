@@ -70,7 +70,7 @@ struct AppData: Codable, Equatable {
     
     func dumpBucket(_ id: UUID) -> Self {
         var events = self.events
-        events.append(.dumpBucket(DumpBucket(bucketToDump: bucket.id)))
+        events.append(.dumpBucket(DumpBucket(bucketToDump: id)))
         return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
     }
     

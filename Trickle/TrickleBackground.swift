@@ -128,7 +128,6 @@ struct BackgroundView: View {
                     Spacer().frame(height: 30)
                     
                     ForEach(buckets, id: \.id) { bucket in
-
                         BucketView(
                             id: bucket.id,
                             amount: bucket.amount,
