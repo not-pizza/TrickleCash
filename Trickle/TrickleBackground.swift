@@ -33,13 +33,13 @@ struct BackgroundView: View {
         
         let debtClockHeight = 20.0
         
-        var buckets = Array(appState.buckets).map({ (id, bucketInfo) in
+        let buckets = Array(appState.buckets).map({ (id, bucketInfo) in
             (
                 id: id,
                 amount: bucketInfo.amount,
                 bucket: bucketInfo.bucket
             )
-        }).sorted {$0.amount < $1.amount}
+        }).sorted(by: {$0.bucket.name < $1.bucket.name}).sorted(by: {$0.amount < $1.amount})
         
         return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
@@ -47,45 +47,45 @@ struct BackgroundView: View {
             let balanceHeight = (Double(foregroundShowingOffset) - 50.0) + (balance < 0 ? 0.0 : debtClockHeight + 10)
             
             VStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack {
-                        Color.clear
-                            .frame(width: 24, height: 24)
-                        Spacer()
-                        
-                        VStack(spacing: 10) {
-                            CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: balanceHeight)
-                            if balance < 0 {
-                                if let debtClock = debtClock {
-                                    Text("Out of debt \(debtClock)").frame(height: debtClockHeight)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Color.clear
+                                .frame(width: 24, height: 24)
+                            Spacer()
+                            
+                            VStack(spacing: 10) {
+                                CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: balanceHeight)
+                                if balance < 0 {
+                                    if let debtClock = debtClock {
+                                        Text("Out of debt \(debtClock)").frame(height: debtClockHeight)
+                                    }
                                 }
                             }
-                        }
-                        
-                        
-                        Spacer()
-                        NavigationLink(
-                            destination: SettingsView(
-                                appData: $appData
-                            )) {
-                            Image(systemName: "gear")
-                                .foregroundColor(.primary)
-                                .font(.system(size: 26))
-                        }
+                            
+                            
+                            Spacer()
+                            NavigationLink(
+                                destination: SettingsView(
+                                    appData: $appData
+                                )) {
+                                Image(systemName: "gear")
+                                    .foregroundColor(.primary)
+                                    .font(.system(size: 26))
+                            }
 
+                        }
+                        .padding()
+                        .frame(height: foregroundShowingOffset, alignment: .top)
+                        
+                        
                     }
-                    .padding()
                     .frame(height: foregroundShowingOffset, alignment: .top)
                     
+                    Spacer().frame(height: 60)
                     
-                }
-                .frame(height: foregroundShowingOffset, alignment: .top)
+                    // Buckets
                 
-                Spacer().frame(height: 60)
-                
-                // Buckets
-                
-                ScrollView {
                     Spacer().frame(height: 1)
                     VStack {
                         Button(action: {
@@ -120,6 +120,8 @@ struct BackgroundView: View {
                             editingBucket = IdentifiedBucket(id: bucket.id, bucket: bucket.bucket)
                         }
                     }
+
+                    Spacer().frame(height: 100)
                 }
             }
         }
