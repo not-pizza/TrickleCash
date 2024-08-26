@@ -42,7 +42,15 @@ struct EditBucketView: View {
                         Text("$")
                         TextField("Target Amount", text: $targetAmountInput)
                             .keyboardType(.decimalPad)
-                            .onChange(of: targetAmountInput) { _ in updateCalculations() }
+                            .onChange(of: targetAmountInput) { newTargetAmountInput in
+                                if let (monthlyContribution, targetAmount) = cleanData(monthlyContributionInput: monthlyContributionInput, targetAmountInput: newTargetAmountInput)
+                                {
+                                    let income = monthlyContribution / secondsPerMonth
+                                    if let newDate = Calendar.current.date(byAdding: .second, value: Int(targetAmount / income), to: Date()) {
+                                        completionDate = newDate
+                                    }
+                                }
+                            }
                     }
                 }
                 
@@ -54,7 +62,15 @@ struct EditBucketView: View {
                         Text("$")
                         TextField("Monthly Contribution", text: $monthlyContributionInput)
                             .keyboardType(.decimalPad)
-                            .onChange(of: monthlyContributionInput) { _ in updateCalculations() }
+                            .onChange(of: monthlyContributionInput) { newMonthlyContributionInput in
+                                if let (monthlyContribution, targetAmount) = cleanData(monthlyContributionInput: newMonthlyContributionInput, targetAmountInput: targetAmountInput)
+                                {
+                                    let income = monthlyContribution / secondsPerMonth
+                                    if let newDate = Calendar.current.date(byAdding: .second, value: Int(targetAmount / income), to: Date()) {
+                                        completionDate = newDate
+                                    }
+                                }
+                            }
                     }
                 }
                 
@@ -64,7 +80,15 @@ struct EditBucketView: View {
                     in: Calendar.current.date(byAdding: .day, value: 1, to: Date())!.startOfDay...,
                     displayedComponents: .date
                 )
-                    .onChange(of: completionDate) { _ in updateCalculations() }
+                .onChange(of: completionDate) { newCompletionDate in
+                    if let targetAmount = toDouble(targetAmountInput) {
+                        let income = targetAmount / (completionDate.timeIntervalSince(Date()))
+                        monthlyContributionInput = String(format: "%.2f", income * secondsPerMonth)
+                    }
+                    // targetAmount = targetAmount
+                    // completionDate = newCompletionDate
+                    // income = targetAmount / (newCompletionDate - Date)
+                }
 
                 Picker("When Finished", selection: $bucket.whenFinished) {
                     Text("Wait to Dump").tag(Bucket.FinishAction.waitToDump)
@@ -98,6 +122,19 @@ struct EditBucketView: View {
         .onAppear {
             nameIsFocused = bucket.name.isEmpty
         }
+    }
+    
+    private func cleanData(monthlyContributionInput: String, targetAmountInput: String) -> (monthlyContribution: Double, targetAmount: Double)? {
+        if let monthlyContributionInput = toDouble(monthlyContributionInput) {
+            if monthlyContributionInput != 0 {
+                if let targetAmountInput = toDouble(targetAmountInput) {
+                    if targetAmountInput != 0 {
+                        return (monthlyContribution: monthlyContributionInput, targetAmount: targetAmountInput)
+                    }
+                }
+            }
+        }
+        return nil
     }
     
     private func updateCalculations() {
