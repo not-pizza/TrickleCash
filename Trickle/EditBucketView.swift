@@ -10,6 +10,7 @@ struct EditBucketView: View {
     @State private var completionDate: Date
     
     @State private var targetAmountInput: String
+    @State private var monthlyContributionInput: String
     
     init(bucket: Binding<Bucket>, save: @escaping (Bucket) -> Void) {
         self._bucket = bucket
@@ -19,6 +20,7 @@ struct EditBucketView: View {
         self._monthlyContribution = State(initialValue: initialBucket.income * secondsPerMonth)
         self._completionDate = State(initialValue: initialBucket.estimatedCompletionDate)
         self._targetAmountInput = State(initialValue: String(format: "%.2f", initialBucket.targetAmount))
+        self._monthlyContributionInput = State(initialValue: String(format: "%.2f", initialBucket.income * secondsPerMonth))
     }
     
     var body: some View {
@@ -35,20 +37,33 @@ struct EditBucketView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Bucket size")
                         .font(.headline)
-                    TextField("Target Amount", text: $targetAmountInput)
-                        .keyboardType(.decimalPad)
-                        .onChange(of: targetAmountInput) { _ in updateCalculations() }
+                    
+                    HStack(alignment: .top, spacing: 2) {
+                        Text("$")
+                        TextField("Target Amount", text: $targetAmountInput)
+                            .keyboardType(.decimalPad)
+                            .onChange(of: targetAmountInput) { _ in updateCalculations() }
+                    }
                 }
                 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Monthly Contribution")
                         .font(.headline)
-                    TextField("Monthly Contribution", value: $monthlyContribution, format: .currency(code: "USD"))
-                        .keyboardType(.decimalPad)
-                        .onChange(of: monthlyContribution) { _ in updateCalculations() }
+                    
+                    HStack(alignment: .top, spacing: 2) {
+                        Text("$")
+                        TextField("Monthly Contribution", text: $monthlyContributionInput)
+                            .keyboardType(.decimalPad)
+                            .onChange(of: monthlyContributionInput) { _ in updateCalculations() }
+                    }
                 }
                 
-                DatePicker("Completion Date", selection: $completionDate, displayedComponents: .date)
+                DatePicker(
+                    "Completion Date",
+                    selection: $completionDate,
+                    in: Calendar.current.date(byAdding: .day, value: 1, to: Date())!.startOfDay...,
+                    displayedComponents: .date
+                )
                     .onChange(of: completionDate) { _ in updateCalculations() }
 
                 Picker("When Finished", selection: $bucket.whenFinished) {

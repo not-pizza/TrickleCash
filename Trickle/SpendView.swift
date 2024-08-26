@@ -69,7 +69,7 @@ struct SpendView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    HStack(alignment: .top) {
+                    HStack(alignment: .top, spacing: 2) {
                         Text("$")
                         if #available(iOS 16.0, *) {
                             amountView

@@ -109,19 +109,19 @@ struct Intro: View {
                             SpendingAvailability(monthlyRate: monthlyRate)
                         }
                         else if currentPage == 2 {
-                            Text("Keep track of how much you have left to spend:")
+                            Text("This balance shows how much money you would have if you got paid 1¢ every \((30.0 * 24 * 60 * 60) / (monthlyRate * 100), specifier: "%.0f") seconds:")
                                 .multilineTextAlignment(.center)
                                 .font(.headline)
                                 .padding()
                             
                             CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: 200)
 
-                            Text("Log your spending and we'll deduct it from your balance.")
+                            Text("Log your spending and we'll deduct it from your balance. This lets you keep track of how much money you have left to spend")
                                 .multilineTextAlignment(.center)
                                 .font(.headline)
                                 .padding()
                         } else {
-                            Text("Stay positive, stay on track, and make your financial goals a reality.")
+                            Text("All spending needs to be logged manually. Stay positive, stay on track, and make your financial goals a reality!")
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .font(.title2)
