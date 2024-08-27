@@ -4,18 +4,20 @@ struct BucketView: View {
     let id: UUID
     let amount: Double
     @Binding var bucket: Bucket
+    var dump: () -> Void
     let currentTime: Date
     
     @State private var animationProgress: CGFloat = 0
     @State private var isEditingBucket = false
     @State private var tempBucket: Bucket
     
-    init(id: UUID, amount: Double, bucket: Binding<Bucket>, currentTime: Date) {
+    init(id: UUID, amount: Double, bucket: Binding<Bucket>, dump: @escaping () -> Void, currentTime: Date) {
         self.id = id
         self.amount = amount
         self._bucket = bucket
         self.currentTime = currentTime
         self._tempBucket = State(initialValue: bucket.wrappedValue)
+        self.dump = dump
     }
     
     var body: some View {
@@ -64,7 +66,7 @@ struct BucketView: View {
         }
         .contextMenu {
             Button("Dump into Trickle") {
-                print("dump selected")
+                dump()
             }
             Button("Edit") {
                 isEditingBucket = true
@@ -114,6 +116,9 @@ struct BucketView_Previews: PreviewProvider {
                         whenFinished: .autoDump,
                         recur: 30 * 24 * 60 * 60
                     )),
+                    dump: {
+                        print("dump me :D")
+                    },
                     currentTime: Date()
                 )
             }

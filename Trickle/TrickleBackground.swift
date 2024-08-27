@@ -38,7 +38,7 @@ struct BackgroundView: View {
                 amount: bucketInfo.amount,
                 bucket: bucketInfo.bucket
             )
-        }).sorted(by: {$0.bucket.name < $1.bucket.name}).sorted(by: {$0.amount < $1.amount})
+        }).sorted(by: {$0.bucket.name < $1.bucket.name}).sorted(by: {$0.bucket.estimatedCompletionDate < $1.bucket.estimatedCompletionDate})
         
         return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
@@ -113,6 +113,9 @@ struct BackgroundView: View {
                                     appData = appData.updateBucket(bucket.id, newBucket)
                                 }
                             ),
+                            dump: {
+                                appData = appData.dumpBucket(bucket.id)
+                            },
                             currentTime: currentTime
                         )
                         .onTapGesture {
