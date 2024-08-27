@@ -71,15 +71,12 @@ struct BucketView: View {
             }
         }
         .sheet(isPresented: $isEditingBucket) {
-            let bucketBinding: Binding<Bucket> = Binding {
-                bucket
-            } set: { newBucket in
-                bucket = newBucket
-            }
-
-            EditBucketView(bucket: bucketBinding, save: {newBucket in
-                bucket = newBucket
-            })
+            EditBucketView(
+                bucket: bucket,
+                save: { newBucket in
+                    bucket = newBucket
+                }
+            )
         }
     }
     

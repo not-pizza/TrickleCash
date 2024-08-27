@@ -121,7 +121,7 @@ struct Intro: View {
                                 .font(.headline)
                                 .padding()
                         } else {
-                            Text("All spending needs to be logged manually. Stay positive, stay on track, and make your financial goals a reality!")
+                            Text("All spending needs to be logged manually in Trickle. Stay positive, stay on track, and make your financial goals a reality!")
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .font(.title2)

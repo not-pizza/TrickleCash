@@ -12,7 +12,6 @@ struct BackgroundView: View {
     var currentTime: Date
 
     @State private var editingBucket: IdentifiedBucket?
-    @State private var addingNewBucket: Bucket = Bucket(name: "", targetAmount: 100, income: 10 / secondsPerMonth, whenFinished: .waitToDump, recur: nil)
     @State private var isAddingNewBucket = false
     
     @Environment(\.colorScheme) var colorScheme
@@ -127,17 +126,12 @@ struct BackgroundView: View {
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .sheet(isPresented: $isAddingNewBucket) {
-            EditBucketView(bucket: $addingNewBucket, save: {
-                newBucket in
-                appData = appData.addBucket(newBucket)
-                addingNewBucket = Bucket(
-                    name: "",
-                    targetAmount: 100,
-                    income: 10 / secondsPerMonth,
-                    whenFinished: .waitToDump,
-                    recur: nil
-                )
-            })
+            EditBucketView(
+                bucket: Bucket(name: "", targetAmount: 100, income: 10 / secondsPerMonth, whenFinished: .waitToDump, recur: nil),
+                save: { newBucket in
+                    appData = appData.addBucket(newBucket)
+                }
+            )
         }
     }
 }
