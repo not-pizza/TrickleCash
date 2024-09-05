@@ -33,6 +33,7 @@
 		AB7B79262C6011FA003647EF /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7B79252C6011FA003647EF /* Expression.swift */; };
 		AB7B79282C602FFB003647EF /* Intro.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7B79272C602FFB003647EF /* Intro.swift */; };
 		ABAAAC492C6483C4008EB27B /* CircularBalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */; };
+		ABB0D9D02C8A4CA100C23C0D /* BudgetAllocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB0D9CF2C8A4CA100C23C0D /* BudgetAllocationView.swift */; };
 		ABB5252F2C62B98E00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB5252E2C62B98E00A52574 /* Oklab */; };
 		ABB525312C62B99700A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525302C62B99700A52574 /* Oklab */; };
 		ABB525332C62B99C00A52574 /* Oklab in Frameworks */ = {isa = PBXBuildFile; productRef = ABB525322C62B99C00A52574 /* Oklab */; };
@@ -127,6 +128,7 @@
 		AB7B79252C6011FA003647EF /* Expression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		AB7B79272C602FFB003647EF /* Intro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intro.swift; sourceTree = "<group>"; };
 		ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularBalanceView.swift; sourceTree = "<group>"; };
+		ABB0D9CF2C8A4CA100C23C0D /* BudgetAllocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetAllocationView.swift; sourceTree = "<group>"; };
 		ABBF529F2C68A4860076329D /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		ABBF52A42C68ADBD0076329D /* BucketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketTests.swift; sourceTree = "<group>"; };
 		ABD497642C6484BF00707842 /* TrickleBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleBackground.swift; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 				ABBF529F2C68A4860076329D /* Utils.swift */,
 				AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */,
 				AB2BE5B22C72E7BD00578B18 /* EditBucketView.swift */,
+				ABB0D9CF2C8A4CA100C23C0D /* BudgetAllocationView.swift */,
 			);
 			path = Trickle;
 			sourceTree = "<group>";
@@ -469,6 +472,7 @@
 				ABD497652C6484BF00707842 /* TrickleBackground.swift in Sources */,
 				ABD497722C649D9500707842 /* CustomTFKeyboard.swift in Sources */,
 				AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */,
+				ABB0D9D02C8A4CA100C23C0D /* BudgetAllocationView.swift in Sources */,
 				AB2BE5B12C72CF3800578B18 /* BucketVIew.swift in Sources */,
 				AB7B79262C6011FA003647EF /* Expression.swift in Sources */,
 				AB2BE5B32C72E7BD00578B18 /* EditBucketView.swift in Sources */,

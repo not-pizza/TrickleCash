@@ -155,7 +155,7 @@ struct EditBucketView: View {
     
     private func derivedBucket() -> Bucket? {
         if let (monthlyContribution, targetAmount) = cleanData(monthlyContributionInput: monthlyContributionInput, targetAmountInput: targetAmountInput) {
-            return Bucket(name: nameInput, targetAmount: targetAmount, income: monthlyContribution / secondsPerMonth, whenFinished: self.whenFinished)
+            return Bucket(name: nameInput, targetAmount: targetAmount, income: monthlyContribution / secondsPerMonth, whenFinished: self.whenFinished, recur: recur)
         }
         return nil
     }

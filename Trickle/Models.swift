@@ -243,11 +243,15 @@ struct AppData: Codable, Equatable {
         mainBalance += incomeForPeriod - distributedToBuckets
         
         let bucketInfos = buckets.mapValues({bucket in AppState.BucketInfo(bucket: bucket.bucket, amount: bucket.amount)})
+        let bucketIncomePerSecond = bucketInfos.values.filter({bucket in bucket.bucket.targetAmount != bucket.amount})
+            .reduce(0, {sum, bucket in sum + bucket.bucket.income});
         
         return AppState(
             balance: mainBalance,
             spends: spends,
-            buckets: bucketInfos
+            buckets: bucketInfos,
+            totalIncomePerSecond: currentPerSecondRate,
+            bucketIncomePerSecond: bucketIncomePerSecond
         )
         
         func distributeToBuckets(duration: TimeInterval) -> Double {
@@ -315,6 +319,8 @@ struct AppState {
     let balance: Double
     let spends: [Spend]
     let buckets: [UUID : BucketInfo]
+    let totalIncomePerSecond: Double
+    let bucketIncomePerSecond: Double
 }
 
 struct SetMonthlyRate: Codable, Equatable, Identifiable {

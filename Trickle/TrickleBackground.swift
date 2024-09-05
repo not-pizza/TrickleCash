@@ -1,6 +1,6 @@
 import SwiftUI
 
-fileprivate struct IdentifiedBucket: Identifiable {
+struct IdentifiedBucket: Identifiable {
     let id: UUID
     let bucket: Bucket
 }
@@ -25,20 +25,23 @@ struct BackgroundView: View {
     var body: some View {
         let appState = appData.getAppState(asOf: currentTime)
         let balance = appState.balance
-        let perSecondRate = appData.getDailyRate(asOf: currentTime) / 24 / 60 / 60
+        let perSecondRate = appState.totalIncomePerSecond - appState.bucketIncomePerSecond
         
-        let timeAtZero = Calendar.current.date(byAdding: .second, value: Int(-balance / perSecondRate), to: currentTime)
+        let timeAtZero = perSecondRate > 0 ? Calendar.current.date(byAdding: .second, value: Int(-balance / perSecondRate), to: currentTime) : nil
         let debtClock = timeAtZero?.formatted(formatStyle)
         
         let debtClockHeight = 20.0
         
-        let buckets = Array(appState.buckets).map({ (id, bucketInfo) in
+        let buckets = Array(appState.buckets).map({(id, bucketInfo) in
             (
                 id: id,
                 amount: bucketInfo.amount,
                 bucket: bucketInfo.bucket
             )
         }).sorted(by: {$0.bucket.name < $1.bucket.name}).sorted(by: {$0.bucket.estimatedCompletionDate < $1.bucket.estimatedCompletionDate})
+        
+        
+        
         
         return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
@@ -122,6 +125,14 @@ struct BackgroundView: View {
                             editingBucket = IdentifiedBucket(id: bucket.id, bucket: bucket.bucket)
                         }
                     }
+                    
+                    BudgetAllocationView(
+                        totalIncomePerSecond: appState.totalIncomePerSecond,
+                        bucketIncomePerSecond: appState.bucketIncomePerSecond,
+                        buckets: buckets
+                    )
+                    .padding(.horizontal)
+
 
                     Spacer().frame(height: 100)
                 }

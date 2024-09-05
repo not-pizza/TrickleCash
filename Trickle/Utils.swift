@@ -17,7 +17,7 @@ func formatCurrencyNoDecimals(_ amount: Double) -> String {
     formatter.numberStyle = .currency
     formatter.currencyCode = "USD"
     formatter.maximumFractionDigits = 0
-    return formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
+    return formatter.string(from: NSNumber(value: amount)) ?? "$0"
 }
 
 func formatCurrency(_ amount: Double) -> String {

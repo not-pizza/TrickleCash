@@ -21,12 +21,12 @@ struct BucketView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        return VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(bucket.name)
                     .font(.headline)
                 Spacer()
-                Text(String(format: "$%.2f / $%.2f", amount, bucket.targetAmount))
+                Text(String(format: "\(formatCurrency(amount)) / \(formatCurrency(bucket.targetAmount))"))
                     .font(.subheadline)
             }
             
