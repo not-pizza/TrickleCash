@@ -5,9 +5,7 @@ struct EditBucketView: View {
     @Environment(\.presentationMode) var presentationMode
     @FocusState private var nameIsFocused: Bool
     
-    @State private var monthlyContribution: Double
     @State private var completionDate: Date
-    
     @State private var targetAmountInput: String
     @State private var monthlyContributionInput: String
     @State private var nameInput: String
@@ -17,7 +15,6 @@ struct EditBucketView: View {
     init(bucket: Bucket, save: @escaping (Bucket) -> Void) {
         self.save = save
         
-        self._monthlyContribution = State(initialValue: bucket.income * secondsPerMonth)
         self._completionDate = State(initialValue: bucket.estimatedCompletionDate)
         self._targetAmountInput = State(initialValue: String(format: "%.2f", bucket.targetAmount))
         self._monthlyContributionInput = State(initialValue: String(format: "%.2f", bucket.income * secondsPerMonth))
@@ -43,17 +40,8 @@ struct EditBucketView: View {
                     
                     HStack(alignment: .top, spacing: 2) {
                         Text("$")
-                        TextField("Target Amount", text: $targetAmountInput)
+                        TextField("Target Amount", text: targetAmountBinding)
                             .keyboardType(.decimalPad)
-                            .onChange(of: targetAmountInput) { newTargetAmountInput in
-                                if let (monthlyContribution, targetAmount) = cleanData(monthlyContributionInput: monthlyContributionInput, targetAmountInput: newTargetAmountInput)
-                                {
-                                    let income = monthlyContribution / secondsPerMonth
-                                    if let newDate = Calendar.current.date(byAdding: .second, value: Int(targetAmount / income), to: Date()) {
-                                        completionDate = newDate
-                                    }
-                                }
-                            }
                     }
                 }
                 
@@ -63,32 +51,17 @@ struct EditBucketView: View {
                     
                     HStack(alignment: .top, spacing: 2) {
                         Text("$")
-                        TextField("Monthly Contribution", text: $monthlyContributionInput)
+                        TextField("Monthly Contribution", text: monthlyContributionBinding)
                             .keyboardType(.decimalPad)
-                            .onChange(of: monthlyContributionInput) { newMonthlyContributionInput in
-                                if let (monthlyContribution, targetAmount) = cleanData(monthlyContributionInput: newMonthlyContributionInput, targetAmountInput: targetAmountInput)
-                                {
-                                    let income = monthlyContribution / secondsPerMonth
-                                    if let newDate = Calendar.current.date(byAdding: .second, value: Int(targetAmount / income), to: Date()) {
-                                        completionDate = newDate
-                                    }
-                                }
-                            }
                     }
                 }
                 
                 DatePicker(
                     "Completion Date",
-                    selection: $completionDate,
+                    selection: completionDateBinding,
                     in: Calendar.current.date(byAdding: .day, value: 1, to: Date())!.startOfDay...,
                     displayedComponents: .date
                 )
-                .onChange(of: completionDate) { newCompletionDate in
-                    if let targetAmount = toDouble(targetAmountInput) {
-                        let income = targetAmount / (completionDate.timeIntervalSince(Date()))
-                        monthlyContributionInput = String(format: "%.2f", income * secondsPerMonth)
-                    }
-                }
 
                 Picker("When Finished", selection: $whenFinished) {
                     Text("Wait to Dump").tag(Bucket.FinishAction.waitToDump)
@@ -124,22 +97,64 @@ struct EditBucketView: View {
         }
     }
     
-    private func cleanData(monthlyContributionInput: String, targetAmountInput: String) -> (monthlyContribution: Double, targetAmount: Double)? {
-        if let monthlyContributionInput = toDouble(monthlyContributionInput) {
-            if monthlyContributionInput != 0 {
-                if let targetAmountInput = toDouble(targetAmountInput) {
-                    if targetAmountInput != 0 {
-                        return (monthlyContribution: monthlyContributionInput, targetAmount: targetAmountInput)
-                    }
-                }
+    private var targetAmountBinding: Binding<String> {
+        Binding(
+            get: { targetAmountInput },
+            set: { newValue in
+                targetAmountInput = newValue
+                updateCompletionDate()
             }
+        )
+    }
+    
+    private var monthlyContributionBinding: Binding<String> {
+        Binding(
+            get: { monthlyContributionInput },
+            set: { newValue in
+                monthlyContributionInput = newValue
+                updateCompletionDate()
+            }
+        )
+    }
+    
+    private var completionDateBinding: Binding<Date> {
+        Binding(
+            get: { completionDate },
+            set: { newValue in
+                completionDate = newValue
+                updateMonthlyContribution()
+            }
+        )
+    }
+    
+    private func updateCompletionDate() {
+        if let (monthlyContribution, targetAmount) = cleanData(monthlyContributionInput: monthlyContributionInput, targetAmountInput: targetAmountInput) {
+            let income = monthlyContribution / secondsPerMonth
+            if let newDate = Calendar.current.date(byAdding: .second, value: Int(targetAmount / income), to: Date()) {
+                completionDate = newDate
+            }
+        }
+    }
+    
+    private func updateMonthlyContribution() {
+        if let targetAmount = toDouble(targetAmountInput) {
+            let income = targetAmount / (completionDate.timeIntervalSince(Date()))
+            monthlyContributionInput = String(format: "%.2f", income * secondsPerMonth)
+        }
+    }
+    
+    private func cleanData(monthlyContributionInput: String, targetAmountInput: String) -> (monthlyContribution: Double, targetAmount: Double)? {
+        if let monthlyContributionInput = toDouble(monthlyContributionInput),
+           monthlyContributionInput != 0,
+           let targetAmountInput = toDouble(targetAmountInput),
+           targetAmountInput != 0 {
+            return (monthlyContribution: monthlyContributionInput, targetAmount: targetAmountInput)
         }
         return nil
     }
     
     private func derivedBucket() -> Bucket? {
-        if let (monthlyContribution, targetAmount) = cleanData(monthlyContributionInput: monthlyContributionInput, targetAmountInput: targetAmountInput)
-        {
+        if let (monthlyContribution, targetAmount) = cleanData(monthlyContributionInput: monthlyContributionInput, targetAmountInput: targetAmountInput) {
             return Bucket(name: nameInput, targetAmount: targetAmount, income: monthlyContribution / secondsPerMonth, whenFinished: self.whenFinished)
         }
         return nil
