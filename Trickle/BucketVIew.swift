@@ -49,7 +49,7 @@ struct BucketView: View {
                         
                         Rectangle()
                             .fill(Color.primary)
-                            .frame(width: geometry.size.width * animationProgress, height: 8)
+                            .frame(width: geometry.size.width * animationProgress * CGFloat(amount / bucket.targetAmount), height: 8)
                             .cornerRadius(4)
                     }
                 }
@@ -78,7 +78,7 @@ struct BucketView: View {
         .padding(.horizontal)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.0)) {
-                animationProgress = CGFloat(amount / bucket.targetAmount)
+                animationProgress = 1
             }
         }
         .contextMenu {

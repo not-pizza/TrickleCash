@@ -34,7 +34,7 @@ struct BudgetAllocationView: View {
         let buckets = buckets.sorted(by: {a, b in a.bucket.income > b.bucket.income})
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 12) {
-                IncomeRow(label: "Total Monthly Income:", amount: monthlyTotalIncome, font: .headline, fontWeight: .bold)
+                IncomeRow(label: "Total Income:", amount: monthlyTotalIncome, font: .headline, fontWeight: .bold)
                 
                 VStack(alignment: .leading, spacing: 8) {
                     IncomeRow(label: "Main Balance:", amount: monthlyMainBalance, font: .headline, indentLevel: 1)
@@ -96,11 +96,16 @@ struct IncomeRow: View {
             .font(font)
             
             Spacer()
-            
-            Text(formatCurrencyNoDecimals(amount))
-                .font(font)
-                .fontWeight(fontWeight)
-                .monospacedDigit()
+            HStack {
+                Text(formatCurrencyNoDecimals(amount))
+                    .monospacedDigit()
+                    .font(font)
+                    .fontWeight(fontWeight)
+                    .padding(0)
+                Text("/ month")
+                    .font(.subheadline)
+                    .padding(0)
+            }
         }
     }
 }
