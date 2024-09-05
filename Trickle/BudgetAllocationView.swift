@@ -31,7 +31,10 @@ struct BudgetAllocationView: View {
     
     
     var body: some View {
-        let buckets = buckets.sorted(by: {a, b in a.bucket.income > b.bucket.income})
+        let buckets = buckets
+            .sorted(by: {a, b in a.bucket.income > b.bucket.income})
+            .filter({bucket in bucket.amount != bucket.bucket.targetAmount})
+            
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 12) {
                 IncomeRow(label: "Total Income:", amount: monthlyTotalIncome, font: .headline, fontWeight: .bold)
