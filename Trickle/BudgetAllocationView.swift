@@ -33,10 +33,6 @@ struct BudgetAllocationView: View {
     var body: some View {
         let buckets = buckets.sorted(by: {a, b in a.bucket.income > b.bucket.income})
         VStack(alignment: .leading, spacing: 16) {
-            Text("Budget Allocation")
-                .font(.headline)
-                .padding(.bottom, 8)
-            
             VStack(alignment: .leading, spacing: 12) {
                 IncomeRow(label: "Total Monthly Income:", amount: monthlyTotalIncome, font: .headline, fontWeight: .bold)
                 
@@ -57,22 +53,6 @@ struct BudgetAllocationView: View {
                 .padding(.leading)
             }
             
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(Color.secondary.opacity(0.3))
-                        .frame(height: 8)
-                        .cornerRadius(4)
-                    
-                    Rectangle()
-                        .fill(isOverBudget ? Color.red : Color.primary)
-                        .frame(width: geometry.size.width * min(monthlyBucketIncome / monthlyTotalIncome, 1), height: 8)
-                        .cornerRadius(4)
-                }
-            }
-            .frame(height: 8)
-            .padding(.vertical, 8)
-            
             Text("\(allocationPercentage, specifier: "%.1f")% of income allocated to buckets")
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -85,7 +65,6 @@ struct BudgetAllocationView: View {
             }
         }
         .padding()
-        .background(Color.secondary.opacity(0.1))
         .cornerRadius(10)
     }
 }
