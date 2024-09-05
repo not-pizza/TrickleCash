@@ -9,10 +9,12 @@ struct BackgroundView: View {
     @Binding var appData: AppData
     var onSettingsTapped: () -> Void
     var foregroundShowingOffset: CGFloat
+    var foregroundHidden: Bool
     var currentTime: Date
 
     @State private var editingBucket: IdentifiedBucket?
     @State private var isAddingNewBucket = false
+    @State private var spacing = 60
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -77,7 +79,8 @@ struct BackgroundView: View {
                     }
                     .frame(height: foregroundShowingOffset, alignment: .top)
                     
-                    Spacer().frame(height: 60)
+                    
+                    Spacer().frame(height: CGFloat(spacing))
                     
                     // Buckets
                 
@@ -145,6 +148,8 @@ struct BackgroundView: View {
                 }
             )
         }
+        .onChange(of: foregroundHidden, perform: {newForegroundHidden in spacing = foregroundHidden ? 60 : 30})
+        .animation(.spring(), value: spacing)
     }
 }
 
@@ -178,6 +183,7 @@ struct AddBucketButtonStyle: ButtonStyle {
         )),
         onSettingsTapped: {},
         foregroundShowingOffset: UIScreen.main.bounds.height / 5,
+        foregroundHidden: true,
         currentTime: Date()
     )
 }

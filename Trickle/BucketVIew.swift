@@ -35,7 +35,7 @@ struct BucketView: View {
                 Text(bucket.name)
                     .font(.headline)
                 Spacer()
-                Text(String(format: "\(formatCurrency(amount)) / \(formatCurrency(bucket.targetAmount))"))
+                Text(String(format: "\(amount == bucket.targetAmount ? "✓ " : "")\(formatCurrencyNoDecimals(floor(amount))) / \(formatCurrencyNoDecimals(bucket.targetAmount))"))
                     .font(.subheadline)
             }
             
@@ -73,7 +73,7 @@ struct BucketView: View {
             }
         }
         .padding()
-        .background(Color.secondary.opacity(0.1))
+        .background(Color.secondary.opacity(amount == bucket.targetAmount ? 0.3 : 0.1))
         .cornerRadius(10)
         .padding(.horizontal)
         .onAppear {
@@ -128,6 +128,21 @@ struct BucketView_Previews: PreviewProvider {
                     amount: 750,
                     bucket: .constant(Bucket(
                         name: "Vacation Fund",
+                        targetAmount: 1000,
+                        income: 10 / secondsPerMonth,
+                        whenFinished: .autoDump,
+                        recur: 30 * 24 * 60 * 60
+                    )),
+                    dump: {
+                        print("dump me :D")
+                    },
+                    currentTime: Date()
+                )
+                BucketView(
+                    id: UUID(),
+                    amount: 1000,
+                    bucket: .constant(Bucket(
+                        name: "iPhone",
                         targetAmount: 1000,
                         income: 10 / secondsPerMonth,
                         whenFinished: .autoDump,

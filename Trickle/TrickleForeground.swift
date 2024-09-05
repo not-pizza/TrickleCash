@@ -13,6 +13,7 @@ struct ForegroundView: View {
     @State private var selectedDate: Date = Date()
     @State private var isDragging = false
     @State private var focusedSpendId: UUID?
+    @State private var chevronRotation: Double = 0
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.scenePhase) private var scenePhase
@@ -66,9 +67,10 @@ struct ForegroundView: View {
             Button(action: {hidden = !hidden}) {
                 HStack {
                     Spacer()
-                    Image(systemName: hidden ? "chevron.up" : "chevron.down")
+                    Image(systemName: "chevron.down")
                     Spacer()
                 }
+                .rotationEffect(.degrees(chevronRotation))
                 .frame(height: 30)
             }.foregroundStyle(Color.primary)
             
@@ -97,7 +99,10 @@ struct ForegroundView: View {
             }.onChange(of: hidden) { _ in
                 focusedSpendId = nil
             }
-        }
+        }.onChange(of: hidden, perform: {_ in
+            chevronRotation = hidden ? 180 : 0
+        })
+        .animation(.spring(), value: chevronRotation)
     }
     
     var topBar: some View {

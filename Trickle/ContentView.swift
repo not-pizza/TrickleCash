@@ -72,6 +72,7 @@ struct TrickleView: View {
                         appData: $appData,
                         onSettingsTapped: openSettings,
                         foregroundShowingOffset: initialforegroundShowingOffset,
+                        foregroundHidden: hidden,
                         currentTime: currentTime
                     ).zIndex(0)
                 }

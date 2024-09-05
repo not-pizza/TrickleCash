@@ -35,7 +35,7 @@ struct EditBucketView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Bucket size")
+                    Text("Fill up to:")
                         .font(.headline)
                     
                     HStack(alignment: .top, spacing: 2) {
@@ -46,7 +46,7 @@ struct EditBucketView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Monthly Contribution")
+                    Text("Monthly Contribution:")
                         .font(.headline)
                     
                     HStack(alignment: .top, spacing: 2) {
@@ -57,16 +57,21 @@ struct EditBucketView: View {
                 }
                 
                 DatePicker(
-                    "Completion Date",
+                    "Completion Date:",
                     selection: completionDateBinding,
                     in: Calendar.current.date(byAdding: .day, value: 1, to: Date())!.startOfDay...,
                     displayedComponents: .date
                 )
-
-                Picker("When Finished", selection: $whenFinished) {
-                    Text("Wait to Dump").tag(Bucket.FinishAction.waitToDump)
-                    Text("Auto Dump").tag(Bucket.FinishAction.autoDump)
-                    Text("Destroy").tag(Bucket.FinishAction.destroy)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("When Finished:")
+                        .font(.headline)
+                    
+                    Picker("When Finished", selection: $whenFinished) {
+                        Text("Do nothing").tag(Bucket.FinishAction.waitToDump)
+                        Text("Automatically dump into main balance").tag(Bucket.FinishAction.autoDump)
+                        Text("Destroy (as if you spent the money)").tag(Bucket.FinishAction.destroy)
+                    }
                 }
                 
                 Toggle("Recurring", isOn: Binding(
