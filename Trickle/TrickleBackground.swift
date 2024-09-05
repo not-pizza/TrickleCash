@@ -139,7 +139,7 @@ struct BackgroundView: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .sheet(isPresented: $isAddingNewBucket) {
             EditBucketView(
-                bucket: Bucket(name: "", targetAmount: 100, income: 10 / secondsPerMonth, whenFinished: .waitToDump, recur: nil),
+                bucket: Bucket(name: "", targetAmount: 150, income: 100 / secondsPerMonth, whenFinished: .waitToDump, recur: nil),
                 save: { newBucket in
                     appData = appData.addBucket(newBucket)
                 }
