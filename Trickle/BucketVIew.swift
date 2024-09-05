@@ -108,7 +108,7 @@ struct BucketView: View {
     private func formatFinishAction(_ action: Bucket.FinishAction) -> String {
         switch action {
         case .waitToDump:
-            return "Wait to dump"
+            return ""
         case .autoDump:
             return "Auto dump"
         case .destroy:
