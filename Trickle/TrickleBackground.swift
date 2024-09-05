@@ -40,9 +40,6 @@ struct BackgroundView: View {
             )
         }).sorted(by: {$0.bucket.name < $1.bucket.name}).sorted(by: {$0.bucket.estimatedCompletionDate < $1.bucket.estimatedCompletionDate})
         
-        
-        
-        
         return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
             
@@ -65,7 +62,6 @@ struct BackgroundView: View {
                                 }
                             }
                             
-                            
                             Spacer()
                             NavigationLink(
                                 destination: SettingsView(
@@ -75,12 +71,9 @@ struct BackgroundView: View {
                                     .foregroundColor(.primary)
                                     .font(.system(size: 26))
                             }
-
                         }
                         .padding()
                         .frame(height: foregroundShowingOffset, alignment: .top)
-                        
-                        
                     }
                     .frame(height: foregroundShowingOffset, alignment: .top)
                     
@@ -126,13 +119,18 @@ struct BackgroundView: View {
                         }
                     }
                     
-                    BudgetAllocationView(
-                        totalIncomePerSecond: appState.totalIncomePerSecond,
-                        bucketIncomePerSecond: appState.bucketIncomePerSecond,
-                        buckets: buckets
-                    )
-                    .padding(.horizontal)
-
+                    if buckets.isEmpty {
+                        Text("Buckets let you start saving a portion of your income for future expenses or bills. Add a bucket to get started!")
+                            .padding()
+                            .multilineTextAlignment(.center)
+                    } else {
+                        BudgetAllocationView(
+                            totalIncomePerSecond: appState.totalIncomePerSecond,
+                            bucketIncomePerSecond: appState.bucketIncomePerSecond,
+                            buckets: buckets
+                        )
+                        .padding(.horizontal)
+                    }
 
                     Spacer().frame(height: 100)
                 }
@@ -149,6 +147,7 @@ struct BackgroundView: View {
         }
     }
 }
+
 struct AddBucketButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration
@@ -175,15 +174,6 @@ struct AddBucketButtonStyle: ButtonStyle {
             startDate: Date().startOfDay,
             events: [
                 .spend(Spend(name: "7/11", amount: 30)),
-                .addBucket(
-                    AddBucket(bucketToAdd: Bucket(
-                        name: "iPhone 15",
-                        targetAmount: 1000,
-                        income: 200 / secondsPerMonth,
-                        whenFinished: .waitToDump,
-                        recur: nil
-                    ))
-                )
             ]
         )),
         onSettingsTapped: {},
