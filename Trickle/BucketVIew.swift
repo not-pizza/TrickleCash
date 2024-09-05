@@ -20,7 +20,16 @@ struct BucketView: View {
         self.dump = dump
     }
     
+    var formatStyle: Date.RelativeFormatStyle {
+        var formatStyle = Date.RelativeFormatStyle()
+        formatStyle.presentation = .named
+        return formatStyle
+    }
+    
     var body: some View {
+        let timeFilled = bucket.income > 0 ? Calendar.current.date(byAdding: .second, value: Int((bucket.targetAmount - amount) / bucket.income), to: currentTime) : nil
+        let filledWhen = timeFilled?.formatted(formatStyle)
+        
         return VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(bucket.name)
@@ -30,20 +39,28 @@ struct BucketView: View {
                     .font(.subheadline)
             }
             
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(Color.secondary.opacity(0.3))
-                        .frame(height: 8)
-                        .cornerRadius(4)
-                    
-                    Rectangle()
-                        .fill(Color.primary)
-                        .frame(width: geometry.size.width * animationProgress, height: 8)
-                        .cornerRadius(4)
+            HStack {
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .fill(Color.secondary.opacity(0.3))
+                            .frame(height: 8)
+                            .cornerRadius(4)
+                        
+                        Rectangle()
+                            .fill(Color.primary)
+                            .frame(width: geometry.size.width * animationProgress, height: 8)
+                            .cornerRadius(4)
+                    }
+                }
+                .frame(height: 8)
+                
+                
+                if let filledWhen = filledWhen {
+                    Text(filledWhen)
+                        .font(.subheadline)
                 }
             }
-            .frame(height: 8)
             
             HStack {
                 Text(formatRecurrence(bucket.recur))
