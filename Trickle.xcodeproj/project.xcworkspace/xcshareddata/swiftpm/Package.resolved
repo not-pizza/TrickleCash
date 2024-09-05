@@ -1,0 +1,24 @@
+{
+  "originHash" : "9f004fcef786ced3cabe2c093e6e5805c95d13b76b308c84dc37df5c9e480514",
+  "pins" : [
+    {
+      "identity" : "oklab",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/importRyan/Oklab.git",
+      "state" : {
+        "revision" : "92b73e1ab5c0049c68326315f03320d77fe2df1a",
+        "version" : "1.1.2"
+      }
+    },
+    {
+      "identity" : "plaid-link-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/plaid/plaid-link-ios",
+      "state" : {
+        "revision" : "e79c1f0fd233d3c4393a90655157ebeefb5372fc",
+        "version" : "5.6.1"
+      }
+    }
+  ],
+  "version" : 3
+}
