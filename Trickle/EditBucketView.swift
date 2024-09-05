@@ -64,10 +64,10 @@ struct EditBucketView: View {
                 )
                 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("When Finished:")
+                    Text("When Filled:")
                         .font(.headline)
                     
-                    Picker("When Finished", selection: $whenFinished) {
+                    Picker("When Filled", selection: $whenFinished) {
                         Text("Do nothing").tag(Bucket.FinishAction.waitToDump)
                         Text("Automatically dump into main balance").tag(Bucket.FinishAction.autoDump)
                         Text("Destroy (as if you spent the money)").tag(Bucket.FinishAction.destroy)

@@ -112,7 +112,7 @@ struct BucketView: View {
         case .autoDump:
             return "Auto dump"
         case .destroy:
-            return "Destroy when finished"
+            return "Destroy"
         }
     }
 }
