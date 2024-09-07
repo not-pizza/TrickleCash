@@ -24,9 +24,15 @@ struct BackgroundView: View {
         return formatStyle
     }
     
-    var body: some View {
-        let appState = appData.getAppState(asOf: currentTime)
-        let balance = appState.balance
+    var appState: AppState {
+        return appData.getAppState(asOf: currentTime)
+    }
+    
+    var balance: Double {
+        appState.balance
+    }
+    
+    var backgroundContent: some View {
         let perSecondRate = appState.totalIncomePerSecond - appState.bucketIncomePerSecond
         
         let timeAtZero = perSecondRate > 0 ? Calendar.current.date(byAdding: .second, value: Int(-balance / perSecondRate), to: currentTime) : nil
@@ -42,108 +48,125 @@ struct BackgroundView: View {
             )
         }).sorted(by: {$0.bucket.name < $1.bucket.name}).sorted(by: {$0.bucket.estimatedCompletionDate < $1.bucket.estimatedCompletionDate})
         
+        let balanceHeight = (Double(foregroundShowingOffset) - 50.0) + (balance < 0 ? 0.0 : debtClockHeight + 10)
+
+        return ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Color.clear
+                        .frame(width: 24, height: 24)
+                    Spacer()
+                    
+                    VStack(spacing: 10) {
+                        CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: balanceHeight)
+                        if balance < 0 {
+                            if let debtClock = debtClock {
+                                Text("Out of debt \(debtClock)").frame(height: debtClockHeight)
+                            }
+                        }
+                    }
+                    
+                    Spacer()
+                    NavigationLink(
+                        destination: SettingsView(
+                            appData: $appData
+                        )) {
+                            Image(systemName: "gear")
+                                .foregroundColor(.primary)
+                                .font(.system(size: 26))
+                        }
+                }
+                .padding()
+                .frame(height: foregroundShowingOffset, alignment: .top)
+            }
+            .frame(height: foregroundShowingOffset, alignment: .top)
+            
+            
+            Spacer().frame(height: CGFloat(spacing))
+            
+            // Buckets
+            
+            Spacer().frame(height: 1)
+            VStack {
+                Button(action: {
+                    isAddingNewBucket = true
+                }) {
+                    HStack {
+                        Spacer()
+                        Text("Add bucket")
+                        Spacer()
+                    }
+                    .frame(height: 30)
+                }
+                .buttonStyle(AddBucketButtonStyle())
+            }
+            .padding(.horizontal)
+            
+            Spacer().frame(height: 30)
+            
+            ForEach(buckets, id: \.id) { bucket in
+                BucketView(
+                    id: bucket.id,
+                    amount: bucket.amount,
+                    bucket: Binding(
+                        get: { bucket.bucket },
+                        set: { newBucket in
+                            appData = appData.updateBucket(bucket.id, newBucket)
+                        }
+                    ),
+                    dump: {
+                        appData = appData.dumpBucket(bucket.id)
+                    },
+                    currentTime: currentTime
+                )
+                .onTapGesture {
+                    editingBucket = IdentifiedBucket(id: bucket.id, bucket: bucket.bucket)
+                }
+            }
+            
+            if buckets.isEmpty {
+                Text("Buckets let you start saving a portion of your income for future expenses or bills. Add a bucket to get started!")
+                    .padding()
+                    .multilineTextAlignment(.center)
+            } else {
+                BudgetAllocationView(
+                    totalIncomePerSecond: appState.totalIncomePerSecond,
+                    bucketIncomePerSecond: appState.bucketIncomePerSecond,
+                    buckets: buckets
+                )
+                .padding(.horizontal)
+            }
+            
+            Spacer().frame(height: 100)
+        }
+    }
+    
+    var body: some View {
+        
         return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
-            
-            let balanceHeight = (Double(foregroundShowingOffset) - 50.0) + (balance < 0 ? 0.0 : debtClockHeight + 10)
-            
+                        
             VStack(alignment: .center) {
                 ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack {
-                                Color.clear
-                                    .frame(width: 24, height: 24)
-                                Spacer()
-                                
-                                VStack(spacing: 10) {
-                                    CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: balanceHeight)
-                                    if balance < 0 {
-                                        if let debtClock = debtClock {
-                                            Text("Out of debt \(debtClock)").frame(height: debtClockHeight)
-                                        }
+                    if #available(iOS 16.0, *) {
+                        backgroundContent
+                            .scrollDisabled(!foregroundHidden)
+                            .onChange(of: foregroundHidden) { _ in
+                                if foregroundHidden {
+                                    withAnimation {
+                                        proxy.scrollTo(0, anchor: .bottom)
                                     }
                                 }
-                                
-                                Spacer()
-                                NavigationLink(
-                                    destination: SettingsView(
-                                        appData: $appData
-                                    )) {
-                                        Image(systemName: "gear")
-                                            .foregroundColor(.primary)
-                                            .font(.system(size: 26))
-                                    }
                             }
-                            .padding()
-                            .frame(height: foregroundShowingOffset, alignment: .top)
-                        }
-                        .frame(height: foregroundShowingOffset, alignment: .top)
-                        
-                        
-                        Spacer().frame(height: CGFloat(spacing))
-                        
-                        // Buckets
-                        
-                        Spacer().frame(height: 1)
-                        VStack {
-                            Button(action: {
-                                isAddingNewBucket = true
-                            }) {
-                                HStack {
-                                    Spacer()
-                                    Text("Add bucket")
-                                    Spacer()
+                    } else {
+                        backgroundContent
+                            .onChange(of: foregroundHidden) { _ in
+                                if foregroundHidden {
+                                    withAnimation {
+                                        proxy.scrollTo(0, anchor: .bottom)
+                                    }
                                 }
-                                .frame(height: 30)
                             }
-                            .buttonStyle(AddBucketButtonStyle())
-                        }
-                        .padding(.horizontal)
-                        
-                        Spacer().frame(height: 30)
-                        
-                        ForEach(buckets, id: \.id) { bucket in
-                            BucketView(
-                                id: bucket.id,
-                                amount: bucket.amount,
-                                bucket: Binding(
-                                    get: { bucket.bucket },
-                                    set: { newBucket in
-                                        appData = appData.updateBucket(bucket.id, newBucket)
-                                    }
-                                ),
-                                dump: {
-                                    appData = appData.dumpBucket(bucket.id)
-                                },
-                                currentTime: currentTime
-                            )
-                            .onTapGesture {
-                                editingBucket = IdentifiedBucket(id: bucket.id, bucket: bucket.bucket)
-                            }
-                        }
-                        
-                        if buckets.isEmpty {
-                            Text("Buckets let you start saving a portion of your income for future expenses or bills. Add a bucket to get started!")
-                                .padding()
-                                .multilineTextAlignment(.center)
-                        } else {
-                            BudgetAllocationView(
-                                totalIncomePerSecond: appState.totalIncomePerSecond,
-                                bucketIncomePerSecond: appState.bucketIncomePerSecond,
-                                buckets: buckets
-                            )
-                            .padding(.horizontal)
-                        }
-                        
-                        Spacer().frame(height: 100)
-                    }
-                    .onChange(of: foregroundHidden) { _ in
-                        if foregroundHidden {
-                            withAnimation {
-                                proxy.scrollTo(0, anchor: .bottom)
-                            }
-                        }
                     }
                 }
             }
