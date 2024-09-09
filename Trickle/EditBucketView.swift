@@ -5,6 +5,7 @@ struct EditBucketView: View {
     @Environment(\.presentationMode) var presentationMode
     @FocusState private var nameIsFocused: Bool
     
+    private var amount: Double
     @State private var completionDate: Date
     @State private var targetAmountInput: String
     @State private var monthlyContributionInput: String
@@ -12,15 +13,16 @@ struct EditBucketView: View {
     @State private var whenFinished: Bucket.FinishAction
     @State private var recur: TimeInterval?
     
-    init(bucket: Bucket, save: @escaping (Bucket) -> Void) {
+    init(bucket: Bucket, amount: Double, save: @escaping (Bucket) -> Void) {
         self.save = save
         
-        self._completionDate = State(initialValue: bucket.estimatedCompletionDate)
+        self._completionDate = State(initialValue: bucket.estimatedCompletionDate(amount, at: Date()) ?? Date.distantFuture)
         self._targetAmountInput = State(initialValue: String(format: "%.2f", bucket.targetAmount))
         self._monthlyContributionInput = State(initialValue: String(format: "%.2f", bucket.income * secondsPerMonth))
         self._nameInput = State(initialValue: bucket.name)
         self._whenFinished = State(initialValue: bucket.whenFinished)
         self._recur = State(initialValue: bucket.recur)
+        self.amount = amount
     }
     
     var body: some View {
@@ -134,9 +136,11 @@ struct EditBucketView: View {
     
     private func updateCompletionDate() {
         if let (monthlyContribution, targetAmount) = cleanData(monthlyContributionInput: monthlyContributionInput, targetAmountInput: targetAmountInput) {
-            let income = monthlyContribution / secondsPerMonth
-            if let newDate = Calendar.current.date(byAdding: .second, value: Int(targetAmount / income), to: Date()) {
-                completionDate = newDate
+            if targetAmount > amount {
+                let income = monthlyContribution / secondsPerMonth
+                if income > 0.01 / secondsPerMonth {
+                    completionDate = Calendar.current.date(byAdding: .second, value: Int((targetAmount - amount) / income), to: Date()) ?? Date.distantFuture
+                }
             }
         }
     }
@@ -174,11 +178,14 @@ struct EditBucketView: View {
 }
 
 extension Bucket {
-    var estimatedCompletionDate: Date {
-        Calendar.current.date(
+    func estimatedCompletionDate(_ amount: Double, at: Date) -> Date {
+        if income <= 0.01 / secondsPerMonth {
+            return Date.distantFuture
+        }
+        return Calendar.current.date(
             byAdding: .second,
-            value: Int(targetAmount / income),
-            to: Date()
-        ) ?? Date()
+            value: Int((targetAmount - amount) / income),
+            to: at
+        ) ?? Date.distantFuture
     }
 }

@@ -27,8 +27,8 @@ struct BucketView: View {
     }
     
     var body: some View {
-        let timeFilled = bucket.income > 0 ? Calendar.current.date(byAdding: .second, value: Int((bucket.targetAmount - amount) / bucket.income), to: currentTime) : nil
-        let filledWhen = timeFilled?.formatted(formatStyle)
+        let timeFilled = bucket.estimatedCompletionDate(amount, at: currentTime)
+        let filledWhen = timeFilled.formatted(formatStyle)
         
         return VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -55,11 +55,8 @@ struct BucketView: View {
                 }
                 .frame(height: 8)
                 
-                
-                if let filledWhen = filledWhen {
-                    Text(filledWhen.smartCapitalized)
-                        .font(.subheadline)
-                }
+                Text(filledWhen.smartCapitalized)
+                    .font(.subheadline)
             }
             
             HStack {
@@ -92,6 +89,7 @@ struct BucketView: View {
         .sheet(isPresented: $isEditingBucket) {
             EditBucketView(
                 bucket: bucket,
+                amount: amount,
                 save: { newBucket in
                     bucket = newBucket
                 }

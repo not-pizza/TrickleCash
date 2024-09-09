@@ -46,7 +46,7 @@ struct BackgroundView: View {
                 amount: bucketInfo.amount,
                 bucket: bucketInfo.bucket
             )
-        }).sorted(by: {$0.bucket.name < $1.bucket.name}).sorted(by: {$0.bucket.estimatedCompletionDate < $1.bucket.estimatedCompletionDate})
+        }).sorted(by: {$0.bucket.name < $1.bucket.name}).sorted(by: {$0.bucket.estimatedCompletionDate($0.amount, at: currentTime) < $1.bucket.estimatedCompletionDate($0.amount, at: currentTime)})
         
         let balanceHeight = (Double(foregroundShowingOffset) - 50.0) + (balance < 0 ? 0.0 : debtClockHeight + 10)
 
@@ -152,20 +152,20 @@ struct BackgroundView: View {
                         backgroundContent
                             .scrollDisabled(!foregroundHidden)
                             .onChange(of: foregroundHidden) { _ in
-                                if foregroundHidden {
+                                /*if foregroundHidden {
                                     withAnimation {
                                         proxy.scrollTo(0, anchor: .bottom)
                                     }
-                                }
+                                }*/
                             }
                     } else {
                         backgroundContent
                             .onChange(of: foregroundHidden) { _ in
-                                if foregroundHidden {
+                                /*if foregroundHidden {
                                     withAnimation {
                                         proxy.scrollTo(0, anchor: .bottom)
                                     }
-                                }
+                                }*/
                             }
                     }
                 }
@@ -175,6 +175,7 @@ struct BackgroundView: View {
         .sheet(isPresented: $isAddingNewBucket) {
             EditBucketView(
                 bucket: Bucket(name: "", targetAmount: 150, income: 100 / secondsPerMonth, whenFinished: .waitToDump, recur: nil),
+                amount: 0,
                 save: { newBucket in
                     appData = appData.addBucket(newBucket)
                 }
