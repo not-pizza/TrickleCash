@@ -32,7 +32,7 @@ struct BucketView: View {
         
         return VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(bucket.name)
+                Text(bucket.name.smartCapitalized)
                     .font(.headline)
                 Spacer()
                 Text(String(format: "\(amount == bucket.targetAmount ? "✓ " : "")\(formatCurrencyNoDecimals(floor(amount))) / \(formatCurrencyNoDecimals(bucket.targetAmount))"))
@@ -57,7 +57,7 @@ struct BucketView: View {
                 
                 
                 if let filledWhen = filledWhen {
-                    Text(filledWhen)
+                    Text(filledWhen.smartCapitalized)
                         .font(.subheadline)
                 }
             }

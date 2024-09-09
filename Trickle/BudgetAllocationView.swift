@@ -46,7 +46,7 @@ struct BudgetAllocationView: View {
                     // Per-bucket breakdown
                     ForEach(buckets, id: \.id) { bucket in
                         IncomeRow(
-                            label: bucket.bucket.name,
+                            label: bucket.bucket.name.smartCapitalized,
                             amount: bucket.bucket.income * secondsPerMonth,
                             font: .subheadline,
                             indentLevel: 2

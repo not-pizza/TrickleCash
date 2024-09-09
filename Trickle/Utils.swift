@@ -87,3 +87,18 @@ func balanceBackgroundGradient(_ amount: Double, colorScheme: ColorScheme, boost
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing)
 }
+
+extension String {
+    var smartCapitalized: String {
+        guard !isEmpty else { return self }
+        
+        let restOfString = self[index(after: startIndex)...]
+        
+        // Check if any character after the first is already uppercase
+        if restOfString.contains(where: { $0.isUppercase }) {
+            return self
+        }
+        
+        return self.capitalized
+    }
+}
