@@ -15,6 +15,7 @@ struct BackgroundView: View {
     @State private var editingBucket: IdentifiedBucket?
     @State private var isAddingNewBucket = false
     @State private var spacing = 60
+    @State private var bucketsOpacity: Double = 1
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -81,60 +82,60 @@ struct BackgroundView: View {
             }
             .frame(height: foregroundShowingOffset, alignment: .top)
             
-            
             Spacer().frame(height: CGFloat(spacing))
             
             // Buckets
-            
-            Spacer().frame(height: 1)
-            VStack {
-                Button(action: {
-                    isAddingNewBucket = true
-                }) {
-                    HStack {
-                        Spacer()
-                        Text("Add bucket")
-                        Spacer()
-                    }
-                    .frame(height: 30)
-                }
-                .buttonStyle(AddBucketButtonStyle())
-            }
-            .padding(.horizontal)
-            
-            Spacer().frame(height: 30)
-            
-            ForEach(buckets, id: \.id) { bucket in
-                BucketView(
-                    id: bucket.id,
-                    amount: bucket.amount,
-                    bucket: Binding(
-                        get: { bucket.bucket },
-                        set: { newBucket in
-                            appData = appData.updateBucket(bucket.id, newBucket)
+            if bucketsOpacity > 0 {
+                VStack {
+                    Button(action: {
+                        isAddingNewBucket = true
+                    }) {
+                        HStack {
+                            Spacer()
+                            Text("Add bucket")
+                            Spacer()
                         }
-                    ),
-                    dump: {
-                        appData = appData.dumpBucket(bucket.id)
-                    },
-                    currentTime: currentTime
-                )
-                .onTapGesture {
-                    editingBucket = IdentifiedBucket(id: bucket.id, bucket: bucket.bucket)
+                        .frame(height: 30)
+                    }
+                    .buttonStyle(AddBucketButtonStyle())
+                    .padding(.horizontal)
+                    
+                    Spacer().frame(height: 30)
+                    
+                    ForEach(buckets, id: \.id) { bucket in
+                        BucketView(
+                            id: bucket.id,
+                            amount: bucket.amount,
+                            bucket: Binding(
+                                get: { bucket.bucket },
+                                set: { newBucket in
+                                    appData = appData.updateBucket(bucket.id, newBucket)
+                                }
+                            ),
+                            dump: {
+                                appData = appData.dumpBucket(bucket.id)
+                            },
+                            currentTime: currentTime
+                        )
+                        .onTapGesture {
+                            editingBucket = IdentifiedBucket(id: bucket.id, bucket: bucket.bucket)
+                        }
+                    }
+                    
+                    if buckets.isEmpty {
+                        Text("Buckets let you start saving a portion of your income for future expenses or bills. Add a bucket to get started!")
+                            .padding()
+                            .multilineTextAlignment(.center)
+                    } else {
+                        BudgetAllocationView(
+                            totalIncomePerSecond: appState.totalIncomePerSecond,
+                            bucketIncomePerSecond: appState.bucketIncomePerSecond,
+                            buckets: buckets
+                        )
+                        .padding(.horizontal)
+                    }
                 }
-            }
-            
-            if buckets.isEmpty {
-                Text("Buckets let you start saving a portion of your income for future expenses or bills. Add a bucket to get started!")
-                    .padding()
-                    .multilineTextAlignment(.center)
-            } else {
-                BudgetAllocationView(
-                    totalIncomePerSecond: appState.totalIncomePerSecond,
-                    bucketIncomePerSecond: appState.bucketIncomePerSecond,
-                    buckets: buckets
-                )
-                .padding(.horizontal)
+                .opacity(bucketsOpacity)
             }
             
             Spacer().frame(height: 100)
@@ -142,7 +143,6 @@ struct BackgroundView: View {
     }
     
     var body: some View {
-        
         return ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
                         
@@ -151,22 +151,8 @@ struct BackgroundView: View {
                     if #available(iOS 16.0, *) {
                         backgroundContent
                             .scrollDisabled(!foregroundHidden)
-                            .onChange(of: foregroundHidden) { _ in
-                                /*if foregroundHidden {
-                                    withAnimation {
-                                        proxy.scrollTo(0, anchor: .bottom)
-                                    }
-                                }*/
-                            }
                     } else {
                         backgroundContent
-                            .onChange(of: foregroundHidden) { _ in
-                                /*if foregroundHidden {
-                                    withAnimation {
-                                        proxy.scrollTo(0, anchor: .bottom)
-                                    }
-                                }*/
-                            }
                     }
                 }
             }
@@ -181,7 +167,12 @@ struct BackgroundView: View {
                 }
             )
         }
-        .onChange(of: foregroundHidden, perform: {newForegroundHidden in spacing = foregroundHidden ? 60 : 30})
+        .onChange(of: foregroundHidden) { newForegroundHidden in
+            spacing = newForegroundHidden ? 60 : 30
+            withAnimation(.easeInOut(duration: 0.3)) {
+                bucketsOpacity = newForegroundHidden ? 1 : 0
+            }
+        }
         .animation(.spring(), value: spacing)
     }
 }
