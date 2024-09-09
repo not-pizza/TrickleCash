@@ -16,7 +16,7 @@ struct EditBucketView: View {
     init(bucket: Bucket, amount: Double, save: @escaping (Bucket) -> Void) {
         self.save = save
         
-        self._completionDate = State(initialValue: bucket.estimatedCompletionDate(amount, at: Date()) ?? Date.distantFuture)
+        self._completionDate = State(initialValue: bucket.estimatedCompletionDate(amount, at: Date()))
         self._targetAmountInput = State(initialValue: String(format: "%.2f", bucket.targetAmount))
         self._monthlyContributionInput = State(initialValue: String(format: "%.2f", bucket.income * secondsPerMonth))
         self._nameInput = State(initialValue: bucket.name)
@@ -36,9 +36,16 @@ struct EditBucketView: View {
                         .font(.title)
                 }
                 
+                
+                Text("This will redirect some money out of your main trickle balance, so it is set aside for later.").font(.caption)
+                
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Fill up to:")
                         .font(.headline)
+                    
+                    Text("Current \(nameInput.smartCapitalized) balance: \(formatCurrencyNoDecimals(amount))")
+                        .font(.caption)
+                    
                     
                     HStack(alignment: .top, spacing: 2) {
                         Text("$")
@@ -46,6 +53,7 @@ struct EditBucketView: View {
                             .keyboardType(.decimalPad)
                     }
                 }
+                
                 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Monthly Contribution:")
