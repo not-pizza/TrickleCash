@@ -115,6 +115,9 @@ struct BackgroundView: View {
                             dump: {
                                 appData = appData.dumpBucket(bucket.id)
                             },
+                            delete: {
+                                appData = appData.deleteBucket(bucket.id)
+                            },
                             currentTime: currentTime
                         )
                         .onTapGesture {
@@ -164,7 +167,9 @@ struct BackgroundView: View {
                 amount: 0,
                 save: { newBucket in
                     appData = appData.addBucket(newBucket)
-                }
+                },
+                dump: nil,
+                delete: nil
             )
         }
         .onChange(of: foregroundHidden) { newForegroundHidden in

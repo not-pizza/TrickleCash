@@ -74,6 +74,13 @@ struct AppData: Codable, Equatable {
         return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
     }
     
+    func deleteBucket(_ id: UUID) -> Self {
+        var events = self.events
+        events.append(.deleteBucket(DeleteBucket(bucketToDelete: id)))
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+    }
+    
+    
     func addBucket(_ bucket: Bucket) -> Self {
         var events = self.events
         events.append(.addBucket(AddBucket(bucketToAdd: bucket)))

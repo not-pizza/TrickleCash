@@ -5,19 +5,21 @@ struct BucketView: View {
     let amount: Double
     @Binding var bucket: Bucket
     var dump: () -> Void
+    var delete: () -> Void
     let currentTime: Date
     
     @State private var animationProgress: CGFloat = 0
     @State private var isEditingBucket = false
     @State private var tempBucket: Bucket
     
-    init(id: UUID, amount: Double, bucket: Binding<Bucket>, dump: @escaping () -> Void, currentTime: Date) {
+    init(id: UUID, amount: Double, bucket: Binding<Bucket>, dump: @escaping () -> Void, delete: @escaping () -> Void, currentTime: Date) {
         self.id = id
         self.amount = amount
         self._bucket = bucket
         self.currentTime = currentTime
         self._tempBucket = State(initialValue: bucket.wrappedValue)
         self.dump = dump
+        self.delete = delete
     }
     
     var formatStyle: Date.RelativeFormatStyle {
@@ -30,46 +32,49 @@ struct BucketView: View {
         let timeFilled = bucket.estimatedCompletionDate(amount, at: currentTime)
         let filledWhen = timeFilled.formatted(formatStyle)
         
-        return VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text(bucket.name.smartCapitalized)
-                    .font(.headline)
-                Spacer()
-                Text(String(format: "\(amount == bucket.targetAmount ? "✓ " : "")\(formatCurrencyNoDecimals(floor(amount))) / \(formatCurrencyNoDecimals(bucket.targetAmount))"))
-                    .font(.subheadline)
-            }
-            
-            HStack {
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        Rectangle()
-                            .fill(Color.secondary.opacity(0.3))
-                            .frame(height: 8)
-                            .cornerRadius(4)
-                        
-                        Rectangle()
-                            .fill(Color.primary)
-                            .frame(width: geometry.size.width * animationProgress * CGFloat(amount / bucket.targetAmount), height: 8)
-                            .cornerRadius(4)
-                    }
+        return Button(action: {isEditingBucket = true}) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text(bucket.name.smartCapitalized)
+                        .font(.headline)
+                    Spacer()
+                    Text(String(format: "\(amount == bucket.targetAmount ? "✓ " : "")\(formatCurrencyNoDecimals(floor(amount))) / \(formatCurrencyNoDecimals(bucket.targetAmount))"))
+                        .font(.subheadline)
                 }
-                .frame(height: 8)
                 
-                Text(filledWhen.smartCapitalized)
-                    .font(.subheadline)
+                HStack {
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            Rectangle()
+                                .fill(Color.secondary.opacity(0.3))
+                                .frame(height: 8)
+                                .cornerRadius(4)
+                            
+                            Rectangle()
+                                .fill(Color.primary)
+                                .frame(width: geometry.size.width * animationProgress * CGFloat(amount / bucket.targetAmount), height: 8)
+                                .cornerRadius(4)
+                        }
+                    }
+                    .frame(height: 8)
+                    
+                    Text(filledWhen.smartCapitalized)
+                        .font(.subheadline)
+                }
+                
+                HStack {
+                    Text(formatRecurrence(bucket.recur))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text(formatFinishAction(bucket.whenFinished))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
-            
-            HStack {
-                Text(formatRecurrence(bucket.recur))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Spacer()
-                Text(formatFinishAction(bucket.whenFinished))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
+            .padding()
         }
-        .padding()
+        .buttonStyle(.plain)
         .background(Color.secondary.opacity(amount == bucket.targetAmount ? 0.3 : 0.1))
         .cornerRadius(10)
         .padding(.horizontal)
@@ -78,21 +83,15 @@ struct BucketView: View {
                 animationProgress = 1
             }
         }
-        .contextMenu {
-            Button("Dump into Trickle") {
-                dump()
-            }
-            Button("Edit") {
-                isEditingBucket = true
-            }
-        }
         .sheet(isPresented: $isEditingBucket) {
             EditBucketView(
                 bucket: bucket,
                 amount: amount,
                 save: { newBucket in
                     bucket = newBucket
-                }
+                },
+                dump: dump,
+                delete: delete
             )
         }
     }
@@ -134,6 +133,9 @@ struct BucketView_Previews: PreviewProvider {
                     dump: {
                         print("dump me :D")
                     },
+                    delete: {
+                        print("delete me :D")
+                    },
                     currentTime: Date()
                 )
                 BucketView(
@@ -148,6 +150,9 @@ struct BucketView_Previews: PreviewProvider {
                     )),
                     dump: {
                         print("dump me :D")
+                    },
+                    delete: {
+                        print("delete me :D")
                     },
                     currentTime: Date()
                 )
