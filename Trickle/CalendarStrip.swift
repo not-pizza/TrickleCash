@@ -51,7 +51,7 @@ struct CalendarStrip: View {
                 HStack {
                     Image(systemName: "calendar")
                     Text("\(dateFormatter.string(from: selectedDate))")
-                        .font(.headline)
+                        .font(.subheadline)
                 }
             }
             .buttonStyle(.plain)
