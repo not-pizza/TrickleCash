@@ -8,6 +8,7 @@
 import AppIntents
 import SwiftUI
 import Oklab
+import Intents
 
 struct TrickleBalanceAdjustmentView: View {
     let previousBalance: Double
@@ -62,7 +63,7 @@ struct TrickleBalanceAdjustmentView: View {
 struct AddApplePayTransactionShortcut: AppIntent {
     static var title: LocalizedStringResource = "Add to Trickle"
     static var description = IntentDescription("Adds an Apple Pay transaction to Trickle's spending log")
-    
+
     @Parameter(title: "Card or Pass")
     var cardOrPass: String?
     

@@ -28,7 +28,6 @@ struct Provider: TimelineProvider {
         let timeline = Timeline(entries: entries, policy: .atEnd)
         completion(timeline)
     }
-    
 }
 
 struct SimpleEntry: TimelineEntry {
@@ -48,21 +47,48 @@ extension View {
     }
 }
 
-struct TrickleWidgetEntryView: View {
+struct LockScreenWidgetView: View {
     var entry: Provider.Entry
-    
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         let background = balanceBackgroundGradient(entry.value, colorScheme: colorScheme).ignoresSafeArea()
-        
-        return ZStack {
-            VStack {
-                Text("Trickle")
-                viewBalanceNoDecimals(entry.value)
+
+        return VStack {
+            Text("Trickle")
+            viewBalanceNoDecimals(entry.value)
+        }.widgetBackground(backgroundView: background)
+    }
+}
+
+struct TrickleWidgetEntryView: View {
+    var entry: Provider.Entry
+    
+    @Environment(\.widgetFamily) var family
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        switch family {
+        case .accessoryRectangular:
+            return AnyView(LockScreenWidgetView(entry: entry))
+        case .accessoryInline:
+            return AnyView(
+                VStack {
+                    Text("Trickle: \(formatCurrencyNoDecimals(entry.value))")
+                }
+            )
+
+        default:
+            let background = balanceBackgroundGradient(entry.value, colorScheme: colorScheme).ignoresSafeArea()
+            
+            return AnyView(ZStack {
+                VStack {
+                    Text("Trickle")
+                    viewBalanceNoDecimals(entry.value)
+                }
             }
+            .widgetBackground(backgroundView: background))
         }
-        .widgetBackground(backgroundView: background)
     }
 }
 
@@ -70,12 +96,21 @@ struct TrickleWidget: Widget {
     let kind: String = "TrickleWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            TrickleWidgetEntryView(entry: entry)
+        if #available(iOSApplicationExtension 16.0, *) {
+            StaticConfiguration(kind: kind, provider: Provider()) { entry in
+                TrickleWidgetEntryView(entry: entry)
+            }
+            .configurationDisplayName("Trickle Balance")
+            .description("Shows your current Trickle balance.")
+            .supportedFamilies([.systemSmall, .systemMedium, .accessoryRectangular, .accessoryInline])
+        } else {
+            StaticConfiguration(kind: kind, provider: Provider()) { entry in
+                TrickleWidgetEntryView(entry: entry)
+            }
+            .configurationDisplayName("Trickle Balance")
+            .description("Shows your current Trickle balance.")
+            .supportedFamilies([.systemSmall, .systemMedium])
         }
-        .configurationDisplayName("Cash Balance")
-        .description("Shows your current cash balance.")
-        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 
@@ -83,6 +118,12 @@ struct TrickleWidget_Previews: PreviewProvider {
     static var previews: some View {
         TrickleWidgetEntryView(entry: SimpleEntry(date: Date(), value: 20))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
+        
+        if #available(iOSApplicationExtension 16.0, *) {
+            TrickleWidgetEntryView(entry: SimpleEntry(date: Date(), value: 20))
+                .previewContext(WidgetPreviewContext(family: .accessoryRectangular))
+            TrickleWidgetEntryView(entry: SimpleEntry(date: Date(), value: 20))
+                .previewContext(WidgetPreviewContext(family: .accessoryInline))
+        }
     }
 }
-
