@@ -2,7 +2,6 @@ import SwiftUI
 
 struct TutorialItem: Identifiable {
     let id = UUID()
-    let title: String
     let videoName: String
     let videoTitle: String
 }
@@ -13,13 +12,13 @@ struct TutorialListView: View {
     @State private var selectedTutorial: TutorialItem?
     
     var body: some View {
-        VStack {
-            Text("Next Steps")
+        VStack(spacing: 20) {
+            Text("Get Started")
                 .font(.headline)
                 .padding(.top)
             
-            List(tutorials) { tutorial in
-                HStack {
+            VStack {
+                ForEach(tutorials) { tutorial in
                     Button(action: { selectedTutorial = tutorial }) {
                         HStack {
                             Toggle(isOn: Binding(
@@ -32,7 +31,7 @@ struct TutorialListView: View {
                                     }
                                 }
                             )) {
-                                Text(tutorial.title)
+                                Text(tutorial.videoTitle)
                             }
                             .toggleStyle(CheckboxToggleStyle())
                             
@@ -42,7 +41,10 @@ struct TutorialListView: View {
                                 .foregroundColor(.blue)
                                 .font(.title2)
                         }
-                    }
+                        .padding()
+                        .background(Color.secondary.opacity(0.1))
+                        .cornerRadius(10)
+                    }.buttonStyle(.plain)
                 }
             }
         }
@@ -86,5 +88,17 @@ struct TutorialVideoPlayer: View {
                 Text("Video not found")
             }
         }
+    }
+}
+
+
+struct TutorialListView_Previews: PreviewProvider {
+    static let tutorials = [
+        TutorialItem(videoName: "add-home-screen-widget", videoTitle: "Add a Home Screen Widget"),
+        TutorialItem(videoName: "add-lock-screen-widget", videoTitle: "Add a Lock Screen Widget"),
+    ]
+    
+    static var previews: some View {
+        TutorialListView(completedTutorials: .constant(Set<UUID>()), tutorials: tutorials)
     }
 }

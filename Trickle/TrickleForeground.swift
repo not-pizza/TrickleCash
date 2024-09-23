@@ -25,7 +25,8 @@ struct ForegroundView: View {
     @State private var completedTutorials: Set<UUID> = []
     
     let tutorials = [
-        TutorialItem(title: "Add a home screen widget", videoName: "add-home-screen-widget", videoTitle: "Add a Home Screen Widget"),
+        TutorialItem(videoName: "add-home-screen-widget", videoTitle: "Add a Home Screen Widget"),
+        TutorialItem(videoName: "add-lock-screen-widgetC", videoTitle: "Add a Lock Screen Widget"),
     ]
     
     private func spendEventBindings() -> [Binding<Spend>] {
@@ -67,6 +68,11 @@ struct ForegroundView: View {
                 )
             }
             .listStyle(.inset)
+            
+            Section {
+                TutorialListView(completedTutorials: $completedTutorials, tutorials: tutorials)
+            }
+            .listStyle(.inset)
         }
 
         return VStack {
@@ -92,8 +98,6 @@ struct ForegroundView: View {
                     else {
                         spendList
                     }
-                    
-                    TutorialListView(completedTutorials: $completedTutorials, tutorials: tutorials)
                 }
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }
