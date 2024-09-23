@@ -86,6 +86,9 @@ struct ForegroundView: View {
                     else {
                         spendList
                     }
+                    
+                    Text("Tutorial: ")
+                    TutorialVideoPlayer(videoName: "add-widget")
                 }
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }

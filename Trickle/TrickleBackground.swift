@@ -15,7 +15,7 @@ struct BackgroundView: View {
     @State private var editingBucket: IdentifiedBucket?
     @State private var isAddingNewBucket = false
     @State private var spacing = 60
-    @State private var bucketsOpacity: Double = 1
+    @State private var bucketsOpacity: Double = 0
     
     @Environment(\.colorScheme) var colorScheme
     
