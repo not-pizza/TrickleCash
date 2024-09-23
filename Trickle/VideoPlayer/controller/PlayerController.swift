@@ -9,7 +9,7 @@ import Foundation
 import AVKit
 
 class PlayerController: ObservableObject{
-    @Published var playbackVideoLink: String = ""
+    @Published var url: URL?
     @Published var playbackTitle: String = ""
     @Published var playbackArtist: String = ""
     @Published var playbackArtwork: String = ""
@@ -19,29 +19,29 @@ class PlayerController: ObservableObject{
     
     func initPlayer(
         title: String,
-        link: String,
+        link: URL,
         artist: String,
         artwork: String){
             self.playbackTitle = title
             self.playbackArtist = artist
             self.playbackArtwork = artwork
-            self.playbackVideoLink = link
+            self.url = link
             
             setupPlayer()
             setupAVPlayerViewController()
         }
     
     private func setupPlayer(){
-        player = AVPlayer(url: URL(string: playbackVideoLink)!)
+        player = AVPlayer(url: url!)
         
         let title = AVMutableMetadataItem()
         title.identifier = .commonIdentifierTitle
-        title.value = "Some random title" as NSString
-        title.extendedLanguageTag = "und"
+        title.value = playbackTitle as NSString
+        title.extendedLanguageTag = "eng"
         
         let artist = AVMutableMetadataItem()
         artist.identifier = .commonIdentifierArtist
-        artist.value = "Khondakar Afridi" as NSString
+        artist.value = playbackArtist as NSString
         artist.extendedLanguageTag = "und"
         
         let artwork = AVMutableMetadataItem()

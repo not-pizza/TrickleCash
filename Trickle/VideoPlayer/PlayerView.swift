@@ -10,6 +10,9 @@ import SwiftUI
 
 struct PlayerView: View {
     @StateObject var playerController = PlayerController()
+    var url: URL
+    var title: String
+    
     
     var body: some View {
         VStack(alignment: .center){
@@ -20,31 +23,17 @@ struct PlayerView: View {
                     Text("Loading")
                 } else {
                     VideoPlayer(playerController: playerController)
+                        .aspectRatio(19.5/9, contentMode: .fill)
                         .frame(width: parentWidth)
                 }
             }
-            .frame(height: 200)
-            
-            Button {
-                playerController.playPlayer()
-            } label: {
-                Text("Play video")
-            }
-            
-            Button {
-                playerController.pausePlayer()
-            } label: {
-                Text("Pause video")
-            }
-            
-            
+            .frame(width: 50)
         }
         .onAppear {
-            playerController.initPlayer(title: "SomeTitle", link: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", artist: "Khondakar Afridi", artwork: "Artist")
+            playerController.initPlayer(title: title, link: url, artist: "not.pizza", artwork: "Trickle")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                playerController.playPlayer()
+            }
         }
     }
-}
-
-#Preview {
-    PlayerView()
 }

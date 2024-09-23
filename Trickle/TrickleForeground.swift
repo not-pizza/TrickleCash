@@ -22,6 +22,12 @@ struct ForegroundView: View {
         colorScheme == .dark ? Color.black : Color.white
     }
     
+    @State private var completedTutorials: Set<UUID> = []
+    
+    let tutorials = [
+        TutorialItem(title: "Add a home screen widget", videoName: "add-widget", videoTitle: "Add a Widget"),
+    ]
+    
     private func spendEventBindings() -> [Binding<Spend>] {
         var spendEvents = appData.getSpendEventsAfterStartDate().compactMap { spend in
                 if Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate) {
@@ -87,8 +93,7 @@ struct ForegroundView: View {
                         spendList
                     }
                     
-                    Text("Tutorial: ")
-                    TutorialVideoPlayer(videoName: "add-widget")
+                    TutorialListView(completedTutorials: $completedTutorials, tutorials: tutorials)
                 }
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }
