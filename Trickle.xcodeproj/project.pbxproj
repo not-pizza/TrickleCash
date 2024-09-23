@@ -218,7 +218,6 @@
 			isa = PBXGroup;
 			children = (
 				AB72A2172CA0FEC500693D37 /* Info.plist */,
-				AB72A2152CA0FC2D00693D37 /* Tutorial.swift */,
 				AB72A2262CA12DB000693D37 /* add-home-screen-widget.mp4 */,
 				AB72A2302CA13B7000693D37 /* add-lock-screen-widget.mp4 */,
 				ABD4976E2C649BB300707842 /* CalculatorKeyboard */,
@@ -236,6 +235,7 @@
 				ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */,
 				ABD497642C6484BF00707842 /* TrickleBackground.swift */,
 				ABD497662C6484E400707842 /* TrickleForeground.swift */,
+				AB72A2152CA0FC2D00693D37 /* Tutorial.swift */,
 				ABD497682C64870900707842 /* SettingsView.swift */,
 				ABBF529F2C68A4860076329D /* Utils.swift */,
 				AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */,

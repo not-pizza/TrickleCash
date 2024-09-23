@@ -26,7 +26,7 @@ struct ForegroundView: View {
     
     let tutorials = [
         TutorialItem(videoName: "add-home-screen-widget", videoTitle: "Add a Home Screen Widget"),
-        TutorialItem(videoName: "add-lock-screen-widgetC", videoTitle: "Add a Lock Screen Widget"),
+        TutorialItem(videoName: "add-lock-screen-widget", videoTitle: "Add a Lock Screen Widget"),
     ]
     
     private func spendEventBindings() -> [Binding<Spend>] {
