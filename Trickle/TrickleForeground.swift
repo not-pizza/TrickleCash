@@ -25,7 +25,7 @@ struct ForegroundView: View {
     @State private var completedTutorials: Set<UUID> = []
     
     let tutorials = [
-        TutorialItem(title: "Add a home screen widget", videoName: "add-widget", videoTitle: "Add a Widget"),
+        TutorialItem(title: "Add a home screen widget", videoName: "add-home-screen-widget", videoTitle: "Add a Home Screen Widget"),
     ]
     
     private func spendEventBindings() -> [Binding<Spend>] {
