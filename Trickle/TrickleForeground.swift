@@ -10,7 +10,6 @@ struct ForegroundView: View {
     @Binding var hidden: Bool
     
     @State private var startingOffset: CGFloat = 0
-    @State private var selectedDate: Date = Date()
     @State private var isDragging = false
     @State private var focusedSpendId: UUID?
     @State private var chevronRotation: Double = 0
@@ -29,51 +28,53 @@ struct ForegroundView: View {
         TutorialItem(videoName: "add-lock-screen-widget", videoTitle: "Add a Lock Screen Widget"),
     ]
     
-    private func spendEventBindings() -> [Binding<Spend>] {
-        var spendEvents = appData.getSpendEventsAfterStartDate().compactMap { spend in
-                if Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate) {
-                    return Binding(
-                        get: { spend },
-                        set: { newSpend in appData = appData.updateSpend(newSpend) }
-                    )
-                }
-            return nil
-        }
-        spendEvents.reverse()
+    private func spendEventBindings() -> [(date: Date, spends: [Binding<Spend>])] {
+        let spendEventsByDay = Dictionary(grouping: appData.getSpendEventsAfterStartDate(), by: { $0.dateAdded.startOfDay })
+        let spendEvents = spendEventsByDay.map { date, events in
+            (date: date, spends: events.sorted(by: { $0.dateAdded < $1.dateAdded }).map({
+                spend in Binding(
+                    get: { spend },
+                    set: { newSpend in appData = appData.updateSpend(newSpend) }
+                )
+            }))
+        }.sorted(by: {$0.date > $1.date})
         return spendEvents
     }
     
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMMM d"
+        return formatter
+    }()
+    
     var body: some View {
-        let spendEvents = spendEventBindings()
-        let spendList = List {
-            Section {
-                ForEach(spendEvents, id: \.wrappedValue.id) { spend in
-                    SpendView(
-                        deduction: spend,
-                        isFocused: focusedSpendId == spend.wrappedValue.id,
-                        onDelete: { appData = appData.deleteEvent(id: spend.id) }
+        let spendEventsByDate = spendEventBindings()
+        let spendList = ScrollView {
+            LazyVStack(alignment: .leading) {
+                ForEach(spendEventsByDate, id: \.date) { (date, spendEvents) in
+                    
+                    Text(
+                        dateFormatter.string(from: date)
                     )
-                    .transition(.move(edge: .top))
-                }
-                .onDelete(perform: { indexSet in
-                    for index in indexSet {
-                        let spend = spendEvents[index]
-                        appData = appData.deleteEvent(id: spend.id)
+                    .font(.subheadline)
+                    .padding(.top, 10)
+                    
+                    ForEach(spendEvents, id: \.wrappedValue.id) { spend in
+                        SpendView(
+                            deduction: spend,
+                            isFocused: focusedSpendId == spend.wrappedValue.id,
+                            onDelete: { appData = appData.deleteEvent(id: spend.id) }
+                        ).padding(.vertical, 2)
+                            .transition(.move(edge: .top))
                     }
-                })
-                .listRowSeparator(.hidden)
-                .listRowSeparatorTint(.clear)
-                .listRowBackground(Rectangle()
-                    .background(.clear)
-                    .foregroundColor(.clear)
-                )
+                    .onDelete(perform: { indexSet in
+                        for index in indexSet {
+                            let spend = spendEvents[index]
+                            appData = appData.deleteEvent(id: spend.id)
+                        }
+                    })
+                }
             }
-            .listStyle(.inset)
-            
-            Section {
-                TutorialListView(completedTutorials: $completedTutorials, tutorials: tutorials)
-            }
-            .listStyle(.inset)
         }
 
         return VStack {
@@ -92,25 +93,25 @@ struct ForegroundView: View {
                     .ignoresSafeArea()
                 
                 VStack {
-                    topBar
+                    addSpend
                     if #available(iOS 16.0, *) {
                         spendList.scrollContentBackground(.hidden)
                     }
                     else {
                         spendList
                     }
+                    
+                    TutorialListView(completedTutorials: $completedTutorials, tutorials: tutorials)
+                    
                     Spacer().frame(height: offset)
                 }
+                .padding()
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .frame(maxHeight: .infinity, alignment: .bottom)
             .ignoresSafeArea(.all)
-            .onChange(of: scenePhase) { newPhase in
-                if newPhase == .active {
-                    selectedDate = Date()
-                }
-            }.onChange(of: hidden) { _ in
+            .onChange(of: hidden) { _ in
                 focusedSpendId = nil
             }
         }.onChange(of: hidden, perform: {_ in
@@ -119,40 +120,27 @@ struct ForegroundView: View {
         .animation(.spring(), value: chevronRotation)
     }
     
-    var topBar: some View {
+    var addSpend: some View {
         return VStack(spacing: 10) {
-            Color.clear
-                .frame(width: 10, height: 10)
-
-            CalendarStrip(selectedDate: $selectedDate, onDateSelected: { date in
-                selectedDate = date
-            }, focusedSpendId: $focusedSpendId)
-            
-            if selectedDate >= appData.getStartDate()
-            {
-                Button(action: {
-                    withAnimation(.spring()) {
-                        let newSpend = Spend(
-                            name: "",
-                            amount: 0,
-                            dateAdded:
-                                selectedDate.startOfDay == Date().startOfDay ?
-                                Date() :
-                                selectedDate
-                        )
-                        appData = appData.addSpend(newSpend)
-                        focusedSpendId = newSpend.id
-                    }
-                }) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text("Add spending")
-                    }
-                    .foregroundColor(.blue)
-                    .padding(.vertical, 8)
+            Button(action: {
+                withAnimation(.spring()) {
+                    let newSpend = Spend(
+                        name: "",
+                        amount: 0,
+                        dateAdded: Date()
+                    )
+                    appData = appData.addSpend(newSpend)
+                    focusedSpendId = newSpend.id
                 }
-                .listRowBackground(Color.blue.opacity(0.1))
+            }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Add spending")
+                }
+                .foregroundColor(.blue)
+                .padding(.vertical, 8)
             }
+            .listRowBackground(Color.blue.opacity(0.1))
         }
     }
 }
