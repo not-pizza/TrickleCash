@@ -31,9 +31,10 @@ struct SpendView: View {
             .onSubmit {
                 focusedField = nil
             }
+            .controlSize(.large)
     }
     
-    var amountView: some View {
+    var amountInput: some View {
         TextField("45.00", text: $inputAmount)
             .inputView(
                 CalculatorKeyboard.self,
@@ -66,53 +67,71 @@ struct SpendView: View {
             .onSubmit {
                 focusedField = .name
             }
+            .controlSize(.large)
+
+    }
+    
+    var amountView: some View {
+        VStack(alignment: .leading) {
+            HStack(alignment: .top, spacing: 2) {
+                Text("$")
+                if #available(iOS 16.0, *) {
+                    amountInput
+                        .bold()
+                } else {
+                    amountInput
+                }
+            }
+            if let paymentMethod = deduction.paymentMethod {
+                Text(paymentMethod)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+    
+    var expandedView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Date Added: \(formattedDate(deduction.dateAdded))")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            Button(action: onDelete) {
+                Text("Delete")
+                    .foregroundColor(.red)
+            }
+        }
+        .padding(.vertical, 8)
+    }
+    
+    var expandChevron: some View {
+        Image(systemName: "chevron.right")
+            .foregroundColor(.secondary)
+            .rotationEffect(.degrees(isExpanded ? 90 : 0))
+            .animation(.spring(duration: 0.2), value: isExpanded)
+            .onTapGesture {
+                withAnimation(.spring(duration: 0.2)) {
+                    isExpanded.toggle()
+                }
+            }
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
-                    HStack(alignment: .top, spacing: 2) {
-                        Text("$")
-                        if #available(iOS 16.0, *) {
-                            amountView
-                                .bold()
-                        } else {
-                            amountView
-                        }
-                    }
-                    if let paymentMethod = deduction.paymentMethod {
-                        Text(paymentMethod)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+        // TODO: switch to grid once we remove support for iOS 15
+        HStack(alignment: .top) {
+            expandChevron
+            VStack(alignment: .leading) {
+                HStack(alignment: .top) {
+                    amountView
+                    Spacer()
+                    nameView
                 }
-                Spacer()
-                nameView
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
-                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                    .animation(.spring(), value: isExpanded)
-                    .onTapGesture {
-                        withAnimation(.spring()) {
-                            isExpanded.toggle()
-                        }
-                    }
+                if isExpanded {
+                    expandedView
+                }
             }
             
-            if isExpanded {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Date Added: \(formattedDate(deduction.dateAdded))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Button(action: onDelete) {
-                        Text("Delete")
-                            .foregroundColor(.red)
-                    }
-                }
-                .padding(.vertical, 8)
-            }
         }
+        
     }
     
     private func formattedDate(_ date: Date) -> String {

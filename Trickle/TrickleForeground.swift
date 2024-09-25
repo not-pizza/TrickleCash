@@ -31,7 +31,7 @@ struct ForegroundView: View {
     private func spendEventBindings() -> [(date: Date, spends: [Binding<Spend>])] {
         let spendEventsByDay = Dictionary(grouping: appData.getSpendEventsAfterStartDate(), by: { $0.dateAdded.startOfDay })
         let spendEvents = spendEventsByDay.map { date, events in
-            (date: date, spends: events.sorted(by: { $0.dateAdded < $1.dateAdded }).map({
+            (date: date, spends: events.sorted(by: { $0.dateAdded > $1.dateAdded }).map({
                 spend in Binding(
                     get: { spend },
                     set: { newSpend in appData = appData.updateSpend(newSpend) }
@@ -64,8 +64,9 @@ struct ForegroundView: View {
                             deduction: spend,
                             isFocused: focusedSpendId == spend.wrappedValue.id,
                             onDelete: { appData = appData.deleteEvent(id: spend.id) }
-                        ).padding(.vertical, 2)
-                            .transition(.move(edge: .top))
+                        )
+                        .transition(.move(edge: .top))
+                        .padding(.horizontal, 15)
                     }
                     .onDelete(perform: { indexSet in
                         for index in indexSet {
