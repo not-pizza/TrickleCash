@@ -81,6 +81,8 @@ struct EditBucketView: View {
                             MoreSettingsView(whenFinished: $whenFinished, recur: $recur)
                         }
                         .padding(.vertical, 10)
+                        .tint(.primary)
+                        .controlSize(.large)
                         
                         Spacer().frame(height: 60) // Add space for the sticky button
                     }
@@ -238,11 +240,12 @@ struct MoreSettingsView: View {
                 Text("Automatically dump into main balance").tag(Bucket.FinishAction.autoDump)
                 Text("Destroy (as if you spent the money)").tag(Bucket.FinishAction.destroy)
             }
+            .tint(.primary)
             
-            Toggle("Recurring", isOn: Binding(
+            Toggle("Recurring:", isOn: Binding(
                 get: { recur != nil },
                 set: { recur = $0 ? 30 * 24 * 60 * 60 : nil }
-            ))
+            )).font(.headline)
             
             if let recur = recur {
                 Stepper(value: Binding(
