@@ -119,22 +119,92 @@ struct SpendView: View {
                     nameView
                 }
                 .toolbar {
-                    if focusedField == .amount {
-                        ToolbarItemGroup(placement: .keyboard) {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        if focusedField == .amount {
+                            Button("+") {
+                                inputAmount += "+"
+                            }
+                            .buttonStyle(.plain)
+                            .padding(3)
+                            
+                            Button("-") {
+                                inputAmount += "-"
+                            }
+                            .buttonStyle(.plain)
+                            .padding(3)
+                            
+                            Button("×") {
+                                inputAmount += "×"
+                            }
+                            .buttonStyle(.plain)
+                            .padding(3)
+                            
+                            Button("÷") {
+                                inputAmount += "÷"
+                            }
+                            .buttonStyle(.plain)
+                            .padding(3)
+                            
                             Spacer()
                             
-                            Button("Done") {
+                            Button("Delete") {
+                                onDelete()
+                            }
+                            .buttonStyle(.plain)
+                            .padding()
+                            
+                            Button("Name →") {
                                 focusedField = .name
                             }
+                            .buttonStyle(.borderedProminent)
+                            .padding(.leading)
                         }
-                    }
-                    else {
-                        EmptyView()
+                        else if focusedField == .name {
+                            Button("Food") {
+                                deduction.name = "Food"
+                            }
+                            .buttonStyle(.plain)
+                            .padding(3)
+                            
+                            Button("Uber") {
+                                deduction.name = "Uber"
+                            }
+                            .buttonStyle(.plain)
+                            .padding(3)
+                            
+                            Button("Gift") {
+                                deduction.name = "Gift"
+                            }
+                            .buttonStyle(.plain)
+                            .padding(3)
+                            
+                            Spacer()
+                            
+                            Button("Delete") {
+                                onDelete()
+                            }
+                            .buttonStyle(.plain)
+                            .padding()
+                            
+                            Button("Done") {
+                                focusedField = nil
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .padding(.leading)
+                        }
+                        else{
+                            EmptyView()
+                        }
                     }
                 }
                 
                 if isExpanded {
                     expandedView
+                }
+            }
+            .onChange(of: focusedField) { newValue in
+                if let input = toDouble(inputAmount) {
+                    inputAmount = String(format: "%.2f", input)
                 }
             }
             
