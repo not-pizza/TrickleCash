@@ -50,7 +50,8 @@ struct ForegroundView: View {
                 ForEach(spendEvents, id: \.wrappedValue.id) { spend in
                     SpendView(
                         deduction: spend,
-                        isFocused: focusedSpendId == spend.wrappedValue.id
+                        isFocused: focusedSpendId == spend.wrappedValue.id,
+                        onDelete: { appData = appData.deleteEvent(id: spend.id) }
                     )
                     .transition(.move(edge: .top))
                 }
@@ -98,6 +99,7 @@ struct ForegroundView: View {
                     else {
                         spendList
                     }
+                    Spacer().frame(height: offset)
                 }
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }

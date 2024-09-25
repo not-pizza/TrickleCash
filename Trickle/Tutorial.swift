@@ -44,7 +44,8 @@ struct TutorialListView: View {
                         .padding()
                         .background(Color.secondary.opacity(0.1))
                         .cornerRadius(10)
-                    }.buttonStyle(.plain)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }

@@ -232,8 +232,19 @@ struct AppData: Codable, Equatable {
                 }
             
             case .spend(let spend):
-                mainBalance -= spend.amount
-                spends.append(spend)
+                if let fromBucket = spend.fromBucket {
+                    if let (_, _) = buckets[fromBucket] {
+                        buckets[fromBucket]!.amount -= spend.amount
+                    }
+                    else {
+                        mainBalance -= spend.amount
+                        spends.append(spend)
+                    }
+                }
+                else {
+                    mainBalance -= spend.amount
+                    spends.append(spend)
+                }
                 
             case .setStartDate:
                 // These events don't affect income calculation
@@ -367,6 +378,7 @@ struct Spend: Identifiable, Codable, Equatable {
     var paymentMethod: String?
     var amount: Double
     var dateAdded: Date = Date()
+    var fromBucket: UUID?
     
     // If unset, it means it was added by the app
     var addedFrom: AddedFrom?

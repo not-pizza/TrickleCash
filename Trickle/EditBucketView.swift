@@ -147,7 +147,7 @@ struct EditBucketView: View {
             .navigationBarItems(
                 leading: Button("Cancel") { presentationMode.wrappedValue.dismiss() },
                 trailing: Button("Save") { saveChanges() }
-                    .disabled(nameInput.isEmpty)
+                    .disabled(nameInput.isEmpty || derivedBucket() == nil || derivedBucket()!.targetAmount < 0.05)
             )
         }
         .onAppear {

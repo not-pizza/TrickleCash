@@ -6,17 +6,20 @@ struct SpendView: View {
     var takeFocusWhenAppearing: Bool
     @State var inputAmount: String = ""
     @FocusState private var focusedField: Field?
+    @State private var isExpanded: Bool = false
+    var onDelete: () -> Void
 
     enum Field: Hashable {
         case amount
         case name
     }
     
-    init(deduction: Binding<Spend>, isFocused: Bool) {
+    init(deduction: Binding<Spend>, isFocused: Bool, onDelete: @escaping () -> Void) {
         self._deduction = deduction
         let amount = String(format: "%.2f", deduction.wrappedValue.amount)
         self._inputAmount = State(initialValue: amount)
         self.takeFocusWhenAppearing = isFocused
+        self.onDelete = onDelete
     }
     
     var nameView: some View {
@@ -86,8 +89,37 @@ struct SpendView: View {
                 }
                 Spacer()
                 nameView
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                    .animation(.spring(), value: isExpanded)
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            isExpanded.toggle()
+                        }
+                    }
+            }
+            
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Date Added: \(formattedDate(deduction.dateAdded))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Button(action: onDelete) {
+                        Text("Delete")
+                            .foregroundColor(.red)
+                    }
+                }
+                .padding(.vertical, 8)
             }
         }
+    }
+    
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
 
@@ -104,5 +136,5 @@ func toDouble(_ s: String) -> Double? {
         set: { _ in () }
     )
     
-    return SpendView(deduction: binding, isFocused: false)
+    SpendView(deduction: binding, isFocused: false, onDelete: {})
 }
