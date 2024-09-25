@@ -36,14 +36,7 @@ struct SpendView: View {
     
     var amountInput: some View {
         TextField("45.00", text: $inputAmount)
-            .inputView(
-                CalculatorKeyboard.self,
-                text: $inputAmount,
-                onSubmit: {
-                    focusedField = .name
-                    inputAmount = String(format: "%.2f", deduction.amount)
-                }
-            )
+            .keyboardType(.decimalPad)
             .focused($focusedField, equals: .amount)
             .onAppear {
                 if takeFocusWhenAppearing {
@@ -125,6 +118,21 @@ struct SpendView: View {
                     Spacer()
                     nameView
                 }
+                .toolbar {
+                    if focusedField == .amount {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            
+                            Button("Done") {
+                                focusedField = .name
+                            }
+                        }
+                    }
+                    else {
+                        EmptyView()
+                    }
+                }
+                
                 if isExpanded {
                     expandedView
                 }

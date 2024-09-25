@@ -62,14 +62,7 @@ struct Intro: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.secondary.opacity(0.2))
             TextField("Enter amount", text: $monthlyRateString)
-                .inputView(
-                    CalculatorKeyboard.self,
-                    text: $monthlyRateString,
-                    onSubmit: {
-                        focusedField = false
-                        currentPage = 2
-                    }
-                )
+                .keyboardType(.decimalPad)
                 .focused($focusedField)
                 .padding()
         }

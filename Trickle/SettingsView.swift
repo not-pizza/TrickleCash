@@ -49,13 +49,7 @@ struct SettingsView: View {
                         Text("Excluding bills and subscriptions")
                             .font(.subheadline)
                         TextField("Enter amount", text: $tempMonthlyRate)
-                            .inputView(
-                                CalculatorKeyboard.self,
-                                text: $tempMonthlyRate,
-                                onSubmit: {
-                                    focusedField = false
-                                }
-                            )
+                            .keyboardType(.decimalPad)
                             .focused($focusedField)
                             .keyboardType(.decimalPad)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
