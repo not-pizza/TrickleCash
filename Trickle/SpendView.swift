@@ -4,6 +4,7 @@ import SwiftUI
 struct SpendView: View {
     @Binding var deduction: Spend
     var takeFocusWhenAppearing: Bool
+    var startDate: Date
     @State var inputAmount: String = ""
     @FocusState private var focusedField: Field?
     @State private var isExpanded: Bool = false
@@ -14,12 +15,13 @@ struct SpendView: View {
         case name
     }
     
-    init(deduction: Binding<Spend>, isFocused: Bool, onDelete: @escaping () -> Void) {
+    init(deduction: Binding<Spend>, isFocused: Bool, startDate: Date, onDelete: @escaping () -> Void) {
         self._deduction = deduction
         let amount = String(format: "%.2f", deduction.wrappedValue.amount)
         self._inputAmount = State(initialValue: amount)
         self.takeFocusWhenAppearing = isFocused
         self.onDelete = onDelete
+        self.startDate = startDate
     }
     
     var nameView: some View {
@@ -85,9 +87,15 @@ struct SpendView: View {
     
     var expandedView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Date Added: \(formattedDate(deduction.dateAdded))")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            DatePicker(
+                "Date Added",
+                selection: $deduction.dateAdded,
+                in: startDate...,
+                displayedComponents: [.date]
+            )
+            .datePickerStyle(CompactDatePickerStyle())
+            .labelsHidden()
+            
             Button(action: onDelete) {
                 Text("Delete")
                     .foregroundColor(.red)
@@ -233,5 +241,5 @@ func toDouble(_ s: String) -> Double? {
         set: { _ in () }
     )
     
-    SpendView(deduction: binding, isFocused: false, onDelete: {})
+    SpendView(deduction: binding, isFocused: false, startDate: Date(), onDelete: {})
 }

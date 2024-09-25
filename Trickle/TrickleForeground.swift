@@ -51,8 +51,8 @@ struct ForegroundView: View {
         let spendEventsByDate = spendEventBindings()
         let spendList = ScrollView {
             LazyVStack(alignment: .leading) {
+                // TODO: flatten these `ForEach`s so that moving spend across them doesn't recreate their view
                 ForEach(spendEventsByDate, id: \.date) { (date, spendEvents) in
-                    
                     Text(
                         dateFormatter.string(from: date)
                     )
@@ -63,6 +63,7 @@ struct ForegroundView: View {
                         SpendView(
                             deduction: spend,
                             isFocused: focusedSpendId == spend.wrappedValue.id,
+                            startDate: appData.getStartDate(asOf: date),
                             onDelete: { appData = appData.deleteEvent(id: spend.id) }
                         )
                         .transition(.move(edge: .top))
