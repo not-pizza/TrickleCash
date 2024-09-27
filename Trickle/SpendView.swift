@@ -3,25 +3,29 @@ import SwiftUI
 
 struct SpendView: View {
     @Binding var deduction: Spend
+    var buckets: [IdentifiedBucket]
     var takeFocusWhenAppearing: Bool
     var startDate: Date
     @State var inputAmount: String = ""
     @FocusState private var focusedField: Field?
     @State private var isExpanded: Bool = false
     var onDelete: () -> Void
-
+    var bucketValidAtDate: (UUID, Date) -> Bool
+    
     enum Field: Hashable {
         case amount
         case name
     }
     
-    init(deduction: Binding<Spend>, isFocused: Bool, startDate: Date, onDelete: @escaping () -> Void) {
+    init(deduction: Binding<Spend>, buckets: [IdentifiedBucket], isFocused: Bool, startDate: Date, onDelete: @escaping () -> Void, bucketValidAtDate: @escaping (UUID, Date) -> Bool) {
         self._deduction = deduction
+        self.buckets = buckets
         let amount = String(format: "%.2f", deduction.wrappedValue.amount)
         self._inputAmount = State(initialValue: amount)
         self.takeFocusWhenAppearing = isFocused
         self.onDelete = onDelete
         self.startDate = startDate
+        self.bucketValidAtDate = bucketValidAtDate
     }
     
     var nameView: some View {
@@ -85,16 +89,49 @@ struct SpendView: View {
         }
     }
     
+    var dateBinding: Binding<Date> {
+        .init(
+            get: { deduction.dateAdded },
+            set: {
+                deduction.dateAdded = $0
+                if let fromBucket = deduction.fromBucket {
+                    if !bucketValidAtDate(fromBucket, $0) {
+                        deduction.fromBucket = nil
+                    }
+                }
+            }
+        )
+    }
+    
+    var sortedBuckets: [IdentifiedBucket] {
+        buckets.sorted { $0.bucket.name < $1.bucket.name }
+    }
+    
     var expandedView: some View {
         VStack(alignment: .leading, spacing: 8) {
             DatePicker(
                 "Date Added",
-                selection: $deduction.dateAdded,
+                selection: dateBinding,
                 in: startDate...,
                 displayedComponents: [.date]
             )
             .datePickerStyle(CompactDatePickerStyle())
             .labelsHidden()
+            
+            if !buckets.isEmpty {
+                Picker("From", selection: $deduction.fromBucket) {
+                    Text("Main Balance")
+                        .tag(nil as UUID?)
+
+                    ForEach(sortedBuckets) { bucket in
+                        Text(bucket.bucket.name)
+                            .tag(bucket.id as UUID?)
+                    }
+                }
+                .pickerStyle(.menu)
+                .tint(.primary)
+            }
+
             
             Button(action: onDelete) {
                 Text("Delete")
@@ -241,5 +278,5 @@ func toDouble(_ s: String) -> Double? {
         set: { _ in () }
     )
     
-    SpendView(deduction: binding, isFocused: false, startDate: Date(), onDelete: {})
+    SpendView(deduction: binding, buckets: [], isFocused: false, startDate: Date(), onDelete: {}, bucketValidAtDate: {_, _ in true})
 }

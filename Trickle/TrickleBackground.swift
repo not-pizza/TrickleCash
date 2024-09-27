@@ -1,10 +1,5 @@
 import SwiftUI
 
-struct IdentifiedBucket: Identifiable {
-    let id: UUID
-    let bucket: Bucket
-}
-
 struct BackgroundView: View {
     @Binding var appData: AppData
     var onSettingsTapped: () -> Void
@@ -139,9 +134,9 @@ struct BackgroundView: View {
                     }
                 }
                 .opacity(bucketsOpacity)
+                
+                Spacer().frame(height: 300)
             }
-            
-            Spacer().frame(height: 100)
         }
     }
     

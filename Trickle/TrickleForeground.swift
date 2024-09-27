@@ -1,12 +1,22 @@
 import Foundation
 import SwiftUI
 
+struct SpendBindingWithBuckets: Identifiable {
+    let spend: Binding<Spend>
+    let buckets: [IdentifiedBucket]
+    
+    var id: UUID {
+        spend.id
+    }
+}
+
 struct ForegroundView: View {
     @Binding var appData: AppData
     @Binding var offset: CGFloat
     var geometry: GeometryProxy
     var foregroundHiddenOffset: Double
     var foregroundShowingOffset: Double
+    var currentTime: Date
     @Binding var hidden: Bool
     
     @State private var startingOffset: CGFloat = 0
@@ -28,15 +38,24 @@ struct ForegroundView: View {
         TutorialItem(videoName: "add-lock-screen-widget", videoTitle: "Add a Lock Screen Widget"),
     ]
     
-    private func spendEventBindings() -> [(date: Date, spends: [Binding<Spend>])] {
-        let spendEventsByDay = Dictionary(grouping: appData.getSpendEventsAfterStartDate(), by: { $0.dateAdded.startOfDay })
+    private func spendEventBindings() -> [(date: Date, spends: [SpendBindingWithBuckets])] {
+        let spendEventsByDay = Dictionary(
+            grouping: appData.getAppState(asOf: currentTime).spends,
+            by: { $0.spend.dateAdded.startOfDay }
+        )
         let spendEvents = spendEventsByDay.map { date, events in
-            (date: date, spends: events.sorted(by: { $0.dateAdded > $1.dateAdded }).map({
-                spend in Binding(
-                    get: { spend },
-                    set: { newSpend in appData = appData.updateSpend(newSpend) }
-                )
-            }))
+            (
+                date: date,
+                spends: events.sorted(by: { $0.spend.dateAdded > $1.spend.dateAdded }).map({
+                    s in SpendBindingWithBuckets(
+                        spend: Binding(
+                            get: { s.spend },
+                            set: { newSpend in appData = appData.updateSpend(newSpend) }
+                        ),
+                        buckets: s.buckets
+                    )
+                })
+            )
         }.sorted(by: {$0.date > $1.date})
         return spendEvents
     }
@@ -59,22 +78,20 @@ struct ForegroundView: View {
                     .font(.subheadline)
                     .padding(.top, 10)
                     
-                    ForEach(spendEvents, id: \.wrappedValue.id) { spend in
-                        SpendView(
-                            deduction: spend,
-                            isFocused: focusedSpendId == spend.wrappedValue.id,
+                     ForEach(spendEvents) { spend in
+                         SpendView(
+                            deduction: spend.spend,
+                            buckets: spend.buckets,
+                            isFocused: focusedSpendId == spend.spend.wrappedValue.id,
                             startDate: appData.getStartDate(asOf: date),
-                            onDelete: { appData = appData.deleteEvent(id: spend.id) }
-                        )
-                        .transition(.move(edge: .top))
-                        .padding(.horizontal, 15)
+                            onDelete: { appData = appData.deleteEvent(id: spend.id) },
+                            bucketValidAtDate: {bucket, date in
+                                appData.getAppState(asOf: date).buckets[bucket] != nil
+                            }
+                         )
+                         .transition(.move(edge: .top))
+                         .padding(.horizontal, 15)
                     }
-                    .onDelete(perform: { indexSet in
-                        for index in indexSet {
-                            let spend = spendEvents[index]
-                            appData = appData.deleteEvent(id: spend.id)
-                        }
-                    })
                 }
             }
         }
@@ -97,7 +114,7 @@ struct ForegroundView: View {
                 VStack {
                     addSpend
                     if #available(iOS 16.0, *) {
-                        spendList.scrollContentBackground(.hidden)
+                        spendList.scrollContentBackground(Visibility.hidden)
                     }
                     else {
                         spendList
@@ -164,6 +181,7 @@ struct ForegroundView: View {
                 geometry: geometry,
                 foregroundHiddenOffset: UIScreen.main.bounds.height - 50,
                 foregroundShowingOffset: UIScreen.main.bounds.height / 5,
+                currentTime: Date(),
                 hidden: .constant(false)
             ).offset(y: 150)
         }

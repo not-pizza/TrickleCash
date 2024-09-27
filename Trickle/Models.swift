@@ -179,7 +179,7 @@ struct AppData: Codable, Equatable {
         var currentPerSecondRate = monthlyRate / secondsPerMonth
         var lastEventDate = startDate
         var buckets: [UUID: (bucket: Bucket, amount: Double)] = [:]
-        var spends: [Spend] = []
+        var spends: [SpendWithBuckets] = []
         var mainBalance = 0.0
         
         // Sort events by date
@@ -232,18 +232,24 @@ struct AppData: Codable, Equatable {
                 }
             
             case .spend(let spend):
+                let bucketsForSpend = buckets.map({(uuid, b) in IdentifiedBucket(id: uuid, bucket: b.bucket)})
+                spends.append(
+                    SpendWithBuckets(
+                        spend: spend,
+                        buckets: bucketsForSpend
+                    )
+                )
+                
                 if let fromBucket = spend.fromBucket {
                     if let (_, _) = buckets[fromBucket] {
                         buckets[fromBucket]!.amount -= spend.amount
                     }
                     else {
                         mainBalance -= spend.amount
-                        spends.append(spend)
                     }
                 }
                 else {
                     mainBalance -= spend.amount
-                    spends.append(spend)
                 }
                 
             case .setStartDate:
@@ -335,7 +341,7 @@ struct AppState {
     }
     
     let balance: Double
-    let spends: [Spend]
+    let spends: [SpendWithBuckets]
     let buckets: [UUID : BucketInfo]
     let totalIncomePerSecond: Double
     let bucketIncomePerSecond: Double
@@ -555,6 +561,20 @@ struct Bucket: Codable, Equatable, Hashable {
         case (.destroy, _):
             return (newBucket: newBucket, result: .destroy)
         }
+    }
+}
+
+struct IdentifiedBucket: Identifiable {
+    let id: UUID
+    let bucket: Bucket
+}
+
+struct SpendWithBuckets: Identifiable {
+    let spend: Spend
+    let buckets: [IdentifiedBucket]
+    
+    var id: UUID {
+        spend.id
     }
 }
 

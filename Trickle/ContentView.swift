@@ -38,6 +38,7 @@ struct TrickleView: View {
                             geometry: geometry,
                             foregroundHiddenOffset: foregroundHiddenOffset,
                             foregroundShowingOffset: foregroundShowingOffset,
+                            currentTime: currentTime,
                             hidden: $hidden
                         )
                     }
