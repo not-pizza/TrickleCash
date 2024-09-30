@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TutorialItem: Identifiable {
+struct TutorialItem: Identifiable, Equatable {
     let id = UUID()
     let videoName: String
     let videoTitle: String

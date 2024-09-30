@@ -1,9 +1,9 @@
 import Foundation
 import SwiftUI
 
-struct SpendView: View {
+struct SpendView: View, Equatable {
     @Binding var deduction: Spend
-    var buckets: [IdentifiedBucket]
+    var buckets: [MinimalBucketInfo]
     var takeFocusWhenAppearing: Bool
     var startDate: Date
     @State var inputAmount: String = ""
@@ -17,7 +17,7 @@ struct SpendView: View {
         case name
     }
     
-    init(deduction: Binding<Spend>, buckets: [IdentifiedBucket], isFocused: Bool, startDate: Date, onDelete: @escaping () -> Void, bucketValidAtDate: @escaping (UUID, Date) -> Bool) {
+    init(deduction: Binding<Spend>, buckets: [MinimalBucketInfo], isFocused: Bool, startDate: Date, onDelete: @escaping () -> Void, bucketValidAtDate: @escaping (UUID, Date) -> Bool) {
         self._deduction = deduction
         self.buckets = buckets
         let amount = String(format: "%.2f", deduction.wrappedValue.amount)
@@ -26,6 +26,17 @@ struct SpendView: View {
         self.onDelete = onDelete
         self.startDate = startDate
         self.bucketValidAtDate = bucketValidAtDate
+    }
+    
+    static func == (lhs: SpendView, rhs: SpendView) -> Bool {
+        return lhs.$deduction.wrappedValue == rhs.$deduction.wrappedValue &&
+            lhs.buckets == rhs.buckets &&
+            lhs.takeFocusWhenAppearing == rhs.takeFocusWhenAppearing &&
+            lhs.startDate == rhs.startDate &&
+            lhs.inputAmount == rhs.inputAmount &&
+            lhs.focusedField == rhs.focusedField &&
+            lhs.isExpanded == rhs.isExpanded
+        // Note: `onDelete` and `bucketValidAtDate` are excluded from comparison
     }
     
     var nameView: some View {
@@ -103,8 +114,8 @@ struct SpendView: View {
         )
     }
     
-    var sortedBuckets: [IdentifiedBucket] {
-        buckets.sorted { $0.bucket.name < $1.bucket.name }
+    var sortedBuckets: [MinimalBucketInfo] {
+        buckets.sorted { $0.name < $1.name }
     }
     
     var expandedView: some View {
@@ -124,7 +135,7 @@ struct SpendView: View {
                         .tag(nil as UUID?)
 
                     ForEach(sortedBuckets) { bucket in
-                        Text(bucket.bucket.name)
+                        Text(bucket.name)
                             .tag(bucket.id as UUID?)
                     }
                 }

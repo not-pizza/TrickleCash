@@ -564,12 +564,12 @@ struct Bucket: Codable, Equatable, Hashable {
     }
 }
 
-struct IdentifiedBucket: Identifiable {
+struct IdentifiedBucket: Identifiable, Equatable {
     let id: UUID
     let bucket: Bucket
 }
 
-struct SpendWithBuckets: Identifiable {
+struct SpendWithBuckets: Identifiable, Equatable {
     let spend: Spend
     let buckets: [IdentifiedBucket]
     
@@ -577,6 +577,21 @@ struct SpendWithBuckets: Identifiable {
         spend.id
     }
 }
+
+struct SpendWithMinimalBuckets: Identifiable, Equatable {
+    let spend: Spend
+    let buckets: [MinimalBucketInfo]
+    
+    var id: UUID {
+        spend.id
+    }
+}
+
+struct MinimalBucketInfo: Identifiable, Equatable {
+    let id: UUID
+    let name: String
+}
+
 
 // Where all our main app data is stored
 enum UpdatableAppData: Codable {

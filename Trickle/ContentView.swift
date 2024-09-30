@@ -20,6 +20,24 @@ struct TrickleView: View {
     @State private var currentTime: Date = Date()
     @State private var offset: CGFloat = 200
     @State private var hidden = false
+    @State private var focusedSpendId: UUID?
+    
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
+    
+    var controlSpend: ControlSpendAction {
+        ControlSpendAction(
+            appData: appData,
+            add: { appData = appData.addSpend($0) },
+            update: { appData = appData.updateSpend($0) },
+            remove: { appData = appData.deleteEvent(id: $0) },
+            bucketValidAtDate: {bucket, date in appData.getAppState(asOf: date).buckets[bucket] != nil}
+        )
+    }
+    
+    var startDate: Date {
+        appData.getStartDate(asOf: currentTime)
+    }
 
     var body: some View {
         NavigationView {
@@ -33,14 +51,16 @@ struct TrickleView: View {
                 ZStack {
                     VStack(alignment: .leading) {
                         ForegroundView(
-                            appData: $appData,
-                            offset: $offset,
-                            geometry: geometry,
+                            offset: offset,
                             foregroundHiddenOffset: foregroundHiddenOffset,
                             foregroundShowingOffset: foregroundShowingOffset,
-                            currentTime: currentTime,
-                            hidden: $hidden
-                        )
+                            spends: [],
+                            controlSpend: controlSpend,
+                            startDate: startDate,
+                            hidden: hidden,
+                            colorScheme: colorScheme,
+                            scenePhase: scenePhase
+                        ).equatable()
                     }
                     .offset(y: max(offset, 0))
                     .zIndex(1)
