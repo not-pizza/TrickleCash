@@ -107,7 +107,7 @@ struct Intro: View {
                                 .font(.headline)
                                 .padding()
                             
-                            CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: 200)
+                            CircularBalanceView(appData: appData, frameSize: 200)
 
                             Text("Log your spending and we'll deduct it from your balance. This lets you keep track of how much money you have left to spend")
                                 .multilineTextAlignment(.center)

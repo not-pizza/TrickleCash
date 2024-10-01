@@ -30,50 +30,34 @@ struct BackgroundView: View {
     
     var backgroundContent: some View {
         let perSecondRate = appState.totalIncomePerSecond - appState.bucketIncomePerSecond
-        
         let timeAtZero = perSecondRate > 0 ? Calendar.current.date(byAdding: .second, value: Int(-balance / perSecondRate), to: currentTime) : nil
         let debtClock = timeAtZero?.formatted(formatStyle)
-        
         let debtClockHeight = 20.0
         
-        let buckets = Array(appState.buckets).map({(id, bucketInfo) in
+        let buckets = Array(appState.buckets).map { (id, bucketInfo) in
             (
                 id: id,
                 amount: bucketInfo.amount,
                 bucket: bucketInfo.bucket
             )
-        }).sorted(by: {$0.bucket.name < $1.bucket.name}).sorted(by: {$0.bucket.estimatedCompletionDate($0.amount, at: currentTime) < $1.bucket.estimatedCompletionDate($0.amount, at: currentTime)})
+        }
+        .sorted(by: { $0.bucket.name < $1.bucket.name })
+        .sorted(by: {
+            $0.bucket.estimatedCompletionDate($0.amount, at: currentTime) < $1.bucket.estimatedCompletionDate($1.amount, at: currentTime)
+        })
         
         let balanceHeight = (Double(foregroundShowingOffset) - 50.0) + (balance < 0 ? 0.0 : debtClockHeight + 10)
-
+        
         return ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    Color.clear
-                        .frame(width: 24, height: 24)
-                    Spacer()
-                    
-                    VStack(spacing: 10) {
-                        CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: balanceHeight)
-                        if balance < 0 {
-                            if let debtClock = debtClock {
-                                Text("Out of debt \(debtClock)").frame(height: debtClockHeight)
-                            }
-                        }
-                    }
-                    
-                    Spacer()
-                    NavigationLink(
-                        destination: SettingsView(
-                            appData: $appData
-                        )) {
-                            Image(systemName: "gear")
-                                .foregroundColor(.primary)
-                                .font(.system(size: 26))
-                        }
-                }
-                .padding()
-                .frame(height: foregroundShowingOffset, alignment: .top)
+                BalanceAndDebtClockView(
+                    appData: $appData,
+                    balance: balance,
+                    balanceHeight: balanceHeight,
+                    debtClock: debtClock,
+                    debtClockHeight: debtClockHeight,
+                    foregroundShowingOffset: foregroundShowingOffset
+                )
             }
             .frame(height: foregroundShowingOffset, alignment: .top)
             
@@ -81,69 +65,22 @@ struct BackgroundView: View {
             
             // Buckets
             if bucketsOpacity > 0 {
-                VStack {
-                    Button(action: {
-                        isAddingNewBucket = true
-                    }) {
-                        HStack {
-                            Spacer()
-                            Text("Add bucket")
-                            Spacer()
-                        }
-                        .frame(height: 30)
-                    }
-                    .buttonStyle(AddBucketButtonStyle())
-                    .padding(.horizontal)
-                    
-                    Spacer().frame(height: 30)
-                    
-                    ForEach(buckets, id: \.id) { bucket in
-                        BucketView(
-                            id: bucket.id,
-                            amount: bucket.amount,
-                            bucket: Binding(
-                                get: { bucket.bucket },
-                                set: { newBucket in
-                                    appData = appData.updateBucket(bucket.id, newBucket)
-                                }
-                            ),
-                            dump: {
-                                appData = appData.dumpBucket(bucket.id)
-                            },
-                            delete: {
-                                appData = appData.deleteBucket(bucket.id)
-                            },
-                            currentTime: currentTime
-                        )
-                        .onTapGesture {
-                            editingBucket = IdentifiedBucket(id: bucket.id, bucket: bucket.bucket)
-                        }
-                    }
-                    
-                    if buckets.isEmpty {
-                        Text("Buckets let you start saving a portion of your income for future expenses or bills. Add a bucket to get started!")
-                            .padding()
-                            .multilineTextAlignment(.center)
-                    } else {
-                        BudgetAllocationView(
-                            totalIncomePerSecond: appState.totalIncomePerSecond,
-                            bucketIncomePerSecond: appState.bucketIncomePerSecond,
-                            buckets: buckets
-                        )
-                        .padding(.horizontal)
-                    }
-                }
-                .opacity(bucketsOpacity)
-                
-                Spacer().frame(height: 300)
+                BucketsView(
+                    appData: $appData,
+                    appState: appState,
+                    currentTime: currentTime,
+                    editingBucket: $editingBucket,
+                    isAddingNewBucket: $isAddingNewBucket,
+                    buckets: buckets,
+                    bucketsOpacity: bucketsOpacity
+                )
             }
         }
     }
     
     var body: some View {
-        return ZStack(alignment: .top) {
+        ZStack(alignment: .top) {
             balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
-                        
             VStack(alignment: .center) {
                 ScrollViewReader { proxy in
                     if #available(iOS 16.0, *) {
@@ -177,6 +114,7 @@ struct BackgroundView: View {
     }
 }
 
+
 struct AddBucketButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration
@@ -192,6 +130,110 @@ struct AddBucketButtonStyle: ButtonStyle {
             )
             .foregroundColor(Color.primary.opacity(configuration.isPressed ? 0.3 : 1))
             .scaleEffect(configuration.isPressed ? 0.99 : 1)
+    }
+}
+
+struct BalanceAndDebtClockView: View {
+    @Binding var appData: AppData
+    var balance: Double
+    var balanceHeight: Double
+    var debtClock: String?
+    var debtClockHeight: Double
+    var foregroundShowingOffset: CGFloat
+
+    var body: some View {
+        HStack {
+            Color.clear
+                .frame(width: 24, height: 24)
+            Spacer()
+            
+            VStack(spacing: 10) {
+                CircularBalanceView(appData: appData, frameSize: balanceHeight)
+                if balance < 0, let debtClock = debtClock {
+                    Text("Out of debt \(debtClock)")
+                        .frame(height: debtClockHeight)
+                }
+            }
+            
+            Spacer()
+            NavigationLink(
+                destination: SettingsView(appData: $appData)
+            ) {
+                Image(systemName: "gear")
+                    .foregroundColor(.primary)
+                    .font(.system(size: 26))
+            }
+        }
+        .padding()
+        .frame(height: foregroundShowingOffset, alignment: .top)
+    }
+}
+
+struct BucketsView: View {
+    @Binding var appData: AppData
+    var appState: AppState
+    var currentTime: Date
+    @Binding var editingBucket: IdentifiedBucket?
+    @Binding var isAddingNewBucket: Bool
+    var buckets: [(id: UUID, amount: Double, bucket: Bucket)]
+    var bucketsOpacity: Double
+
+    var body: some View {
+        VStack {
+            Button(action: {
+                isAddingNewBucket = true
+            }) {
+                HStack {
+                    Spacer()
+                    Text("Add bucket")
+                    Spacer()
+                }
+                .frame(height: 30)
+            }
+            .buttonStyle(AddBucketButtonStyle())
+            .padding(.horizontal)
+            
+            Spacer().frame(height: 30)
+            
+            ForEach(buckets, id: \.id) { bucket in
+                BucketView(
+                    id: bucket.id,
+                    amount: bucket.amount,
+                    bucket: Binding(
+                        get: { bucket.bucket },
+                        set: { newBucket in
+                            appData = appData.updateBucket(bucket.id, newBucket)
+                        }
+                    ),
+                    dump: {
+                        appData = appData.dumpBucket(bucket.id)
+                    },
+                    delete: {
+                        appData = appData.deleteBucket(bucket.id)
+                    },
+                    currentTime: currentTime
+                )
+                .onTapGesture {
+                    editingBucket = IdentifiedBucket(id: bucket.id, bucket: bucket.bucket)
+                }
+            }
+            
+            if buckets.isEmpty {
+                Text("Buckets let you start saving a portion of your income for future expenses or bills. Add a bucket to get started!")
+                    .padding()
+                    .multilineTextAlignment(.center)
+            } else {
+                BudgetAllocationView(
+                    totalIncomePerSecond: appState.totalIncomePerSecond,
+                    bucketIncomePerSecond: appState.bucketIncomePerSecond,
+                    buckets: buckets
+                )
+                .padding(.horizontal)
+            }
+        }
+        .opacity(bucketsOpacity)
+        
+        Spacer().frame(height: 300)
     }
 }
 

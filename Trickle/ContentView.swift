@@ -17,7 +17,6 @@ struct TrickleView: View {
     @Binding var appData: AppData
     var openSettings: () -> Void
     
-    @State private var currentTime: Date = Date()
     @State private var offset: CGFloat = 200
     @State private var hidden = false
     @State private var focusedSpendId: UUID?
@@ -34,13 +33,24 @@ struct TrickleView: View {
             bucketValidAtDate: {bucket, date in appData.getAppState(asOf: date).buckets[bucket] != nil}
         )
     }
-    
-    var startDate: Date {
-        appData.getStartDate(asOf: currentTime)
-    }
 
     var body: some View {
-        NavigationView {
+        let currentTime = Date()
+        let startDate = appData.getStartDate(asOf: currentTime)
+        let appState = appData.getAppState(asOf: currentTime)
+        let spends = appState.spends.map({spendWithBucket in
+            SpendWithMinimalBuckets(
+                spend: spendWithBucket.spend,
+                buckets: spendWithBucket.buckets.map({bucket in
+                    MinimalBucketInfo(
+                        id: bucket.id,
+                        name: bucket.bucket.name
+                    )
+                })
+            )
+        })
+
+        return NavigationView {
             GeometryReader { geometry in
                 let foregroundHiddenOffset: CGFloat = geometry.size.height - 120
                 
@@ -54,7 +64,7 @@ struct TrickleView: View {
                             offset: offset,
                             foregroundHiddenOffset: foregroundHiddenOffset,
                             foregroundShowingOffset: foregroundShowingOffset,
-                            spends: [],
+                            spends: spends,
                             controlSpend: controlSpend,
                             startDate: startDate,
                             hidden: hidden,
@@ -88,7 +98,6 @@ struct TrickleView: View {
                         }
                     }
                     
-                    
                     BackgroundView(
                         appData: $appData,
                         onSettingsTapped: openSettings,
@@ -97,15 +106,7 @@ struct TrickleView: View {
                         currentTime: currentTime
                     ).zIndex(0)
                 }
-            }.onAppear() {
-                setupTimer()
             }
-        }
-    }
-
-    private func setupTimer() {
-        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
-            currentTime = Date()
         }
     }
 }

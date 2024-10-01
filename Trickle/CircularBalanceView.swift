@@ -10,8 +10,8 @@ import SwiftUI
 
 public struct CircularBalanceView: View {
     var appData: AppData
-    var currentTime: Date
     let frameSize: Double
+    @State var currentTime: Date = Date()
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -50,6 +50,16 @@ public struct CircularBalanceView: View {
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
             }
-        }.frame(width: frameSize, height: frameSize)
+        }
+        .frame(width: frameSize, height: frameSize)
+        .onAppear {
+            setupTimer()
+        }
+    }
+    
+    private func setupTimer() {
+        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
+         currentTime = Date()
+        }
     }
 }
