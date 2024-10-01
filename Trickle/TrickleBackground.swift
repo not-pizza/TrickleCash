@@ -1,12 +1,13 @@
 import SwiftUI
 
+
 struct BackgroundView: View {
     @Binding var appData: AppData
     var onSettingsTapped: () -> Void
     var foregroundShowingOffset: CGFloat
     var foregroundHidden: Bool
-    var currentTime: Date
-
+    
+    @State private var balanceBackgroundColor: BalanceBackgroundColor = .green
     @State private var editingBucket: IdentifiedBucket?
     @State private var isAddingNewBucket = false
     @State private var spacing = 60
@@ -14,49 +15,13 @@ struct BackgroundView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
-    var formatStyle: Date.RelativeFormatStyle {
-        var formatStyle = Date.RelativeFormatStyle()
-        formatStyle.presentation = .named
-        return formatStyle
-    }
-    
-    var appState: AppState {
-        return appData.getAppState(asOf: currentTime)
-    }
-    
-    var balance: Double {
-        appState.balance
-    }
-    
-    var backgroundContent: some View {
-        let perSecondRate = appState.totalIncomePerSecond - appState.bucketIncomePerSecond
-        let timeAtZero = perSecondRate > 0 ? Calendar.current.date(byAdding: .second, value: Int(-balance / perSecondRate), to: currentTime) : nil
-        let debtClock = timeAtZero?.formatted(formatStyle)
-        let debtClockHeight = 20.0
-        
-        let buckets = Array(appState.buckets).map { (id, bucketInfo) in
-            (
-                id: id,
-                amount: bucketInfo.amount,
-                bucket: bucketInfo.bucket
-            )
-        }
-        .sorted(by: { $0.bucket.name < $1.bucket.name })
-        .sorted(by: {
-            $0.bucket.estimatedCompletionDate($0.amount, at: currentTime) < $1.bucket.estimatedCompletionDate($1.amount, at: currentTime)
-        })
-        
-        let balanceHeight = (Double(foregroundShowingOffset) - 50.0) + (balance < 0 ? 0.0 : debtClockHeight + 10)
-        
-        return ScrollView {
+    var body: some View {
+        let backgroundContent = ScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 BalanceAndDebtClockView(
                     appData: $appData,
-                    balance: balance,
-                    balanceHeight: balanceHeight,
-                    debtClock: debtClock,
-                    debtClockHeight: debtClockHeight,
-                    foregroundShowingOffset: foregroundShowingOffset
+                    foregroundShowingOffset: foregroundShowingOffset,
+                    balanceBackgroundColor: $balanceBackgroundColor
                 )
             }
             .frame(height: foregroundShowingOffset, alignment: .top)
@@ -67,20 +32,15 @@ struct BackgroundView: View {
             if bucketsOpacity > 0 {
                 BucketsView(
                     appData: $appData,
-                    appState: appState,
-                    currentTime: currentTime,
                     editingBucket: $editingBucket,
                     isAddingNewBucket: $isAddingNewBucket,
-                    buckets: buckets,
                     bucketsOpacity: bucketsOpacity
                 )
             }
-        }
-    }
-    
-    var body: some View {
-        ZStack(alignment: .top) {
-            balanceBackgroundGradient(balance, colorScheme: colorScheme).ignoresSafeArea()
+        };
+        
+        return ZStack(alignment: .top) {
+            balanceBackgroundGradient(color: balanceBackgroundColor, colorScheme: colorScheme).ignoresSafeArea()
             VStack(alignment: .center) {
                 ScrollViewReader { proxy in
                     if #available(iOS 16.0, *) {
@@ -135,20 +95,35 @@ struct AddBucketButtonStyle: ButtonStyle {
 
 struct BalanceAndDebtClockView: View {
     @Binding var appData: AppData
-    var balance: Double
-    var balanceHeight: Double
-    var debtClock: String?
-    var debtClockHeight: Double
     var foregroundShowingOffset: CGFloat
-
+    @Binding var balanceBackgroundColor: BalanceBackgroundColor
+    
+    @State private var currentTime: Date = Date()
+    
+    var formatStyle: Date.RelativeFormatStyle {
+        var formatStyle = Date.RelativeFormatStyle()
+        formatStyle.presentation = .named
+        return formatStyle
+    }
+    
     var body: some View {
+        let appState = appData.getAppState(asOf: currentTime)
+        let balance = appState.balance
+        let perSecondRate = appState.totalIncomePerSecond - appState.bucketIncomePerSecond
+
+        let timeAtZero = perSecondRate > 0 ? Calendar.current.date(byAdding: .second, value: Int(-balance / perSecondRate), to: currentTime) : nil
+        let debtClock = timeAtZero?.formatted(formatStyle)
+        let debtClockHeight = 20.0
+        let balanceHeight = (Double(foregroundShowingOffset) - 50.0) + (balance < 0 ? 0.0 : debtClockHeight + 10)
+
+        
         HStack {
             Color.clear
                 .frame(width: 24, height: 24)
             Spacer()
             
             VStack(spacing: 10) {
-                CircularBalanceView(appData: appData, frameSize: balanceHeight)
+                CircularBalanceView(appData: appData, currentTime: currentTime, frameSize: balanceHeight)
                 if balance < 0, let debtClock = debtClock {
                     Text("Out of debt \(debtClock)")
                         .frame(height: debtClockHeight)
@@ -164,22 +139,46 @@ struct BalanceAndDebtClockView: View {
                     .font(.system(size: 26))
             }
         }
+        .onAppear {
+            setupTimer()
+        }
         .padding()
         .frame(height: foregroundShowingOffset, alignment: .top)
+    }
+    
+    private func setupTimer() {
+        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
+            currentTime = Date()
+            
+            let appState = appData.getAppState(asOf: currentTime)
+            let balance = appState.balance
+            balanceBackgroundColor = balanceBackground(balance)
+        }
     }
 }
 
 struct BucketsView: View {
     @Binding var appData: AppData
-    var appState: AppState
-    var currentTime: Date
     @Binding var editingBucket: IdentifiedBucket?
     @Binding var isAddingNewBucket: Bool
-    var buckets: [(id: UUID, amount: Double, bucket: Bucket)]
     var bucketsOpacity: Double
+    @State var currentTime = Date()
 
     var body: some View {
-        VStack {
+        let appState = appData.getAppState(asOf: currentTime)
+        let buckets = Array(appState.buckets).map { (id, bucketInfo) in
+            (
+                id: id,
+                amount: bucketInfo.amount,
+                bucket: bucketInfo.bucket
+            )
+        }
+        .sorted(by: { $0.bucket.name < $1.bucket.name })
+        .sorted(by: {
+            $0.bucket.estimatedCompletionDate($0.amount, at: currentTime) < $1.bucket.estimatedCompletionDate($1.amount, at: currentTime)
+        })
+        
+        return VStack {
             Button(action: {
                 isAddingNewBucket = true
             }) {
@@ -230,10 +229,20 @@ struct BucketsView: View {
                 )
                 .padding(.horizontal)
             }
+            
+            Spacer().frame(height: 300)
+        }
+        .onAppear {
+            setupTimer()
         }
         .opacity(bucketsOpacity)
         
-        Spacer().frame(height: 300)
+    }
+    
+    private func setupTimer() {
+        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
+            currentTime = Date()
+        }
     }
 }
 
@@ -249,7 +258,6 @@ struct BucketsView: View {
         )),
         onSettingsTapped: {},
         foregroundShowingOffset: UIScreen.main.bounds.height / 5,
-        foregroundHidden: true,
-        currentTime: Date()
+        foregroundHidden: true
     )
 }

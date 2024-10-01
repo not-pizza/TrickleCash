@@ -22,19 +22,19 @@ struct ControlSpendAction: Equatable {
     let bucketValidAtDate: (UUID, Date) -> Bool
 }
 
-struct ForegroundView: View, Equatable {
+struct ForegroundView: View {
     var offset: CGFloat
     var foregroundHiddenOffset: Double
     var foregroundShowingOffset: Double
     var spends: [SpendWithMinimalBuckets]
     var controlSpend: ControlSpendAction
     var startDate: Date
-    var hidden: Bool
-    var focusedSpendId: UUID?
+    @Binding var hidden: Bool
     var colorScheme: ColorScheme
     var scenePhase: ScenePhase
     
-    var chevronRotation: Double = 0
+    @State private var focusedSpendId: UUID?
+    @State var chevronRotation: Double = 0
     
     
     var backgroundColor: Color {
@@ -75,7 +75,6 @@ struct ForegroundView: View, Equatable {
     }()
     
     var body: some View {
-        Self._printChanges()
         let spendEventsByDate = spendEventBindings()
         let spendList = ScrollView {
             LazyVStack(alignment: .leading) {
@@ -109,7 +108,7 @@ struct ForegroundView: View, Equatable {
         }
 
         return VStack {
-            Button(action: {/*TODO: fix | hidden = !hidden*/}) {
+            Button(action: {hidden = !hidden}) {
                 HStack {
                     Spacer()
                     Image(systemName: "chevron.down")
@@ -143,10 +142,10 @@ struct ForegroundView: View, Equatable {
             .frame(maxHeight: .infinity, alignment: .bottom)
             .ignoresSafeArea(.all)
             .onChange(of: hidden) { _ in
-                /* TODO: fix | focusedSpendId = nil */
+                focusedSpendId = nil
             }
         }.onChange(of: hidden, perform: {_ in
-            /* TODO: fix | chevronRotation = hidden ? 180 : 0 */
+            chevronRotation = hidden ? 180 : 0
         })
         .animation(.spring(), value: chevronRotation)
     }
@@ -161,7 +160,7 @@ struct ForegroundView: View, Equatable {
                         dateAdded: Date()
                     )
                     controlSpend.add(newSpend)
-                    /* TODO: fix | focusedSpendId = newSpend.id */
+                    focusedSpendId = newSpend.id
                 }
             }) {
                 HStack {
@@ -199,7 +198,7 @@ struct ForegroundView: View, Equatable {
                 bucketValidAtDate: {_, _ in true}
             ),
             startDate: Date().startOfDay,
-            hidden: false,
+            hidden: .constant(false),
             colorScheme: .dark,
             scenePhase: .active
         ).offset(y: 150)

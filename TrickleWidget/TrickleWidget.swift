@@ -52,7 +52,7 @@ struct LockScreenWidgetView: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        let background = balanceBackgroundGradient(entry.value, colorScheme: colorScheme).ignoresSafeArea()
+        let background = balanceBackgroundGradient(color: balanceBackground(entry.value), colorScheme: colorScheme).ignoresSafeArea()
 
         return VStack {
             Text("Trickle")
@@ -79,7 +79,7 @@ struct TrickleWidgetEntryView: View {
             )
 
         default:
-            let background = balanceBackgroundGradient(entry.value, colorScheme: colorScheme).ignoresSafeArea()
+            let background = balanceBackgroundGradient(color: balanceBackground(entry.value), colorScheme: colorScheme).ignoresSafeArea()
             
             return AnyView(ZStack {
                 VStack {

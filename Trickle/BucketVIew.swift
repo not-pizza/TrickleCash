@@ -118,7 +118,7 @@ struct BucketView: View {
 struct BucketView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            balanceBackgroundGradient(-30, colorScheme: .dark).ignoresSafeArea()
+            balanceBackgroundGradient(color: .red, colorScheme: .dark).ignoresSafeArea()
             
             VStack(alignment: .leading) {
                 BucketView(

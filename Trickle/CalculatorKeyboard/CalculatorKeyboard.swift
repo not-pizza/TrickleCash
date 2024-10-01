@@ -175,7 +175,7 @@ struct KeyboardButtonView: View {
 
 
 #Preview {
-    var inputAmount = ""
+    let inputAmount = ""
     
     ZStack {
         Color(.systemBackground)

@@ -19,7 +19,6 @@ struct TrickleView: View {
     
     @State private var offset: CGFloat = 200
     @State private var hidden = false
-    @State private var focusedSpendId: UUID?
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.scenePhase) private var scenePhase
@@ -67,10 +66,10 @@ struct TrickleView: View {
                             spends: spends,
                             controlSpend: controlSpend,
                             startDate: startDate,
-                            hidden: hidden,
+                            hidden: $hidden,
                             colorScheme: colorScheme,
                             scenePhase: scenePhase
-                        ).equatable()
+                        )
                     }
                     .offset(y: max(offset, 0))
                     .zIndex(1)
@@ -102,8 +101,7 @@ struct TrickleView: View {
                         appData: $appData,
                         onSettingsTapped: openSettings,
                         foregroundShowingOffset: initialforegroundShowingOffset,
-                        foregroundHidden: hidden,
-                        currentTime: currentTime
+                        foregroundHidden: hidden
                     ).zIndex(0)
                 }
             }
