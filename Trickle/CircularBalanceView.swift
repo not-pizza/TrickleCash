@@ -10,7 +10,7 @@ import SwiftUI
 
 public struct CircularBalanceView: View {
     var appData: AppData
-    var currentTime: Date
+    let currentTime: Date
     let frameSize: Double
     
     @Environment(\.colorScheme) var colorScheme
@@ -50,6 +50,8 @@ public struct CircularBalanceView: View {
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
             }
-        }.frame(width: frameSize, height: frameSize)
+        }
+        .frame(width: frameSize, height: frameSize)
     }
+    
 }

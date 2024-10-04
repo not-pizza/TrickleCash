@@ -14,6 +14,7 @@ struct EditBucketView: View {
     @State private var nameInput: String
     @State private var whenFinished: Bucket.FinishAction
     @State private var recur: TimeInterval?
+    @State private var isMoreSettingsExpanded: Bool = false
     
     init(bucket: Bucket, amount: Double, save: @escaping (Bucket) -> Void, dump: (() -> Void)?, delete: (() -> Void)?) {
         self.save = save
@@ -40,7 +41,8 @@ struct EditBucketView: View {
                                 .font(.title)
                         }
                         
-                        Text("This will redirect some money out of your main trickle balance, so it is set aside for later.").font(.caption)
+                        Text("This will redirect some money out of your main trickle balance, so it is set aside for later.")
+                            .font(.caption)
                         
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Fill up to:")
@@ -74,30 +76,13 @@ struct EditBucketView: View {
                             displayedComponents: .date
                         )
                         
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("When Filled:")
-                                .font(.headline)
-                            
-                            Picker("When Filled", selection: $whenFinished) {
-                                Text("Do nothing").tag(Bucket.FinishAction.waitToDump)
-                                Text("Automatically dump into main balance").tag(Bucket.FinishAction.autoDump)
-                                Text("Destroy (as if you spent the money)").tag(Bucket.FinishAction.destroy)
-                            }
+                        // Collapsible "More Settings" Section
+                        DisclosureGroup("More Settings", isExpanded: $isMoreSettingsExpanded) {
+                            MoreSettingsView(whenFinished: $whenFinished, recur: $recur)
                         }
-                        
-                        Toggle("Recurring", isOn: Binding(
-                            get: { recur != nil },
-                            set: { recur = $0 ? 30 * 24 * 60 * 60 : nil }
-                        ))
-                        
-                        if let recur = recur {
-                            Stepper(value: Binding(
-                                get: { Double(recur / (24 * 60 * 60)) },
-                                set: { self.recur = $0 * 24 * 60 * 60 }
-                            ), in: 1...365) {
-                                Text("Every \(Int(recur / (24 * 60 * 60))) days")
-                            }
-                        }
+                        .padding(.vertical, 10)
+                        .tint(.primary)
+                        .controlSize(.large)
                         
                         Spacer().frame(height: 60) // Add space for the sticky button
                     }
@@ -147,7 +132,7 @@ struct EditBucketView: View {
             .navigationBarItems(
                 leading: Button("Cancel") { presentationMode.wrappedValue.dismiss() },
                 trailing: Button("Save") { saveChanges() }
-                    .disabled(nameInput.isEmpty)
+                    .disabled(nameInput.isEmpty || derivedBucket() == nil || derivedBucket()!.targetAmount < 0.05)
             )
         }
         .onAppear {
@@ -155,7 +140,6 @@ struct EditBucketView: View {
         }
     }
 
-    
     private var targetAmountBinding: Binding<String> {
         Binding(
             get: { targetAmountInput },
@@ -241,3 +225,39 @@ extension Bucket {
         ) ?? Date.distantFuture
     }
 }
+
+struct MoreSettingsView: View {
+    @Binding var whenFinished: Bucket.FinishAction
+    @Binding var recur: TimeInterval?
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("When Filled:")
+                .font(.headline)
+            
+            Picker("When Filled", selection: $whenFinished) {
+                Text("Do nothing").tag(Bucket.FinishAction.waitToDump)
+                Text("Automatically dump into main balance").tag(Bucket.FinishAction.autoDump)
+                Text("Destroy (as if you spent the money)").tag(Bucket.FinishAction.destroy)
+            }
+            .tint(.primary)
+            
+            Toggle("Recurring:", isOn: Binding(
+                get: { recur != nil },
+                set: { recur = $0 ? 30 * 24 * 60 * 60 : nil }
+            )).font(.headline)
+            
+            if let recur = recur {
+                Stepper(value: Binding(
+                    get: { Double(recur / (24 * 60 * 60)) },
+                    set: { self.recur = $0 * 24 * 60 * 60 }
+                ), in: 1...365) {
+                    Text("Every \(Int(recur / (24 * 60 * 60))) days")
+                }
+            }
+        }
+        .padding(.top, 10)
+    }
+}
+
+

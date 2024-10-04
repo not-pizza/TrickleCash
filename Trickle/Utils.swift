@@ -50,20 +50,28 @@ func balanceBackground(_ amount: Double, colorScheme: ColorScheme) -> Color {
     amount < 0 ? Color.red : Color.green
 }
 
-func balanceBackgroundGradient(_ amount: Double, colorScheme: ColorScheme, boost: Float = 0) -> LinearGradient {
+
+enum BalanceBackgroundColor: Equatable  {
+    case green
+    case red
+}
+
+func balanceBackground(_ amount: Double) -> BalanceBackgroundColor {
+    amount > 0 ? BalanceBackgroundColor.green : BalanceBackgroundColor.red
+}
+
+func balanceBackgroundGradient(color: BalanceBackgroundColor, colorScheme: ColorScheme, boost: Float = 0) -> LinearGradient {
     let lightness_delta: Float = colorScheme == .dark ? -(0.07 + boost) : (0.1 + boost)
-    
-    let grayify: Float = amount < 1 && amount > -1 ? 0.2 : 1
     
     let reds = [
         OklabColorPolar(
             lightness: 0.65 + lightness_delta,
-            chroma: 0.2017 * grayify,
+            chroma: 0.2017,
             hueDegrees: 26.33
         ),
         OklabColorPolar(
             lightness: 0.65 + lightness_delta,
-            chroma: 0.2017 * grayify,
+            chroma: 0.2017,
             hueDegrees: 316.44
         )
     ]
@@ -71,17 +79,17 @@ func balanceBackgroundGradient(_ amount: Double, colorScheme: ColorScheme, boost
     let greens = [
         OklabColorPolar(
             lightness: 0.65 + lightness_delta,
-            chroma: 0.1678 * grayify,
+            chroma: 0.1678,
             hueDegrees: 132.12
         ),
         OklabColorPolar(
             lightness: 0.65 + lightness_delta,
-            chroma: 0.1678 * grayify,
+            chroma: 0.1678,
             hueDegrees: 226.51
         )
     ]
     
-    let colors = (amount > 0 ? greens : reds).map({color in Color(color)})
+    let colors = (color == .green ? greens : reds).map({color in Color(color)})
     
     return LinearGradient(gradient: Gradient(colors: colors),
                 startPoint: .topLeading,

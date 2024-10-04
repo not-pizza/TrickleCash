@@ -22,7 +22,7 @@ struct TrickleBalanceAdjustmentView: View {
         var spendColor = OklabColor(swiftUI: Color.red)
         spendColor.lightness += colorScheme == .dark ? 0.1 : -0.1
         return ZStack {
-            balanceBackgroundGradient(newBalance, colorScheme: colorScheme, boost: 0.2)
+            balanceBackgroundGradient(color: balanceBackground(newBalance), colorScheme: colorScheme, boost: 0.2)
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(merchant)

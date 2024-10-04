@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		AB1669312C5F035B0048A993 /* CalendarStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1669302C5F035B0048A993 /* CalendarStrip.swift */; };
 		AB1669332C5F03870048A993 /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1669322C5F03870048A993 /* SpendView.swift */; };
+		AB1B00B52CAF842400D8C298 /* Add a shortcut to trickle.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = AB1B00B42CAF842400D8C298 /* Add a shortcut to trickle.mp4 */; };
 		AB2BE5B12C72CF3800578B18 /* BucketVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */; };
 		AB2BE5B32C72E7BD00578B18 /* EditBucketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2BE5B22C72E7BD00578B18 /* EditBucketView.swift */; };
 		AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */; };
@@ -16,6 +17,12 @@
 		AB2D2B992BFC4E5300F03DFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */; };
 		AB2D2B9C2BFC4E5300F03DFD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB2D2B9B2BFC4E5300F03DFD /* Preview Assets.xcassets */; };
 		AB2D2BA62BFC4E5400F03DFD /* TrickleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2BA52BFC4E5400F03DFD /* TrickleTests.swift */; };
+		AB72A2162CA0FC4300693D37 /* Tutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB72A2152CA0FC2D00693D37 /* Tutorial.swift */; };
+		AB72A2202CA1132500693D37 /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB72A21B2CA1132500693D37 /* PlayerController.swift */; };
+		AB72A2212CA1132500693D37 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB72A21D2CA1132500693D37 /* VideoPlayer.swift */; };
+		AB72A2242CA1135000693D37 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB72A2232CA1135000693D37 /* PlayerView.swift */; };
+		AB72A2272CA12DB000693D37 /* add-home-screen-widget.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = AB72A2262CA12DB000693D37 /* add-home-screen-widget.mp4 */; };
+		AB72A2312CA13B7000693D37 /* add-lock-screen-widget.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = AB72A2302CA13B7000693D37 /* add-lock-screen-widget.mp4 */; };
 		AB78A47C2C39CBC0007C4787 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47B2C39CBC0007C4787 /* WidgetKit.framework */; };
 		AB78A47E2C39CBC0007C4787 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB78A47D2C39CBC0007C4787 /* SwiftUI.framework */; };
 		AB78A4812C39CBC0007C4787 /* TrickleWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78A4802C39CBC0007C4787 /* TrickleWidgetBundle.swift */; };
@@ -101,6 +108,7 @@
 /* Begin PBXFileReference section */
 		AB1669302C5F035B0048A993 /* CalendarStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStrip.swift; sourceTree = "<group>"; };
 		AB1669322C5F03870048A993 /* SpendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendView.swift; sourceTree = "<group>"; };
+		AB1B00B42CAF842400D8C298 /* Add a shortcut to trickle.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Add a shortcut to trickle.mp4"; sourceTree = "<group>"; };
 		AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketVIew.swift; sourceTree = "<group>"; };
 		AB2BE5B22C72E7BD00578B18 /* EditBucketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBucketView.swift; sourceTree = "<group>"; };
 		AB2D2B912BFC4E5200F03DFD /* Trickle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trickle.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -110,6 +118,13 @@
 		AB2D2B9B2BFC4E5300F03DFD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		AB2D2BA12BFC4E5400F03DFD /* TrickleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrickleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB2D2BA52BFC4E5400F03DFD /* TrickleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrickleTests.swift; sourceTree = "<group>"; };
+		AB72A2152CA0FC2D00693D37 /* Tutorial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tutorial.swift; sourceTree = "<group>"; };
+		AB72A2172CA0FEC500693D37 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AB72A21B2CA1132500693D37 /* PlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerController.swift; sourceTree = "<group>"; };
+		AB72A21D2CA1132500693D37 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
+		AB72A2232CA1135000693D37 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		AB72A2262CA12DB000693D37 /* add-home-screen-widget.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "add-home-screen-widget.mp4"; sourceTree = "<group>"; };
+		AB72A2302CA13B7000693D37 /* add-lock-screen-widget.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "add-lock-screen-widget.mp4"; sourceTree = "<group>"; };
 		AB78A4792C39CBC0007C4787 /* TrickleWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TrickleWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB78A47B2C39CBC0007C4787 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		AB78A47D2C39CBC0007C4787 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -204,9 +219,14 @@
 		AB2D2B932BFC4E5200F03DFD /* Trickle */ = {
 			isa = PBXGroup;
 			children = (
+				AB72A2172CA0FEC500693D37 /* Info.plist */,
+				AB72A2262CA12DB000693D37 /* add-home-screen-widget.mp4 */,
+				AB72A2302CA13B7000693D37 /* add-lock-screen-widget.mp4 */,
+				AB1B00B42CAF842400D8C298 /* Add a shortcut to trickle.mp4 */,
 				ABD4976E2C649BB300707842 /* CalculatorKeyboard */,
 				AB78A4922C39D66A007C4787 /* Trickle.entitlements */,
 				AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */,
+				AB72A21F2CA1132500693D37 /* VideoPlayer */,
 				AB2D2B962BFC4E5200F03DFD /* ContentView.swift */,
 				AB78A4942C445787007C4787 /* Models.swift */,
 				AB2D2B982BFC4E5300F03DFD /* Assets.xcassets */,
@@ -218,6 +238,7 @@
 				ABAAAC482C6483C4008EB27B /* CircularBalanceView.swift */,
 				ABD497642C6484BF00707842 /* TrickleBackground.swift */,
 				ABD497662C6484E400707842 /* TrickleForeground.swift */,
+				AB72A2152CA0FC2D00693D37 /* Tutorial.swift */,
 				ABD497682C64870900707842 /* SettingsView.swift */,
 				ABBF529F2C68A4860076329D /* Utils.swift */,
 				AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */,
@@ -242,6 +263,32 @@
 				ABBF52A42C68ADBD0076329D /* BucketTests.swift */,
 			);
 			path = TrickleTests;
+			sourceTree = "<group>";
+		};
+		AB72A21C2CA1132500693D37 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				AB72A21B2CA1132500693D37 /* PlayerController.swift */,
+			);
+			path = controller;
+			sourceTree = "<group>";
+		};
+		AB72A21E2CA1132500693D37 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				AB72A21D2CA1132500693D37 /* VideoPlayer.swift */,
+			);
+			path = view;
+			sourceTree = "<group>";
+		};
+		AB72A21F2CA1132500693D37 /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				AB72A2232CA1135000693D37 /* PlayerView.swift */,
+				AB72A21C2CA1132500693D37 /* controller */,
+				AB72A21E2CA1132500693D37 /* view */,
+			);
+			path = VideoPlayer;
 			sourceTree = "<group>";
 		};
 		AB78A47A2C39CBC0007C4787 /* Frameworks */ = {
@@ -426,7 +473,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB1B00B52CAF842400D8C298 /* Add a shortcut to trickle.mp4 in Resources */,
 				AB2D2B9C2BFC4E5300F03DFD /* Preview Assets.xcassets in Resources */,
+				AB72A2272CA12DB000693D37 /* add-home-screen-widget.mp4 in Resources */,
+				AB72A2312CA13B7000693D37 /* add-lock-screen-widget.mp4 in Resources */,
 				AB2D2B992BFC4E5300F03DFD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -461,7 +511,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB1669332C5F03870048A993 /* SpendView.swift in Sources */,
+				AB72A2162CA0FC4300693D37 /* Tutorial.swift in Sources */,
 				AB78A4952C445787007C4787 /* Models.swift in Sources */,
+				AB72A2202CA1132500693D37 /* PlayerController.swift in Sources */,
+				AB72A2242CA1135000693D37 /* PlayerView.swift in Sources */,
+				AB72A2212CA1132500693D37 /* VideoPlayer.swift in Sources */,
 				ABAAAC492C6483C4008EB27B /* CircularBalanceView.swift in Sources */,
 				ABBF52A02C68A4860076329D /* Utils.swift in Sources */,
 				AB2D2B972BFC4E5200F03DFD /* ContentView.swift in Sources */,
@@ -665,6 +719,7 @@
 				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Trickle/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -674,7 +729,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.17;
+				MARKETING_VERSION = 0.0.18;
 				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.Trickle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -699,6 +754,7 @@
 				DEVELOPMENT_TEAM = AF2CJ3G3ZU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Trickle/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -708,7 +764,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.17;
+				MARKETING_VERSION = 0.0.18;
 				PRODUCT_BUNDLE_IDENTIFIER = pizza.not.Trickle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

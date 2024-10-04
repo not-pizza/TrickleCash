@@ -175,13 +175,13 @@ struct KeyboardButtonView: View {
 
 
 #Preview {
-    @State var inputAmount = ""
+    let inputAmount = ""
     
-    return ZStack {
+    ZStack {
         Color(.systemBackground)
         CalculatorKeyboard(
-            text: $inputAmount,
-            selectedText: $inputAmount,
+            text: .constant(inputAmount),
+            selectedText: .constant(inputAmount),
             onSubmit: {},
             onBackspace: {},
             getCharBeforeCursor: {nil}

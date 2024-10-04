@@ -1,66 +1,108 @@
 import Foundation
 import SwiftUI
 
+struct SpendBindingWithBuckets: Identifiable {
+    let spend: Binding<Spend>
+    let buckets: [MinimalBucketInfo]
+    
+    var id: UUID {
+        spend.id
+    }
+}
+
+struct ControlSpendAction: Equatable {
+    static func == (lhs: ControlSpendAction, rhs: ControlSpendAction) -> Bool {
+        lhs.appData == rhs.appData
+    }
+    
+    let appData: AppData
+    let add: (Spend) -> Void
+    let update: (Spend) -> Void
+    let remove: (UUID) -> Void
+    let bucketValidAtDate: (UUID, Date) -> Bool
+}
+
 struct ForegroundView: View {
-    @Binding var appData: AppData
-    @Binding var offset: CGFloat
-    var geometry: GeometryProxy
+    var offset: CGFloat
     var foregroundHiddenOffset: Double
     var foregroundShowingOffset: Double
+    var spends: [SpendWithMinimalBuckets]
+    var tutorials: [TutorialItem]
+    let tutorialsClosed: Bool
+    var controlSpend: ControlSpendAction
+    var closeTutorials: () -> Void
+    var startDate: Date
     @Binding var hidden: Bool
+    var colorScheme: ColorScheme
+    var scenePhase: ScenePhase
     
-    @State private var startingOffset: CGFloat = 0
-    @State private var selectedDate: Date = Date()
-    @State private var isDragging = false
     @State private var focusedSpendId: UUID?
-    @State private var chevronRotation: Double = 0
+    @State var chevronRotation: Double = 0
     
-    @Environment(\.colorScheme) var colorScheme
-    @Environment(\.scenePhase) private var scenePhase
     
     var backgroundColor: Color {
         colorScheme == .dark ? Color.black : Color.white
     }
     
-    private func spendEventBindings() -> [Binding<Spend>] {
-        var spendEvents = appData.getSpendEventsAfterStartDate().compactMap { spend in
-                if Calendar.current.isDate(spend.dateAdded, inSameDayAs: selectedDate) {
-                    return Binding(
-                        get: { spend },
-                        set: { newSpend in appData = appData.updateSpend(newSpend) }
+    private func spendEventBindings() -> [(date: Date, spends: [SpendBindingWithBuckets])] {
+        let spendEventsByDay = Dictionary(
+            grouping: spends,
+            by: { $0.spend.dateAdded.startOfDay }
+        )
+        let spendEvents = spendEventsByDay.map { date, events in
+            (
+                date: date,
+                spends: events.sorted(by: { $0.spend.dateAdded > $1.spend.dateAdded }).map({
+                    s in SpendBindingWithBuckets(
+                        spend: Binding(
+                            get: { s.spend },
+                            set: { newSpend in controlSpend.update(newSpend) }
+                        ),
+                        buckets: s.buckets
                     )
-                }
-            return nil
-        }
-        spendEvents.reverse()
+                })
+            )
+        }.sorted(by: {$0.date > $1.date})
         return spendEvents
     }
     
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMMM d"
+        return formatter
+    }()
+    
     var body: some View {
-        let spendEvents = spendEventBindings()
-        let spendList = List {
-            Section {
-                ForEach(spendEvents, id: \.wrappedValue.id) { spend in
-                    SpendView(
-                        deduction: spend,
-                        isFocused: focusedSpendId == spend.wrappedValue.id
+        let spendEventsByDate = spendEventBindings()
+        let spendList = ScrollView {
+            LazyVStack(alignment: .leading) {
+                // TODO: flatten these `ForEach`s so that moving spend across them doesn't recreate their view
+                ForEach(spendEventsByDate, id: \.date) { (date, spendEvents) in
+                    Text(
+                        dateFormatter.string(from: date)
                     )
-                    .transition(.move(edge: .top))
-                }
-                .onDelete(perform: { indexSet in
-                    for index in indexSet {
-                        let spend = spendEvents[index]
-                        appData = appData.deleteEvent(id: spend.id)
+                    .font(.subheadline)
+                    .padding(.top, 10)
+                    
+                     ForEach(spendEvents) { spend in
+                         EquatableView(content:
+                             SpendView(
+                                deduction: spend.spend,
+                                buckets: spend.buckets,
+                                isFocused: focusedSpendId == spend.spend.wrappedValue.id,
+                                startDate: startDate,
+                                onDelete: { controlSpend.remove(spend.id) },
+                                bucketValidAtDate: {bucket, date in
+                                    controlSpend.bucketValidAtDate(bucket, date)
+                                }
+                             )
+                         )
+                         .transition(.move(edge: .top))
+                         .padding(.horizontal, 15)
+                         
                     }
-                })
-                .listRowSeparator(.hidden)
-                .listRowSeparatorTint(.clear)
-                .listRowBackground(Rectangle()
-                    .background(.clear)
-                    .foregroundColor(.clear)
-                )
+                }
             }
-            .listStyle(.inset)
         }
 
         return VStack {
@@ -79,24 +121,27 @@ struct ForegroundView: View {
                     .ignoresSafeArea()
                 
                 VStack {
-                    topBar
+                    addSpend
                     if #available(iOS 16.0, *) {
-                        spendList.scrollContentBackground(.hidden)
+                        spendList.scrollContentBackground(Visibility.hidden)
                     }
                     else {
                         spendList
                     }
+                    
+                    if !tutorialsClosed {
+                        TutorialListView(tutorials: tutorials, closeTutorials: closeTutorials)
+                    }
+                    
+                    Spacer().frame(height: offset)
                 }
+                .padding()
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .frame(maxHeight: .infinity, alignment: .bottom)
             .ignoresSafeArea(.all)
-            .onChange(of: scenePhase) { newPhase in
-                if newPhase == .active {
-                    selectedDate = Date()
-                }
-            }.onChange(of: hidden) { _ in
+            .onChange(of: hidden) { _ in
                 focusedSpendId = nil
             }
         }.onChange(of: hidden, perform: {_ in
@@ -105,63 +150,63 @@ struct ForegroundView: View {
         .animation(.spring(), value: chevronRotation)
     }
     
-    var topBar: some View {
+    var addSpend: some View {
         return VStack(spacing: 10) {
-            Color.clear
-                .frame(width: 10, height: 10)
-
-            CalendarStrip(selectedDate: $selectedDate, onDateSelected: { date in
-                selectedDate = date
-            }, focusedSpendId: $focusedSpendId)
-            
-            if selectedDate >= appData.getStartDate()
-            {
-                Button(action: {
-                    withAnimation(.spring()) {
-                        let newSpend = Spend(
-                            name: "",
-                            amount: 0,
-                            dateAdded:
-                                selectedDate.startOfDay == Date().startOfDay ?
-                                Date() :
-                                selectedDate
-                        )
-                        appData = appData.addSpend(newSpend)
-                        focusedSpendId = newSpend.id
-                    }
-                }) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text("Add spending")
-                    }
-                    .foregroundColor(.blue)
-                    .padding(.vertical, 8)
+            Button(action: {
+                withAnimation(.spring()) {
+                    let newSpend = Spend(
+                        name: "",
+                        amount: 0,
+                        dateAdded: Date()
+                    )
+                    controlSpend.add(newSpend)
+                    focusedSpendId = newSpend.id
                 }
-                .listRowBackground(Color.blue.opacity(0.1))
+            }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Add spending")
+                }
+                .foregroundColor(.blue)
+                .padding(.vertical, 8)
             }
+            .listRowBackground(Color.blue.opacity(0.1))
         }
     }
 }
 
 #Preview {
-    GeometryReader { geometry in
-        ZStack {
-            Color.green.ignoresSafeArea()
-            
-            ForegroundView(
-                appData: .constant(AppData(
+    ZStack {
+        Color.green.ignoresSafeArea()
+        
+        ForegroundView(
+            offset: UIScreen.main.bounds.height / 5,
+            foregroundHiddenOffset: UIScreen.main.bounds.height - 50,
+            foregroundShowingOffset: UIScreen.main.bounds.height / 5,
+            spends: [],
+            tutorials: [],
+            tutorialsClosed: false,
+            controlSpend: ControlSpendAction(
+                appData: AppData(
                     monthlyRate: 1000,
                     startDate: Date().startOfDay,
                     events: [
                         .spend(Spend(name: "7/11", amount: 30))
-                    ]
-                )),
-                offset: .constant(UIScreen.main.bounds.height / 5),
-                geometry: geometry,
-                foregroundHiddenOffset: UIScreen.main.bounds.height - 50,
-                foregroundShowingOffset: UIScreen.main.bounds.height / 5,
-                hidden: .constant(false)
-            ).offset(y: 150)
-        }
+                    ],
+                    watchedHomeSceenWidgetTutorial: nil,
+                    watchedLockSceenWidgetTutorial: nil,
+                    watchedShortcutTutorial: nil
+                ),
+                add: {_ in ()},
+                update: {_ in ()},
+                remove: {_ in ()},
+                bucketValidAtDate: {_, _ in true}
+            ),
+            closeTutorials: {},
+            startDate: Date().startOfDay,
+            hidden: .constant(false),
+            colorScheme: .dark,
+            scenePhase: .active
+        ).offset(y: 150)
     }
 }

@@ -31,6 +31,7 @@ struct BucketView: View {
     var body: some View {
         let timeFilled = bucket.estimatedCompletionDate(amount, at: currentTime)
         let filledWhen = timeFilled.formatted(formatStyle)
+        let barProgress = abs(bucket.targetAmount) < 0.005 ? 0 : max(min((amount  / bucket.targetAmount), 1), 0)
         
         return Button(action: {isEditingBucket = true}) {
             VStack(alignment: .leading, spacing: 10) {
@@ -52,7 +53,7 @@ struct BucketView: View {
                             
                             Rectangle()
                                 .fill(Color.primary)
-                                .frame(width: geometry.size.width * animationProgress * CGFloat(amount / bucket.targetAmount), height: 8)
+                                .frame(width: geometry.size.width * animationProgress * CGFloat(barProgress), height: 8)
                                 .cornerRadius(4)
                         }
                     }
@@ -117,7 +118,7 @@ struct BucketView: View {
 struct BucketView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            balanceBackgroundGradient(-30, colorScheme: .dark).ignoresSafeArea()
+            balanceBackgroundGradient(color: .red, colorScheme: .dark).ignoresSafeArea()
             
             VStack(alignment: .leading) {
                 BucketView(

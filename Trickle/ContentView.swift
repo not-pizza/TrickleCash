@@ -17,12 +17,66 @@ struct TrickleView: View {
     @Binding var appData: AppData
     var openSettings: () -> Void
     
-    @State private var currentTime: Date = Date()
     @State private var offset: CGFloat = 200
     @State private var hidden = false
+    
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
+    
+    var tutorials: [TutorialItem] {
+        var tutorials: [TutorialItem] = []
+        tutorials.append(
+            TutorialItem(
+                videoName: "add-home-screen-widget",
+                videoTitle: "Add a Home Screen Widget",
+                watched: Binding(get: {appData.watchedHomeSceenWidgetTutorial}, set: {appData.watchedHomeSceenWidgetTutorial = $0})
+            )
+        )
+        tutorials.append(
+            TutorialItem(
+                videoName: "add-lock-screen-widget",
+                videoTitle: "Add a Lock Screen Widget",
+                watched: Binding(get: {appData.watchedLockSceenWidgetTutorial}, set: {appData.watchedLockSceenWidgetTutorial = $0})
+            )
+        )
+        tutorials.append(
+            TutorialItem(
+                videoName: "Add a shortcut to trickle",
+                videoTitle: "Add iPhone Payments Automatically",
+                watched: Binding(get: {appData.watchedShortcutTutorial}, set: {appData.watchedShortcutTutorial = $0})
+
+            )
+        )
+        return tutorials
+    }
+    
+    var controlSpend: ControlSpendAction {
+        ControlSpendAction(
+            appData: appData,
+            add: { appData = appData.addSpend($0) },
+            update: { appData = appData.updateSpend($0) },
+            remove: { appData = appData.deleteEvent(id: $0) },
+            bucketValidAtDate: {bucket, date in appData.getAppState(asOf: date).buckets[bucket] != nil}
+        )
+    }
 
     var body: some View {
-        NavigationView {
+        let currentTime = Date()
+        let startDate = appData.getStartDate(asOf: currentTime)
+        let appState = appData.getAppState(asOf: currentTime)
+        let spends = appState.spends.map({spendWithBucket in
+            SpendWithMinimalBuckets(
+                spend: spendWithBucket.spend,
+                buckets: spendWithBucket.buckets.map({bucket in
+                    MinimalBucketInfo(
+                        id: bucket.id,
+                        name: bucket.bucket.name
+                    )
+                })
+            )
+        })
+
+        return NavigationView {
             GeometryReader { geometry in
                 let foregroundHiddenOffset: CGFloat = geometry.size.height - 120
                 
@@ -33,12 +87,18 @@ struct TrickleView: View {
                 ZStack {
                     VStack(alignment: .leading) {
                         ForegroundView(
-                            appData: $appData,
-                            offset: $offset,
-                            geometry: geometry,
+                            offset: offset,
                             foregroundHiddenOffset: foregroundHiddenOffset,
                             foregroundShowingOffset: foregroundShowingOffset,
-                            hidden: $hidden
+                            spends: spends,
+                            tutorials: tutorials,
+                            tutorialsClosed: appData.tutorialsPaneLastClosed != nil,
+                            controlSpend: controlSpend,
+                            closeTutorials: {appData.tutorialsPaneLastClosed = Date()},
+                            startDate: startDate,
+                            hidden: $hidden,
+                            colorScheme: colorScheme,
+                            scenePhase: scenePhase
                         )
                     }
                     .offset(y: max(offset, 0))
@@ -67,24 +127,14 @@ struct TrickleView: View {
                         }
                     }
                     
-                    
                     BackgroundView(
                         appData: $appData,
                         onSettingsTapped: openSettings,
                         foregroundShowingOffset: initialforegroundShowingOffset,
-                        foregroundHidden: hidden,
-                        currentTime: currentTime
+                        foregroundHidden: hidden
                     ).zIndex(0)
                 }
-            }.onAppear() {
-                setupTimer()
             }
-        }
-    }
-
-    private func setupTimer() {
-        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
-            currentTime = Date()
         }
     }
 }
@@ -122,6 +172,9 @@ struct ContentView: View {
         startDate: Date().startOfDay,
         events: [
             .spend(Spend(name: "7/11", amount: 30))
-        ]
+        ],
+        watchedHomeSceenWidgetTutorial: nil,
+        watchedLockSceenWidgetTutorial: nil,
+        watchedShortcutTutorial: nil
     ))
 }
