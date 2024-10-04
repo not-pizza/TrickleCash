@@ -76,6 +76,8 @@ struct TrickleView: View {
             )
         })
 
+        print("appData.tutorialsPaneLastClosed: \(appData.tutorialsPaneLastClosed)")
+
         return NavigationView {
             GeometryReader { geometry in
                 let foregroundHiddenOffset: CGFloat = geometry.size.height - 120
@@ -175,6 +177,7 @@ struct ContentView: View {
         ],
         watchedHomeSceenWidgetTutorial: nil,
         watchedLockSceenWidgetTutorial: nil,
-        watchedShortcutTutorial: nil
+        watchedShortcutTutorial: nil,
+        tutorialsPaneLastClosed: nil
     ))
 }

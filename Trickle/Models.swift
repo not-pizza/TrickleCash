@@ -19,11 +19,16 @@ struct AppData: Codable, Equatable {
         events: [Event],
         watchedHomeSceenWidgetTutorial: Date?,
         watchedLockSceenWidgetTutorial: Date?,
-        watchedShortcutTutorial: Date?
+        watchedShortcutTutorial: Date?,
+        tutorialsPaneLastClosed: Date?
     ) {
         self.monthlyRate = monthlyRate
         self.startDate = startDate
         self.events = events
+        self.watchedHomeSceenWidgetTutorial = watchedHomeSceenWidgetTutorial
+        self.watchedLockSceenWidgetTutorial = watchedLockSceenWidgetTutorial
+        self.watchedShortcutTutorial = watchedShortcutTutorial
+        self.tutorialsPaneLastClosed = tutorialsPaneLastClosed
     }
     
     func getMonthlyRate(asOf date: Date = Date()) -> Double {
@@ -73,7 +78,7 @@ struct AppData: Codable, Equatable {
     func addSpend(_ spend: Spend) -> Self {
         var events = self.events
         events.append(.spend(spend))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial)
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial, tutorialsPaneLastClosed: self.tutorialsPaneLastClosed)
     }
     
     func updateSpend(_ spend: Spend) -> Self {
@@ -83,20 +88,36 @@ struct AppData: Codable, Equatable {
     func dumpBucket(_ id: UUID) -> Self {
         var events = self.events
         events.append(.dumpBucket(DumpBucket(bucketToDump: id)))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial)
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial, tutorialsPaneLastClosed: self.tutorialsPaneLastClosed)
     }
     
     func deleteBucket(_ id: UUID) -> Self {
         var events = self.events
         events.append(.deleteBucket(DeleteBucket(bucketToDelete: id)))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial)
+        return Self(
+            monthlyRate: self.monthlyRate,
+            startDate: self.startDate,
+            events: events,
+            watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
+            watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
+            watchedShortcutTutorial: self.watchedShortcutTutorial,
+            tutorialsPaneLastClosed: self.tutorialsPaneLastClosed
+        )
     }
     
     
     func addBucket(_ bucket: Bucket) -> Self {
         var events = self.events
         events.append(.addBucket(AddBucket(bucketToAdd: bucket)))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial)
+        return Self(
+            monthlyRate: self.monthlyRate,
+            startDate: self.startDate,
+            events: events,
+            watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
+            watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
+            watchedShortcutTutorial: self.watchedShortcutTutorial,
+            tutorialsPaneLastClosed: self.tutorialsPaneLastClosed
+        )
     }
     
     func updateBucket(_ id: UUID, _ bucket: Bucket) -> Self {
@@ -108,7 +129,8 @@ struct AppData: Codable, Equatable {
             events: events,
             watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
             watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
-            watchedShortcutTutorial: self.watchedShortcutTutorial
+            watchedShortcutTutorial: self.watchedShortcutTutorial,
+            tutorialsPaneLastClosed: self.tutorialsPaneLastClosed
         )
     }
     
@@ -127,7 +149,8 @@ struct AppData: Codable, Equatable {
             events: events,
             watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
             watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
-            watchedShortcutTutorial: self.watchedShortcutTutorial
+            watchedShortcutTutorial: self.watchedShortcutTutorial,
+            tutorialsPaneLastClosed: self.tutorialsPaneLastClosed
         )
     }
     
@@ -140,7 +163,8 @@ struct AppData: Codable, Equatable {
             events: events,
             watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
             watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
-            watchedShortcutTutorial: self.watchedShortcutTutorial
+            watchedShortcutTutorial: self.watchedShortcutTutorial,
+            tutorialsPaneLastClosed: self.tutorialsPaneLastClosed
         )
     }
     
@@ -153,7 +177,8 @@ struct AppData: Codable, Equatable {
             events: events,
             watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
             watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
-            watchedShortcutTutorial: self.watchedShortcutTutorial
+            watchedShortcutTutorial: self.watchedShortcutTutorial,
+            tutorialsPaneLastClosed: self.tutorialsPaneLastClosed
         )
     }
     
@@ -166,7 +191,8 @@ struct AppData: Codable, Equatable {
             events: events,
             watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
             watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
-            watchedShortcutTutorial: self.watchedShortcutTutorial
+            watchedShortcutTutorial: self.watchedShortcutTutorial,
+            tutorialsPaneLastClosed: self.tutorialsPaneLastClosed
         )
     }
     
@@ -220,7 +246,8 @@ struct AppData: Codable, Equatable {
             events: [],
             watchedHomeSceenWidgetTutorial: nil,
             watchedLockSceenWidgetTutorial: nil,
-            watchedShortcutTutorial: nil
+            watchedShortcutTutorial: nil,
+            tutorialsPaneLastClosed: nil
         )
     }
     

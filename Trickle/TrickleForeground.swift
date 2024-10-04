@@ -195,7 +195,8 @@ struct ForegroundView: View {
                     ],
                     watchedHomeSceenWidgetTutorial: nil,
                     watchedLockSceenWidgetTutorial: nil,
-                    watchedShortcutTutorial: nil
+                    watchedShortcutTutorial: nil,
+                    tutorialsPaneLastClosed: nil
                 ),
                 add: {_ in ()},
                 update: {_ in ()},

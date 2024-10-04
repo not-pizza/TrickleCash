@@ -257,7 +257,8 @@ struct BucketsView: View {
             ],
             watchedHomeSceenWidgetTutorial: nil,
             watchedLockSceenWidgetTutorial: nil,
-            watchedShortcutTutorial: nil
+            watchedShortcutTutorial: nil,
+            tutorialsPaneLastClosed: nil
         )),
         onSettingsTapped: {},
         foregroundShowingOffset: UIScreen.main.bounds.height / 5,

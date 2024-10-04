@@ -56,7 +56,8 @@ struct Intro: View {
             events: [],
             watchedHomeSceenWidgetTutorial: nil,
             watchedLockSceenWidgetTutorial: nil,
-            watchedShortcutTutorial: nil
+            watchedShortcutTutorial: nil,
+            tutorialsPaneLastClosed: nil
         )
     }
     
