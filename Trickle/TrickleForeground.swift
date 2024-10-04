@@ -28,7 +28,9 @@ struct ForegroundView: View {
     var foregroundShowingOffset: Double
     var spends: [SpendWithMinimalBuckets]
     var tutorials: [TutorialItem]
+    let tutorialsClosed: Bool
     var controlSpend: ControlSpendAction
+    var closeTutorials: () -> Void
     var startDate: Date
     @Binding var hidden: Bool
     var colorScheme: ColorScheme
@@ -127,7 +129,9 @@ struct ForegroundView: View {
                         spendList
                     }
                     
-                    TutorialListView(tutorials: tutorials)
+                    if !tutorialsClosed {
+                        TutorialListView(tutorials: tutorials, closeTutorials: closeTutorials)
+                    }
                     
                     Spacer().frame(height: offset)
                 }
@@ -181,6 +185,7 @@ struct ForegroundView: View {
             foregroundShowingOffset: UIScreen.main.bounds.height / 5,
             spends: [],
             tutorials: [],
+            tutorialsClosed: false,
             controlSpend: ControlSpendAction(
                 appData: AppData(
                     monthlyRate: 1000,
@@ -197,6 +202,7 @@ struct ForegroundView: View {
                 remove: {_ in ()},
                 bucketValidAtDate: {_, _ in true}
             ),
+            closeTutorials: {},
             startDate: Date().startOfDay,
             hidden: .constant(false),
             colorScheme: .dark,

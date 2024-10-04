@@ -11,6 +11,7 @@ struct AppData: Codable, Equatable {
     var watchedHomeSceenWidgetTutorial: Date?
     var watchedLockSceenWidgetTutorial: Date?
     var watchedShortcutTutorial: Date?
+    var tutorialsPaneLastClosed: Date?
     
     init(
         monthlyRate: Double,

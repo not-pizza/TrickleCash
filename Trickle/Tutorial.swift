@@ -9,17 +9,27 @@ struct TutorialItem: Identifiable {
 
 struct TutorialListView: View {
     var tutorials: [TutorialItem]
+    var closeTutorials: () -> Void
+
     @State private var selectedTutorial: TutorialItem?
-    
+
     var body: some View {
         VStack(spacing: 20) {
-            Text("Get Started")
-                .font(.headline)
-                .padding(.top)
-            
+            HStack {
+                Text("Get Started")
+                    .font(.headline)
+                Spacer()
+                Button(action: {
+                    closeTutorials()
+                }) {
+                    Image(systemName: "xmark")
+                        .foregroundColor(.primary)
+                }
+            }
+            .padding(.top)
+
             VStack {
                 ForEach(tutorials) { tutorial in
-                    // Create a Binding<Bool> to represent the watched state
                     let isWatched = Binding<Bool>(
                         get: { tutorial.watched.wrappedValue != nil },
                         set: { newValue in
@@ -37,7 +47,7 @@ struct TutorialListView: View {
                                     .strikethrough(isWatched.wrappedValue)
                             }
                             .toggleStyle(CheckboxToggleStyle())
-                            
+
                             Spacer()
                             Image(systemName: "play.circle.fill")
                                 .foregroundColor(.blue)
@@ -52,7 +62,11 @@ struct TutorialListView: View {
             }
         }
         .sheet(item: $selectedTutorial) { tutorial in
-            TutorialVideoPlayer(videoName: tutorial.videoName, videoTitle: tutorial.videoTitle, isPresented: $selectedTutorial)
+            TutorialVideoPlayer(
+                videoName: tutorial.videoName,
+                videoTitle: tutorial.videoTitle,
+                isPresented: $selectedTutorial
+            )
         }
     }
 }
@@ -110,6 +124,6 @@ struct TutorialListView_Previews: PreviewProvider {
     ]
     
     static var previews: some View {
-        TutorialListView(tutorials: tutorials)
+        TutorialListView(tutorials: tutorials, closeTutorials: {})
     }
 }
