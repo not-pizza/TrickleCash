@@ -1,14 +1,14 @@
 import SwiftUI
 
-struct TutorialItem: Identifiable, Equatable {
+struct TutorialItem: Identifiable {
     let id = UUID()
     let videoName: String
     let videoTitle: String
+    var watched: Binding<Date?>
 }
 
 struct TutorialListView: View {
-    @Binding var completedTutorials: Set<UUID>
-    let tutorials: [TutorialItem]
+    var tutorials: [TutorialItem]
     @State private var selectedTutorial: TutorialItem?
     
     var body: some View {
@@ -19,33 +19,35 @@ struct TutorialListView: View {
             
             VStack {
                 ForEach(tutorials) { tutorial in
-                    Button(action: { selectedTutorial = tutorial }) {
+                    // Create a Binding<Bool> to represent the watched state
+                    let isWatched = Binding<Bool>(
+                        get: { tutorial.watched.wrappedValue != nil },
+                        set: { newValue in
+                            tutorial.watched.wrappedValue = newValue ? Date() : nil
+                        }
+                    )
+
+                    Button(action: {
+                        selectedTutorial = tutorial
+                        tutorial.watched.wrappedValue = Date()
+                    }) {
                         HStack {
-                            Toggle(isOn: Binding(
-                                get: { completedTutorials.contains(tutorial.id) },
-                                set: { newValue in
-                                    if newValue {
-                                        completedTutorials.insert(tutorial.id)
-                                    } else {
-                                        completedTutorials.remove(tutorial.id)
-                                    }
-                                }
-                            )) {
+                            Toggle(isOn: isWatched) {
                                 Text(tutorial.videoTitle)
+                                    .strikethrough(isWatched.wrappedValue)
                             }
                             .toggleStyle(CheckboxToggleStyle())
                             
                             Spacer()
-                            
                             Image(systemName: "play.circle.fill")
                                 .foregroundColor(.blue)
                                 .font(.title2)
                         }
-                        .padding()
-                        .background(Color.secondary.opacity(0.1))
-                        .cornerRadius(10)
                     }
                     .buttonStyle(.plain)
+                    .padding()
+                    .background(Color.secondary.opacity(0.1))
+                    .cornerRadius(10)
                 }
             }
         }
@@ -95,11 +97,19 @@ struct TutorialVideoPlayer: View {
 
 struct TutorialListView_Previews: PreviewProvider {
     static let tutorials = [
-        TutorialItem(videoName: "add-home-screen-widget", videoTitle: "Add a Home Screen Widget"),
-        TutorialItem(videoName: "add-lock-screen-widget", videoTitle: "Add a Lock Screen Widget"),
+        TutorialItem(
+            videoName: "add-home-screen-widget",
+            videoTitle: "Add a Home Screen Widget",
+            watched: .constant(nil)
+        ),
+        TutorialItem(
+            videoName: "add-lock-screen-widget",
+            videoTitle: "Add a Lock Screen Widget",
+            watched: .constant(nil)
+        ),
     ]
     
     static var previews: some View {
-        TutorialListView(completedTutorials: .constant(Set<UUID>()), tutorials: tutorials)
+        TutorialListView(tutorials: tutorials)
     }
 }

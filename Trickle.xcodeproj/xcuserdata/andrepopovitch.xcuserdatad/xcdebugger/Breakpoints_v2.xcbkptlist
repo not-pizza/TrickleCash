@@ -14,8 +14,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
+            startingLineNumber = "224"
+            endingLineNumber = "224"
             landmarkName = "loadOrDefault()"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "178"
-            endingLineNumber = "178"
+            startingLineNumber = "227"
+            endingLineNumber = "227"
             landmarkName = "getAppState(asOf:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "526"
-            endingLineNumber = "526"
+            startingLineNumber = "575"
+            endingLineNumber = "575"
             landmarkName = "Bucket"
             landmarkType = "14">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "508"
-            endingLineNumber = "508"
+            startingLineNumber = "557"
+            endingLineNumber = "557"
             landmarkName = "DumpBucket"
             landmarkType = "14">
          </BreakpointContent>
@@ -94,8 +94,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "509"
-            endingLineNumber = "509"
+            startingLineNumber = "558"
+            endingLineNumber = "558"
             landmarkName = "DumpBucket"
             landmarkType = "14">
          </BreakpointContent>
@@ -238,8 +238,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
+            startingLineNumber = "240"
+            endingLineNumber = "240"
             landmarkName = "getAppState(asOf:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -254,8 +254,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "502"
-            endingLineNumber = "502"
+            startingLineNumber = "551"
+            endingLineNumber = "551"
             landmarkName = "UpdateBucket"
             landmarkType = "14">
          </BreakpointContent>
@@ -286,8 +286,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "264"
-            endingLineNumber = "264"
+            startingLineNumber = "313"
+            endingLineNumber = "313"
             landmarkName = "getAppState(asOf:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -302,8 +302,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "282"
-            endingLineNumber = "282"
+            startingLineNumber = "331"
+            endingLineNumber = "331"
             landmarkName = "distributeToBuckets(duration:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -318,8 +318,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "286"
-            endingLineNumber = "286"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
             landmarkName = "distributeToBuckets(duration:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -382,8 +382,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "289"
-            endingLineNumber = "289"
+            startingLineNumber = "338"
+            endingLineNumber = "338"
             landmarkName = "distributeToBuckets(duration:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -398,8 +398,8 @@
             filePath = "Trickle/Models.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "285"
-            endingLineNumber = "285"
+            startingLineNumber = "334"
+            endingLineNumber = "334"
             landmarkName = "distributeToBuckets(duration:)"
             landmarkType = "9">
          </BreakpointContent>

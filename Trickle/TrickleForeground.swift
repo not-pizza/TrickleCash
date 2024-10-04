@@ -27,6 +27,7 @@ struct ForegroundView: View {
     var foregroundHiddenOffset: Double
     var foregroundShowingOffset: Double
     var spends: [SpendWithMinimalBuckets]
+    var tutorials: [TutorialItem]
     var controlSpend: ControlSpendAction
     var startDate: Date
     @Binding var hidden: Bool
@@ -40,11 +41,6 @@ struct ForegroundView: View {
     var backgroundColor: Color {
         colorScheme == .dark ? Color.black : Color.white
     }
-    
-    let tutorials = [
-        TutorialItem(videoName: "add-home-screen-widget", videoTitle: "Add a Home Screen Widget"),
-        TutorialItem(videoName: "add-lock-screen-widget", videoTitle: "Add a Lock Screen Widget"),
-    ]
     
     private func spendEventBindings() -> [(date: Date, spends: [SpendBindingWithBuckets])] {
         let spendEventsByDay = Dictionary(
@@ -131,7 +127,7 @@ struct ForegroundView: View {
                         spendList
                     }
                     
-                    TutorialListView(completedTutorials: Binding.constant([]), tutorials: tutorials)
+                    TutorialListView(tutorials: tutorials)
                     
                     Spacer().frame(height: offset)
                 }
@@ -184,13 +180,17 @@ struct ForegroundView: View {
             foregroundHiddenOffset: UIScreen.main.bounds.height - 50,
             foregroundShowingOffset: UIScreen.main.bounds.height / 5,
             spends: [],
+            tutorials: [],
             controlSpend: ControlSpendAction(
                 appData: AppData(
                     monthlyRate: 1000,
                     startDate: Date().startOfDay,
                     events: [
                         .spend(Spend(name: "7/11", amount: 30))
-                    ]
+                    ],
+                    watchedHomeSceenWidgetTutorial: nil,
+                    watchedLockSceenWidgetTutorial: nil,
+                    watchedShortcutTutorial: nil
                 ),
                 add: {_ in ()},
                 update: {_ in ()},

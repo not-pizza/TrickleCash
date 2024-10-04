@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		AB1669312C5F035B0048A993 /* CalendarStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1669302C5F035B0048A993 /* CalendarStrip.swift */; };
 		AB1669332C5F03870048A993 /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1669322C5F03870048A993 /* SpendView.swift */; };
+		AB1B00B52CAF842400D8C298 /* Add a shortcut to trickle.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = AB1B00B42CAF842400D8C298 /* Add a shortcut to trickle.mp4 */; };
 		AB2BE5B12C72CF3800578B18 /* BucketVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */; };
 		AB2BE5B32C72E7BD00578B18 /* EditBucketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2BE5B22C72E7BD00578B18 /* EditBucketView.swift */; };
 		AB2D2B952BFC4E5200F03DFD /* TrickleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */; };
@@ -107,6 +108,7 @@
 /* Begin PBXFileReference section */
 		AB1669302C5F035B0048A993 /* CalendarStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStrip.swift; sourceTree = "<group>"; };
 		AB1669322C5F03870048A993 /* SpendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendView.swift; sourceTree = "<group>"; };
+		AB1B00B42CAF842400D8C298 /* Add a shortcut to trickle.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Add a shortcut to trickle.mp4"; sourceTree = "<group>"; };
 		AB2BE5B02C72CF3800578B18 /* BucketVIew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketVIew.swift; sourceTree = "<group>"; };
 		AB2BE5B22C72E7BD00578B18 /* EditBucketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBucketView.swift; sourceTree = "<group>"; };
 		AB2D2B912BFC4E5200F03DFD /* Trickle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trickle.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -220,6 +222,7 @@
 				AB72A2172CA0FEC500693D37 /* Info.plist */,
 				AB72A2262CA12DB000693D37 /* add-home-screen-widget.mp4 */,
 				AB72A2302CA13B7000693D37 /* add-lock-screen-widget.mp4 */,
+				AB1B00B42CAF842400D8C298 /* Add a shortcut to trickle.mp4 */,
 				ABD4976E2C649BB300707842 /* CalculatorKeyboard */,
 				AB78A4922C39D66A007C4787 /* Trickle.entitlements */,
 				AB2D2B942BFC4E5200F03DFD /* TrickleApp.swift */,
@@ -470,6 +473,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB1B00B52CAF842400D8C298 /* Add a shortcut to trickle.mp4 in Resources */,
 				AB2D2B9C2BFC4E5300F03DFD /* Preview Assets.xcassets in Resources */,
 				AB72A2272CA12DB000693D37 /* add-home-screen-widget.mp4 in Resources */,
 				AB72A2312CA13B7000693D37 /* add-lock-screen-widget.mp4 in Resources */,

@@ -254,7 +254,10 @@ struct BucketsView: View {
             startDate: Date().startOfDay,
             events: [
                 .spend(Spend(name: "7/11", amount: 30)),
-            ]
+            ],
+            watchedHomeSceenWidgetTutorial: nil,
+            watchedLockSceenWidgetTutorial: nil,
+            watchedShortcutTutorial: nil
         )),
         onSettingsTapped: {},
         foregroundShowingOffset: UIScreen.main.bounds.height / 5,

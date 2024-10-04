@@ -53,7 +53,10 @@ struct Intro: View {
         AppData(
             monthlyRate: monthlyRate,
             startDate: startDate,
-            events: []
+            events: [],
+            watchedHomeSceenWidgetTutorial: nil,
+            watchedLockSceenWidgetTutorial: nil,
+            watchedShortcutTutorial: nil
         )
     }
     

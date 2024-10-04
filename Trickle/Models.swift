@@ -8,7 +8,18 @@ struct AppData: Codable, Equatable {
     var startDate: Date
     var events: [Event]
     
-    init(monthlyRate: Double, startDate: Date, events: [Event]) {
+    var watchedHomeSceenWidgetTutorial: Date?
+    var watchedLockSceenWidgetTutorial: Date?
+    var watchedShortcutTutorial: Date?
+    
+    init(
+        monthlyRate: Double,
+        startDate: Date,
+        events: [Event],
+        watchedHomeSceenWidgetTutorial: Date?,
+        watchedLockSceenWidgetTutorial: Date?,
+        watchedShortcutTutorial: Date?
+    ) {
         self.monthlyRate = monthlyRate
         self.startDate = startDate
         self.events = events
@@ -61,7 +72,7 @@ struct AppData: Codable, Equatable {
     func addSpend(_ spend: Spend) -> Self {
         var events = self.events
         events.append(.spend(spend))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial)
     }
     
     func updateSpend(_ spend: Spend) -> Self {
@@ -71,26 +82,33 @@ struct AppData: Codable, Equatable {
     func dumpBucket(_ id: UUID) -> Self {
         var events = self.events
         events.append(.dumpBucket(DumpBucket(bucketToDump: id)))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial)
     }
     
     func deleteBucket(_ id: UUID) -> Self {
         var events = self.events
         events.append(.deleteBucket(DeleteBucket(bucketToDelete: id)))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial)
     }
     
     
     func addBucket(_ bucket: Bucket) -> Self {
         var events = self.events
         events.append(.addBucket(AddBucket(bucketToAdd: bucket)))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events, watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial, watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial, watchedShortcutTutorial: self.watchedShortcutTutorial)
     }
     
     func updateBucket(_ id: UUID, _ bucket: Bucket) -> Self {
         var events = self.events
         events.append(.updateBucket(UpdateBucket(bucketToUpdate: id, newBucket: bucket)))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+        return Self(
+            monthlyRate: self.monthlyRate,
+            startDate: self.startDate,
+            events: events,
+            watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
+            watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
+            watchedShortcutTutorial: self.watchedShortcutTutorial
+        )
     }
     
     func updateEvent(newEvent: Event) -> Self {
@@ -102,25 +120,53 @@ struct AppData: Codable, Equatable {
                 event
             }
         })
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+        return Self(
+            monthlyRate: self.monthlyRate,
+            startDate: self.startDate,
+            events: events,
+            watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
+            watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
+            watchedShortcutTutorial: self.watchedShortcutTutorial
+        )
     }
     
     func setMonthlyRate(_ rate: SetMonthlyRate) -> Self {
         var events = self.events
         events.append(.setMonthlyRate(rate))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+        return Self(
+            monthlyRate: self.monthlyRate,
+            startDate: self.startDate,
+            events: events,
+            watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
+            watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
+            watchedShortcutTutorial: self.watchedShortcutTutorial
+        )
     }
     
     func setStartDate(_ startDate: SetStartDate) -> Self {
         var events = self.events
         events.append(.setStartDate(startDate))
-        return Self(monthlyRate: self.monthlyRate, startDate: self.startDate, events: events)
+        return Self(
+            monthlyRate: self.monthlyRate,
+            startDate: self.startDate,
+            events: events,
+            watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
+            watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
+            watchedShortcutTutorial: self.watchedShortcutTutorial
+        )
     }
     
     func deleteEvent(id: UUID) -> Self {
         var events = self.events
         events.removeAll { $0.id == id }
-        return Self(monthlyRate: monthlyRate, startDate: startDate, events: events)
+        return Self(
+            monthlyRate: monthlyRate,
+            startDate: startDate,
+            events: events,
+            watchedHomeSceenWidgetTutorial: self.watchedHomeSceenWidgetTutorial,
+            watchedLockSceenWidgetTutorial: self.watchedLockSceenWidgetTutorial,
+            watchedShortcutTutorial: self.watchedShortcutTutorial
+        )
     }
     
     func getSpendEventsAfterStartDate(asOf date: Date = Date()) -> [Spend] {
@@ -170,7 +216,10 @@ struct AppData: Codable, Equatable {
         return Self(
             monthlyRate: 1000.0,
             startDate: Date(),
-            events: []
+            events: [],
+            watchedHomeSceenWidgetTutorial: nil,
+            watchedLockSceenWidgetTutorial: nil,
+            watchedShortcutTutorial: nil
         )
     }
     
