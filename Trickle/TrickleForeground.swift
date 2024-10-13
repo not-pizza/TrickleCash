@@ -99,9 +99,10 @@ struct ForegroundView: View {
                          )
                          .transition(.move(edge: .top))
                          .padding(.horizontal, 15)
-                         
                     }
                 }
+            }.onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
             }
         }
 

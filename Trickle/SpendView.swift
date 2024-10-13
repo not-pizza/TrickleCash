@@ -40,15 +40,17 @@ struct SpendView: View, Equatable {
     }
     
     var nameView: some View {
-        TextField("Name", text: $deduction.name)
-            .focused($focusedField, equals: .name)
-            .textFieldStyle(.plain)
-            .background(.clear)
-            .submitLabel(.done)
-            .onSubmit {
-                focusedField = nil
-            }
-            .controlSize(.large)
+        HStack {
+            TextField("Name", text: $deduction.name)
+                .focused($focusedField, equals: .name)
+                .textFieldStyle(.plain)
+                .background(.clear)
+                .submitLabel(.done)
+                .onSubmit {
+                    focusedField = nil
+                }
+                .controlSize(.large)
+        }
     }
     
     var amountInput: some View {
@@ -120,36 +122,44 @@ struct SpendView: View, Equatable {
     
     var expandedView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            DatePicker(
-                "Date Added",
-                selection: dateBinding,
-                in: startDate...,
-                displayedComponents: [.date]
-            )
-            .datePickerStyle(CompactDatePickerStyle())
-            .labelsHidden()
-            
-            if !buckets.isEmpty {
-                Picker("From", selection: $deduction.fromBucket) {
-                    Text("Main Balance")
-                        .tag(nil as UUID?)
-
-                    ForEach(sortedBuckets) { bucket in
-                        Text(bucket.name)
-                            .tag(bucket.id as UUID?)
-                    }
+            HStack {
+                HStack{
+                    DatePicker(
+                        "Date Added",
+                        selection: dateBinding,
+                        in: startDate...,
+                        displayedComponents: [.date]
+                    )
+                    .datePickerStyle(CompactDatePickerStyle())
+                    .labelsHidden()
                 }
-                .pickerStyle(.menu)
-                .tint(.primary)
+                
+                if !buckets.isEmpty {
+                    Spacer()
+                    HStack {
+                        Picker("From", selection: $deduction.fromBucket) {
+                            Text("Main Balance")
+                                .tag(nil as UUID?)
+                            
+                            ForEach(sortedBuckets) { bucket in
+                                Text(bucket.name)
+                                    .tag(bucket.id as UUID?)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .tint(.primary)
+                    }
+                    Spacer()
+                }
+                
             }
-
             
             Button(action: onDelete) {
                 Text("Delete")
                     .foregroundColor(.red)
-            }
+            }.buttonStyle(.bordered)
         }
-        .padding(.vertical, 8)
+        .padding(.bottom, 25)
     }
     
     var expandChevron: some View {
@@ -177,6 +187,14 @@ struct SpendView: View, Equatable {
                 .toolbar {
                     ToolbarItemGroup(placement: .keyboard) {
                         if focusedField == .amount {
+                            Button("Delete") {
+                                onDelete()
+                            }
+                            .buttonStyle(.plain)
+                            .padding()
+                            
+                            Spacer()
+                            
                             Button("+") {
                                 inputAmount += "+"
                             }
@@ -203,12 +221,6 @@ struct SpendView: View, Equatable {
                             
                             Spacer()
                             
-                            Button("Delete") {
-                                onDelete()
-                            }
-                            .buttonStyle(.plain)
-                            .padding()
-                            
                             Button("Name →") {
                                 focusedField = .name
                             }
@@ -216,31 +228,13 @@ struct SpendView: View, Equatable {
                             .padding(.leading)
                         }
                         else if focusedField == .name {
-                            Button("Food") {
-                                deduction.name = "Food"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
-                            
-                            Button("Uber") {
-                                deduction.name = "Uber"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
-                            
-                            Button("Gift") {
-                                deduction.name = "Gift"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
-                            
-                            Spacer()
-                            
                             Button("Delete") {
                                 onDelete()
                             }
                             .buttonStyle(.plain)
                             .padding()
+                            
+                            Spacer()
                             
                             Button("Done") {
                                 focusedField = nil
