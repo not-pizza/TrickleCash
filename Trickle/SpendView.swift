@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-struct SpendView: View, Equatable {
+struct SpendView: View {
     @Binding var deduction: Spend
     var buckets: [MinimalBucketInfo]
     var takeFocusWhenAppearing: Bool
@@ -26,17 +26,6 @@ struct SpendView: View, Equatable {
         self.onDelete = onDelete
         self.startDate = startDate
         self.bucketValidAtDate = bucketValidAtDate
-    }
-    
-    static func == (lhs: SpendView, rhs: SpendView) -> Bool {
-        return lhs.$deduction.wrappedValue == rhs.$deduction.wrappedValue &&
-            lhs.buckets == rhs.buckets &&
-            lhs.takeFocusWhenAppearing == rhs.takeFocusWhenAppearing &&
-            lhs.startDate == rhs.startDate &&
-            lhs.inputAmount == rhs.inputAmount &&
-            lhs.focusedField == rhs.focusedField &&
-            lhs.isExpanded == rhs.isExpanded
-        // Note: `onDelete` and `bucketValidAtDate` are excluded from comparison
     }
     
     var nameView: some View {

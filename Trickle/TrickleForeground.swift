@@ -85,17 +85,15 @@ struct ForegroundView: View {
                     .padding(.top, 10)
                     
                      ForEach(spendEvents) { spend in
-                         EquatableView(content:
-                             SpendView(
-                                deduction: spend.spend,
-                                buckets: spend.buckets,
-                                isFocused: focusedSpendId == spend.spend.wrappedValue.id,
-                                startDate: startDate,
-                                onDelete: { controlSpend.remove(spend.id) },
-                                bucketValidAtDate: {bucket, date in
-                                    controlSpend.bucketValidAtDate(bucket, date)
-                                }
-                             )
+                         SpendView(
+                            deduction: spend.spend,
+                            buckets: spend.buckets,
+                            isFocused: focusedSpendId == spend.spend.wrappedValue.id,
+                            startDate: startDate,
+                            onDelete: { controlSpend.remove(spend.id) },
+                            bucketValidAtDate: {bucket, date in
+                                controlSpend.bucketValidAtDate(bucket, date)
+                            }
                          )
                          .transition(.move(edge: .top))
                          .padding(.horizontal, 15)
