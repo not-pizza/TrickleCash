@@ -24,7 +24,7 @@ struct TrickleView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.scenePhase) private var scenePhase
 
-    @State private var lastDeletedSpendId: UUID?
+    @State private var lastDeletedSpend: Spend?
     @State private var lastDumpedBucket: (Bucket, Double)?
     @State private var lastDeletedBucket: (Bucket, Double)?
     
@@ -34,7 +34,7 @@ struct TrickleView: View {
             appData: appData,
             add: { appData = appData.addSpend($0) },
             update: { appData = appData.updateSpend($0) },
-            remove: { appData = appData.deleteEvent(id: $0); lastDeletedSpendId = $0 },
+            remove: { appData = appData.deleteEvent(id: $0); lastDeletedSpend = $1 },
             bucketValidAtDate: {bucket, date in appData.getAppState(asOf: date).buckets[bucket] != nil}
         )
     }
@@ -126,8 +126,15 @@ struct TrickleView: View {
                 }
             }
         }
-        .toast(isPresenting: Binding(get: {lastDeletedSpendId != nil}, set: {_ in lastDeletedSpendId = nil}), duration: 4) {
-            AlertToast(displayMode: .hud, type: .error(.red), title: "Spending deleted")
+        .toast(isPresenting: Binding(get: {lastDeletedSpend != nil}, set: {_ in lastDeletedSpend = nil}), duration: 4) {
+            if let lastDeletedSpend = lastDeletedSpend {
+                let amountString = formatCurrencyNoDecimals(abs(lastDeletedSpend.amount))
+                let type = lastDeletedSpend.amount < 0 ? "income" : "spending"
+                return AlertToast(displayMode: .hud, type: .error(.red), title: "\(amountString) \(type) deleted")
+            }
+            else {
+                return AlertToast(displayMode: .hud, type: .error(.red), title: "Spending deleted")
+            }
         }
         .toast(isPresenting: Binding(get: {lastDeletedBucket != nil}, set: {_ in lastDeletedBucket = nil}), duration: 8) {
             if let lastDeletedBucket = lastDeletedBucket {

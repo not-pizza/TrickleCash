@@ -18,7 +18,7 @@ struct ControlSpendAction: Equatable {
     let appData: AppData
     let add: (Spend) -> Void
     let update: (Spend) -> Void
-    let remove: (UUID) -> Void
+    let remove: (UUID, Spend) -> Void
     let bucketValidAtDate: (UUID, Date) -> Bool
 }
 
@@ -90,7 +90,7 @@ struct ForegroundView: View {
                             buckets: spend.buckets,
                             isFocused: focusedSpendId == spend.spend.wrappedValue.id,
                             startDate: startDate,
-                            onDelete: { controlSpend.remove(spend.id) },
+                            onDelete: { controlSpend.remove(spend.id, spend.spend.wrappedValue) },
                             bucketValidAtDate: {bucket, date in
                                 controlSpend.bucketValidAtDate(bucket, date)
                             }
@@ -127,6 +127,8 @@ struct ForegroundView: View {
                         addSpend
                         Spacer()
                     }
+                    
+                    Divider()
                     
                     if #available(iOS 16.0, *) {
                         spendList.scrollContentBackground(Visibility.hidden)
@@ -173,7 +175,7 @@ struct ForegroundView: View {
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text("Add income")
+                    Text("Income")
                 }
                 .foregroundColor(.blue)
                 .padding(.vertical, 8)
@@ -196,7 +198,7 @@ struct ForegroundView: View {
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text("Add spending")
+                    Text("Spending")
                 }
                 .foregroundColor(.blue)
                 .padding(.vertical, 8)
@@ -230,7 +232,7 @@ struct ForegroundView: View {
                 ),
                 add: {_ in ()},
                 update: {_ in ()},
-                remove: {_ in ()},
+                remove: {_, _ in ()},
                 bucketValidAtDate: {_, _ in true}
             ),
             closeTutorials: {},
