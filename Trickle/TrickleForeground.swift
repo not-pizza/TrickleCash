@@ -141,7 +141,9 @@ struct ForegroundView: View {
             .frame(maxHeight: .infinity, alignment: .bottom)
             .ignoresSafeArea(.all)
             .onChange(of: hidden) { _ in
-                focusedSpendId = nil
+                if hidden == true {
+                    focusedSpendId = nil
+                }
             }
         }.onChange(of: hidden, perform: {_ in
             chevronRotation = hidden ? 180 : 0
@@ -161,6 +163,7 @@ struct ForegroundView: View {
                     controlSpend.add(newSpend)
                     focusedSpendId = newSpend.id
                 }
+                hidden = false
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")

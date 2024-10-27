@@ -1,5 +1,6 @@
 import SwiftUI
 import WidgetKit
+import AlertToast
 
 extension View {
     func endEditing() {
@@ -22,14 +23,29 @@ struct TrickleView: View {
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.scenePhase) private var scenePhase
+
+    @State private var lastDeletedSpendId: UUID?
+    @State private var lastDumpedBucket: (Bucket, Double)?
+    @State private var lastDeletedBucket: (Bucket, Double)?
+    
     
     var controlSpend: ControlSpendAction {
         ControlSpendAction(
             appData: appData,
             add: { appData = appData.addSpend($0) },
             update: { appData = appData.updateSpend($0) },
-            remove: { appData = appData.deleteEvent(id: $0) },
+            remove: { appData = appData.deleteEvent(id: $0); lastDeletedSpendId = $0 },
             bucketValidAtDate: {bucket, date in appData.getAppState(asOf: date).buckets[bucket] != nil}
+        )
+    }
+
+    var controlBucket: ControlBucketAction {
+        ControlBucketAction(
+            appData: appData,
+            add: { appData = appData.addBucket($0) },
+            update: { appData = appData.updateBucket($0, $1) },
+            dump: { appData = appData.dumpBucket($0); lastDumpedBucket = ($1, $2) },
+            delete: { appData = appData.deleteBucket($0); lastDeletedBucket = ($1, $2) }
         )
     }
 
@@ -48,8 +64,6 @@ struct TrickleView: View {
                 })
             )
         })
-
-        print("appData.tutorialsPaneLastClosed: \(appData.tutorialsPaneLastClosed)")
 
         return NavigationView {
             GeometryReader { geometry in
@@ -104,11 +118,35 @@ struct TrickleView: View {
                     
                     BackgroundView(
                         appData: $appData,
+                        controlBucket: controlBucket,
                         onSettingsTapped: openSettings,
                         foregroundShowingOffset: initialforegroundShowingOffset,
                         foregroundHidden: hidden
                     ).zIndex(0)
                 }
+            }
+        }
+        .toast(isPresenting: Binding(get: {lastDeletedSpendId != nil}, set: {_ in lastDeletedSpendId = nil}), duration: 4) {
+            AlertToast(displayMode: .hud, type: .error(.red), title: "Spending deleted")
+        }
+        .toast(isPresenting: Binding(get: {lastDeletedBucket != nil}, set: {_ in lastDeletedBucket = nil}), duration: 8) {
+            if let lastDeletedBucket = lastDeletedBucket {
+                let (bucket, amount) = lastDeletedBucket
+                let amountString = formatCurrencyNoDecimals(amount)
+                return AlertToast(displayMode: .hud, type: .error(.red), title: "Bucket \(bucket.name.smartCapitalized) deleted")
+            }
+            else {
+                return AlertToast(displayMode: .hud, type: .error(.red), title: "Bucket deleted")
+            }
+        }
+        .toast(isPresenting: Binding(get: {lastDumpedBucket != nil}, set: {_ in lastDumpedBucket = nil}), duration: 8) {
+            if let lastDumpedBucket = lastDumpedBucket {
+                let (bucket, amount) = lastDumpedBucket
+                let amountString = formatCurrencyNoDecimals(amount)
+                return AlertToast(displayMode: .hud, type: .complete(.green), title: "\(amountString) from `\(bucket.name.smartCapitalized)` dumped into main balance")
+            }
+            else {
+                return AlertToast(displayMode: .hud, type: .complete(.green), title: "Bucket dumped into main balance")
             }
         }
     }

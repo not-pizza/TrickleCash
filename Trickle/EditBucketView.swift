@@ -99,11 +99,14 @@ struct EditBucketView: View {
                                 delete()
                                 presentationMode.wrappedValue.dismiss()
                             }) {
-                                Text("Delete")
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.red)
-                                    .cornerRadius(10)
+                                Text(whenFinished == .destroy ? 
+                                    "Destroy \(formatCurrencyNoDecimals(amount)) and don't restart" : 
+                                    "Dump \(formatCurrencyNoDecimals(amount)) into main balance and don't restart"
+                                )
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.red)
+                                .cornerRadius(10)
                             }
                             .buttonStyle(.plain)
                             .padding()
@@ -118,11 +121,20 @@ struct EditBucketView: View {
                             dump()
                             presentationMode.wrappedValue.dismiss()
                         }) {
-                            Text(recur != nil ? "Dump into trickle and restart" : "Dump into trickle")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.red)
-                                .cornerRadius(10)
+                            Text(whenFinished == .destroy ? 
+                                (recur != nil ? 
+                                    "Destroy \(formatCurrencyNoDecimals(amount)) and restart" : 
+                                    "Destroy \(formatCurrencyNoDecimals(amount))"
+                                ) : 
+                                (recur != nil ? 
+                                    "Dump \(formatCurrencyNoDecimals(amount)) into main balance and restart" : 
+                                    "Dump \(formatCurrencyNoDecimals(amount)) into main balance"
+                                )
+                            )
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(10)
                         }
                         .buttonStyle(.plain)
                         .padding()

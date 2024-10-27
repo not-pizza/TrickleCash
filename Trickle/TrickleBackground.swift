@@ -1,8 +1,20 @@
 import SwiftUI
 
+struct ControlBucketAction: Equatable {
+    static func == (lhs: ControlBucketAction, rhs: ControlBucketAction) -> Bool {
+        lhs.appData == rhs.appData
+    }
+
+    let appData: AppData
+    let add: (Bucket) -> Void
+    let update: (UUID, Bucket) -> Void
+    let dump: (UUID, Bucket, Double) -> Void
+    let delete: (UUID, Bucket, Double) -> Void
+}
 
 struct BackgroundView: View {
     @Binding var appData: AppData
+    var controlBucket: ControlBucketAction
     var onSettingsTapped: () -> Void
     var foregroundShowingOffset: CGFloat
     var foregroundHidden: Bool
@@ -32,6 +44,7 @@ struct BackgroundView: View {
             if bucketsOpacity > 0 {
                 BucketsView(
                     appData: $appData,
+                    controlBucket: controlBucket,
                     editingBucket: $editingBucket,
                     isAddingNewBucket: $isAddingNewBucket,
                     bucketsOpacity: bucketsOpacity
@@ -57,9 +70,7 @@ struct BackgroundView: View {
             EditBucketView(
                 bucket: Bucket(name: "", targetAmount: 150, income: 100 / secondsPerMonth, whenFinished: .waitToDump, recur: nil),
                 amount: 0,
-                save: { newBucket in
-                    appData = appData.addBucket(newBucket)
-                },
+                save: {controlBucket.add($0)},
                 dump: nil,
                 delete: nil
             )
@@ -159,6 +170,7 @@ struct BalanceAndDebtClockView: View {
 
 struct BucketsView: View {
     @Binding var appData: AppData
+    var controlBucket: ControlBucketAction
     @Binding var editingBucket: IdentifiedBucket?
     @Binding var isAddingNewBucket: Bool
     var bucketsOpacity: Double
@@ -201,14 +213,14 @@ struct BucketsView: View {
                     bucket: Binding(
                         get: { bucket.bucket },
                         set: { newBucket in
-                            appData = appData.updateBucket(bucket.id, newBucket)
+                            controlBucket.update(bucket.id, newBucket)
                         }
                     ),
                     dump: {
-                        appData = appData.dumpBucket(bucket.id)
+                        controlBucket.dump(bucket.id, bucket.bucket, bucket.amount)
                     },
                     delete: {
-                        appData = appData.deleteBucket(bucket.id)
+                        controlBucket.delete(bucket.id, bucket.bucket, bucket.amount)
                     },
                     currentTime: currentTime
                 )
@@ -246,22 +258,3 @@ struct BucketsView: View {
     }
 }
 
-
-#Preview {
-    BackgroundView(
-        appData: .constant(AppData(
-            monthlyRate: 1000,
-            startDate: Date().startOfDay,
-            events: [
-                .spend(Spend(name: "7/11", amount: 30)),
-            ],
-            watchedHomeSceenWidgetTutorial: nil,
-            watchedLockSceenWidgetTutorial: nil,
-            watchedShortcutTutorial: nil,
-            tutorialsPaneLastClosed: nil
-        )),
-        onSettingsTapped: {},
-        foregroundShowingOffset: UIScreen.main.bounds.height / 5,
-        foregroundHidden: true
-    )
-}
