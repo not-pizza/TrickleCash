@@ -139,11 +139,10 @@ struct TrickleView: View {
         .toast(isPresenting: Binding(get: {lastDeletedBucket != nil}, set: {_ in lastDeletedBucket = nil}), duration: 8) {
             if let lastDeletedBucket = lastDeletedBucket {
                 let (bucket, amount) = lastDeletedBucket
-                let amountString = formatCurrencyNoDecimals(amount)
-                return AlertToast(displayMode: .hud, type: .error(.red), title: "Bucket \(bucket.name.smartCapitalized) deleted")
+                return AlertToast(displayMode: .hud, type: .error(.red), title: "Bucket \(bucket.name.smartCapitalized) will no longer recur")
             }
             else {
-                return AlertToast(displayMode: .hud, type: .error(.red), title: "Bucket deleted")
+                return AlertToast(displayMode: .hud, type: .error(.red), title: "Bucket will no longer recur")
             }
         }
         .toast(isPresenting: Binding(get: {lastDumpedBucket != nil}, set: {_ in lastDumpedBucket = nil}), duration: 8) {
