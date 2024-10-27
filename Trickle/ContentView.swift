@@ -23,33 +23,6 @@ struct TrickleView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.scenePhase) private var scenePhase
     
-    var tutorials: [TutorialItem] {
-        var tutorials: [TutorialItem] = []
-        tutorials.append(
-            TutorialItem(
-                videoName: "add-home-screen-widget",
-                videoTitle: "Add a Home Screen Widget",
-                watched: Binding(get: {appData.watchedHomeSceenWidgetTutorial}, set: {appData.watchedHomeSceenWidgetTutorial = $0})
-            )
-        )
-        tutorials.append(
-            TutorialItem(
-                videoName: "add-lock-screen-widget",
-                videoTitle: "Add a Lock Screen Widget",
-                watched: Binding(get: {appData.watchedLockSceenWidgetTutorial}, set: {appData.watchedLockSceenWidgetTutorial = $0})
-            )
-        )
-        tutorials.append(
-            TutorialItem(
-                videoName: "Add a shortcut to trickle",
-                videoTitle: "Add iPhone Payments Automatically",
-                watched: Binding(get: {appData.watchedShortcutTutorial}, set: {appData.watchedShortcutTutorial = $0})
-
-            )
-        )
-        return tutorials
-    }
-    
     var controlSpend: ControlSpendAction {
         ControlSpendAction(
             appData: appData,
@@ -93,7 +66,7 @@ struct TrickleView: View {
                             foregroundHiddenOffset: foregroundHiddenOffset,
                             foregroundShowingOffset: foregroundShowingOffset,
                             spends: spends,
-                            tutorials: tutorials,
+                            tutorials: getTutorialItems(appData: $appData),
                             tutorialsClosed: appData.tutorialsPaneLastClosed != nil,
                             controlSpend: controlSpend,
                             closeTutorials: {appData.tutorialsPaneLastClosed = Date()},

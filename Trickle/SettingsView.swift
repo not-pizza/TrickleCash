@@ -7,10 +7,12 @@ struct SettingsView: View {
     @FocusState private var focusedField: Bool
     @State private var showUndoButton: Bool = false
     @State private var previousStartDate: Date?
+    var tutorials: [TutorialItem]
     
     init(appData: Binding<AppData>) {
         _appData = appData
         tempMonthlyRate = String(format: "%.2f", appData.wrappedValue.getMonthlyRate())
+        tutorials = getTutorialItems(appData: appData)
     }
     
     var body: some View {
@@ -65,6 +67,8 @@ struct SettingsView: View {
                 .padding()
 
                 SpendingAvailability(monthlyRate: appData.getMonthlyRate())
+
+                TutorialListView(tutorials: tutorials, closeTutorials: nil).padding()
 
                 Spacer()
             }

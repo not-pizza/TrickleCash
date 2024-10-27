@@ -9,7 +9,7 @@ struct TutorialItem: Identifiable {
 
 struct TutorialListView: View {
     var tutorials: [TutorialItem]
-    var closeTutorials: () -> Void
+    var closeTutorials: (() -> Void)?
 
     @State private var selectedTutorial: TutorialItem?
 
@@ -19,11 +19,13 @@ struct TutorialListView: View {
                 Text("Get Started")
                     .font(.headline)
                 Spacer()
-                Button(action: {
-                    closeTutorials()
-                }) {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.primary)
+                if let closeTutorials = closeTutorials {
+                    Button(action: {
+                        closeTutorials()
+                    }) {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.primary)
+                    }
                 }
             }
             .padding(.top)
@@ -127,3 +129,30 @@ struct TutorialListView_Previews: PreviewProvider {
         TutorialListView(tutorials: tutorials, closeTutorials: {})
     }
 }
+
+func getTutorialItems(appData: Binding<AppData>) -> [TutorialItem] {
+    var tutorials: [TutorialItem] = []
+    tutorials.append(
+        TutorialItem(
+            videoName: "add-home-screen-widget",
+            videoTitle: "Add a Home Screen Widget",
+            watched: Binding(get: {appData.wrappedValue.watchedHomeSceenWidgetTutorial}, set: {appData.wrappedValue.watchedHomeSceenWidgetTutorial = $0})
+        )
+    )
+    tutorials.append(
+        TutorialItem(
+            videoName: "add-lock-screen-widget",
+            videoTitle: "Add a Lock Screen Widget",
+            watched: Binding(get: {appData.wrappedValue.watchedLockSceenWidgetTutorial}, set: {appData.wrappedValue.watchedLockSceenWidgetTutorial = $0})
+        )
+    )
+    tutorials.append(
+        TutorialItem(
+            videoName: "Add a shortcut to trickle",
+            videoTitle: "Add iPhone Payments Automatically",
+            watched: Binding(get: {appData.wrappedValue.watchedShortcutTutorial}, set: {appData.wrappedValue.watchedShortcutTutorial = $0})
+        )
+    )
+    return tutorials
+}
+
