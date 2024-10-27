@@ -19,13 +19,22 @@ struct BackgroundView: View {
     var foregroundShowingOffset: CGFloat
     var foregroundHidden: Bool
     
-    @State private var balanceBackgroundColor: BalanceBackgroundColor = .green
+    @State private var balanceBackgroundColor: BalanceBackgroundColor
     @State private var editingBucket: IdentifiedBucket?
     @State private var isAddingNewBucket = false
     @State private var spacing = 60
     @State private var bucketsOpacity: Double = 0
     
     @Environment(\.colorScheme) var colorScheme
+
+    init(appData: Binding<AppData>, controlBucket: ControlBucketAction, onSettingsTapped: @escaping () -> Void, foregroundShowingOffset: CGFloat, foregroundHidden: Bool) {
+        self._appData = appData
+        self.controlBucket = controlBucket
+        self.onSettingsTapped = onSettingsTapped
+        self.foregroundShowingOffset = foregroundShowingOffset
+        self.foregroundHidden = foregroundHidden
+        self.balanceBackgroundColor = balanceBackground(appData.wrappedValue.getAppState(asOf: Date()).balance)
+    }
     
     var body: some View {
         let backgroundContent = ScrollView {
