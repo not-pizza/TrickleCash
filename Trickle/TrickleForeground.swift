@@ -120,7 +120,14 @@ struct ForegroundView: View {
                     .ignoresSafeArea()
                 
                 VStack {
-                    addSpend
+                    HStack {
+                        Spacer()
+                        addIncome
+                        Spacer()
+                        addSpend
+                        Spacer()
+                    }
+                    
                     if #available(iOS 16.0, *) {
                         spendList.scrollContentBackground(Visibility.hidden)
                     }
@@ -151,9 +158,31 @@ struct ForegroundView: View {
         .animation(.spring(), value: chevronRotation)
     }
     
+    var addIncome: some View {
+        return Button(action: {
+                withAnimation(.spring()) {
+                    let newSpend = Spend(
+                        name: "",
+                        amount: -10,
+                        dateAdded: Date()
+                    )
+                    controlSpend.add(newSpend)
+                    focusedSpendId = newSpend.id
+                }
+                hidden = false
+            }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Add income")
+                }
+                .foregroundColor(.blue)
+                .padding(.vertical, 8)
+            }
+            .listRowBackground(Color.blue.opacity(0.1))
+    }
+    
     var addSpend: some View {
-        return VStack(spacing: 10) {
-            Button(action: {
+        return Button(action: {
                 withAnimation(.spring()) {
                     let newSpend = Spend(
                         name: "",
@@ -173,7 +202,6 @@ struct ForegroundView: View {
                 .padding(.vertical, 8)
             }
             .listRowBackground(Color.blue.opacity(0.1))
-        }
     }
 }
 

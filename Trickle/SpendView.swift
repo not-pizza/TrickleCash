@@ -62,7 +62,24 @@ struct SpendView: View {
             }
             .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
                 if let textField = obj.object as? UITextField {
-                    textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                    // We don't want to select the leading `-`if one is present
+                    if let text = textField.text {
+                        if text.hasPrefix("-") {
+                            if let startPosition = textField.position(from: textField.beginningOfDocument, offset: 1) {
+                                // Create text range from position to end
+                                if let newRange = textField.textRange(from: startPosition, to: textField.endOfDocument) {
+                                    // Set the selection
+                                    textField.selectedTextRange = newRange
+                                }
+                            }
+                        }
+                        else {
+                            textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                        }
+                    }
+                    else {
+                        textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                    }
                 }
             }
             .onSubmit {
