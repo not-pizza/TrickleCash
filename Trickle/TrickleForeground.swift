@@ -161,49 +161,73 @@ struct ForegroundView: View {
     }
     
     var addIncome: some View {
-        return Button(action: {
-                withAnimation(.spring()) {
-                    let newSpend = Spend(
-                        name: "",
-                        amount: -10,
-                        dateAdded: Date()
-                    )
-                    controlSpend.add(newSpend)
-                    focusedSpendId = newSpend.id
-                }
-                hidden = false
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Income")
-                }
-                .foregroundColor(.blue)
-                .padding(.vertical, 8)
+        return AddTransactionButton(isIncome: true, action: {
+            withAnimation(.spring()) {
+                let newSpend = Spend(
+                    name: "",
+                    amount: -10,
+                    dateAdded: Date()
+                )
+                controlSpend.add(newSpend)
+                focusedSpendId = newSpend.id
             }
-            .listRowBackground(Color.blue.opacity(0.1))
+            hidden = false
+        })
     }
     
     var addSpend: some View {
-        return Button(action: {
-                withAnimation(.spring()) {
-                    let newSpend = Spend(
-                        name: "",
-                        amount: 0,
-                        dateAdded: Date()
-                    )
-                    controlSpend.add(newSpend)
-                    focusedSpendId = newSpend.id
-                }
-                hidden = false
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Spending")
-                }
-                .foregroundColor(.blue)
-                .padding(.vertical, 8)
+        return AddTransactionButton(isIncome: false, action: {
+            withAnimation(.spring()) {
+                let newSpend = Spend(
+                    name: "",
+                    amount: 10,
+                    dateAdded: Date()
+                )
+                controlSpend.add(newSpend)
+                focusedSpendId = newSpend.id
             }
-            .listRowBackground(Color.blue.opacity(0.1))
+            hidden = false
+        })
+    }
+    
+    struct AddTransactionButton: View {
+        let isIncome: Bool
+        let action: () -> Void
+        @State private var animate = false
+        
+        var body: some View {
+            Button(action: {
+                action()
+                animate = true
+                
+                // Reset the animation state without animation
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                    withAnimation(.none) {
+                        animate = false
+                    }
+                }
+            }) {
+                ZStack {
+                    // Ripple Effect
+                    Circle()
+                        .stroke(isIncome ? Color.green : Color.red, lineWidth: 2)
+                        .frame(width: 27, height: 27)
+                        .scaleEffect(animate ? 2.5 : 1)
+                        .opacity(animate ? 0 : 1)
+                        .animation(animate ? .easeOut(duration: 0.6) : .none, value: animate)
+                    
+                    // Icon
+                    Image(systemName: isIncome ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
+                        .font(.system(size: 27))
+                        .foregroundColor(isIncome ? .green : .red)
+                        .rotationEffect(animate ? Angle(degrees: 360) : Angle(degrees: 0))
+                        //.scaleEffect(animate ? 1.5 : 1)
+                        .animation(animate ? .easeInOut(duration: 0.6) : .none, value: animate)
+                }
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(2)
+        }
     }
 }
 
