@@ -20,7 +20,7 @@ struct SpendView: View {
     init(deduction: Binding<Spend>, buckets: [MinimalBucketInfo], isFocused: Bool, startDate: Date, onDelete: @escaping () -> Void, bucketValidAtDate: @escaping (UUID, Date) -> Bool) {
         self._deduction = deduction
         self.buckets = buckets
-        let amount = String(format: "%.2f", deduction.wrappedValue.amount)
+        let amount = String(format: "%.2f", -deduction.wrappedValue.amount)
         self._inputAmount = State(initialValue: amount)
         self.takeFocusWhenAppearing = isFocused
         self.onDelete = onDelete
@@ -57,7 +57,7 @@ struct SpendView: View {
                     deduction.amount = 0
                 }
                 else {
-                    deduction.amount = toDouble(newValue) ?? deduction.amount
+                    deduction.amount = -(toDouble(newValue) ?? -deduction.amount)
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in

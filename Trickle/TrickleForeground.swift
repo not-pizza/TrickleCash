@@ -122,9 +122,11 @@ struct ForegroundView: View {
                 VStack {
                     HStack {
                         Spacer()
+                        Spacer()
                         addIncome
                         Spacer()
                         addSpend
+                        Spacer()
                         Spacer()
                     }
                     
