@@ -132,8 +132,19 @@ struct ForegroundView: View {
                     
                     Divider()
                     
-                    if #available(iOS 16.0, *) {
-                        spendList.scrollContentBackground(Visibility.hidden)
+                    if #available(iOS 18.0, *) {
+                        spendList
+                            .scrollContentBackground(Visibility.hidden)
+                            .scrollDismissesKeyboard(.immediately)
+                            .onScrollPhaseChange { phase, nextPhase in
+                                if nextPhase == .decelerating {
+                                    focusedSpendId = nil
+                                }
+                            }
+                    }
+                    else if #available(iOS 16.0, *) {
+                        spendList
+                            .scrollContentBackground(Visibility.hidden)
                     }
                     else {
                         spendList
