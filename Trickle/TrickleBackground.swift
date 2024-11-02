@@ -147,6 +147,7 @@ struct BalanceAndDebtClockView: View {
                 if balance < 0, let debtClock = debtClock {
                     Text("Out of debt \(debtClock)")
                         .frame(height: debtClockHeight)
+                        .opacity(0.8)
                 }
             }
             
