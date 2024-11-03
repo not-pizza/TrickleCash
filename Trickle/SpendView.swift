@@ -35,7 +35,9 @@ struct SpendView: View {
                 .background(.clear)
                 .submitLabel(.done)
                 .onSubmit {
-                    focusedField = nil
+                    withAnimation {
+                        focusedField = nil
+                    }
                 }
                 .controlSize(.large)
         }
@@ -47,7 +49,9 @@ struct SpendView: View {
             .focused($focusedField, equals: .amount)
             .onAppear {
                 if takeFocusWhenAppearing {
-                    focusedField = .amount
+                    withAnimation {
+                        focusedField = .amount
+                    }
                 }
             }
             .textFieldStyle(.plain)
@@ -82,7 +86,9 @@ struct SpendView: View {
                 }
             }
             .onSubmit {
-                focusedField = .name
+                withAnimation {
+                    focusedField = .name
+                }
             }
             .controlSize(.large)
 
@@ -159,12 +165,18 @@ struct SpendView: View {
                 
             }
             
-            Button(action: onDelete) {
+            Button(action: {
+                withAnimation {
+                    focusedField = nil
+                    onDelete()
+                }
+            }) {
                 Text("Delete")
                     .foregroundColor(.red)
             }.buttonStyle(.bordered)
         }
         .padding(.bottom, 25)
+        .transition(.move(edge: .top).combined(with: .opacity))
     }
     
     var body: some View {
@@ -180,7 +192,10 @@ struct SpendView: View {
                     ToolbarItemGroup(placement: .keyboard) {
                         if focusedField == .amount {
                             Button("Delete") {
-                                onDelete()
+                                withAnimation {
+                                    focusedField = nil
+                                    onDelete()
+                                }
                             }
                             .buttonStyle(.plain)
                             .padding()
@@ -221,7 +236,10 @@ struct SpendView: View {
                         }
                         else if focusedField == .name {
                             Button("Delete") {
-                                onDelete()
+                                withAnimation {
+                                    focusedField = nil
+                                    onDelete()
+                                }
                             }
                             .buttonStyle(.plain)
                             .padding()
@@ -249,7 +267,7 @@ struct SpendView: View {
                     inputAmount = String(format: "%.2f", input)
                 }
             }
-            
+            .animation(.default, value: focusedField)
         }
         
     }
