@@ -8,7 +8,6 @@ struct SpendView: View {
     var startDate: Date
     @State var inputAmount: String = ""
     @FocusState private var focusedField: Field?
-    @State private var isExpanded: Bool = false
     var onDelete: () -> Void
     var bucketValidAtDate: (UUID, Date) -> Bool
     
@@ -168,22 +167,9 @@ struct SpendView: View {
         .padding(.bottom, 25)
     }
     
-    var expandChevron: some View {
-        Image(systemName: "chevron.right")
-            .foregroundColor(.secondary)
-            .rotationEffect(.degrees(isExpanded ? 90 : 0))
-            .animation(.spring(duration: 0.2), value: isExpanded)
-            .onTapGesture {
-                withAnimation(.spring(duration: 0.2)) {
-                    isExpanded.toggle()
-                }
-            }
-    }
-    
     var body: some View {
         // TODO: switch to grid once we remove support for iOS 15
         HStack(alignment: .top) {
-            expandChevron
             VStack(alignment: .leading) {
                 HStack(alignment: .top) {
                     amountView
@@ -254,7 +240,7 @@ struct SpendView: View {
                     }
                 }
                 
-                if isExpanded {
+                if focusedField != nil {
                     expandedView
                 }
             }
