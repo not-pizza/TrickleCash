@@ -199,22 +199,27 @@ struct ForegroundView: View {
                     }
                 }
             }) {
-                ZStack {
-                    // Ripple Effect
-                    Circle()
-                        .stroke(isIncome ? Color.green : Color.red, lineWidth: 2)
-                        .frame(width: 27, height: 27)
-                        .scaleEffect(animate ? 2.5 : 1)
-                        .opacity(animate ? 0 : 1)
-                        .animation(animate ? .easeOut(duration: 0.6) : .none, value: animate)
-                    
-                    // Icon
-                    Image(systemName: isIncome ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
-                        .font(.system(size: 27))
-                        .foregroundColor(isIncome ? .green : .red)
-                        .rotationEffect(animate ? Angle(degrees: 360) : Angle(degrees: 0))
-                        //.scaleEffect(animate ? 1.5 : 1)
-                        .animation(animate ? .easeInOut(duration: 0.6) : .none, value: animate)
+                HStack {
+                    ZStack {
+                        // Ripple Effect
+                        Circle()
+                            .stroke(isIncome ? Color.green : Color.red, lineWidth: 2)
+                            .frame(width: 27, height: 27)
+                            .scaleEffect(animate ? 2.5 : 1)
+                            .opacity(animate ? 0 : 1)
+                            .animation(animate ? .easeOut(duration: 0.6) : .none, value: animate)
+                        
+                        // Icon
+                        Image(systemName: isIncome ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
+                            .font(.system(size: 27))
+                            .foregroundColor(isIncome ? .green : .red)
+                            .rotationEffect(animate ? Angle(degrees: 360) : Angle(degrees: 0))
+                            //.scaleEffect(animate ? 1.5 : 1)
+                            .animation(animate ? .easeInOut(duration: 0.6) : .none, value: animate)
+                    }
+
+                    Text(isIncome ? "Windfall" : "Spending")
+                        .font(.headline)
                 }
             }
             .buttonStyle(PlainButtonStyle())
