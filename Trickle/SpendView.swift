@@ -162,18 +162,17 @@ struct SpendView: View {
                     }
                     Spacer()
                 }
-                
             }
-            
-            Button(action: {
-                withAnimation {
-                    focusedField = nil
-                    onDelete()
+
+            Toggle(isOn: Binding(
+                get: { deduction.amount < 0 },
+                set: { inputAmount = $0 ?
+                    String(format: "%.2f", abs(toDouble(inputAmount) ?? deduction.amount)) :
+                    String(format: "%.2f", -abs((toDouble(inputAmount) ?? deduction.amount)))
                 }
-            }) {
-                Text("Delete")
-                    .foregroundColor(.red)
-            }.buttonStyle(.bordered)
+            )) {
+                Text("Windfall")
+            }
         }
         .padding(.bottom, 25)
         .transition(.move(edge: .top).combined(with: .opacity))
