@@ -121,13 +121,7 @@ struct ForegroundView: View {
                 
                 VStack {
                     HStack {
-                        Spacer()
-                        Spacer()
-                        addIncome
-                        Spacer()
                         addSpend
-                        Spacer()
-                        Spacer()
                     }
                     
                     Divider()
@@ -171,21 +165,6 @@ struct ForegroundView: View {
             chevronRotation = hidden ? 180 : 0
         })
         .animation(.spring(), value: chevronRotation)
-    }
-    
-    var addIncome: some View {
-        return AddTransactionButton(isIncome: true, action: {
-            withAnimation(.spring()) {
-                let newSpend = Spend(
-                    name: "",
-                    amount: -10,
-                    dateAdded: Date()
-                )
-                controlSpend.add(newSpend)
-                focusedSpendId = newSpend.id
-            }
-            hidden = false
-        })
     }
     
     var addSpend: some View {
