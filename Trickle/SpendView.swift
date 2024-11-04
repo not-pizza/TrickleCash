@@ -138,7 +138,7 @@ struct SpendView: View {
                     DatePicker(
                         "Date Added",
                         selection: dateBinding,
-                        in: startDate...,
+                        in: startDate...Date(),
                         displayedComponents: [.date]
                     )
                     .datePickerStyle(CompactDatePickerStyle())
