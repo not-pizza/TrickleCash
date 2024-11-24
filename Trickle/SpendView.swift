@@ -58,9 +58,31 @@ struct SpendView: View {
             .onChange(of: inputAmount) { newValue in
                 if newValue.trimmingCharacters(in: .whitespaces) == "" {
                     deduction.amount = 0
-                }
-                else {
-                    deduction.amount = -(toDouble(newValue) ?? -deduction.amount)
+                } else {
+                    // Handle numeric input in a currency-style way
+                    let cleanedInput = newValue.replacingOccurrences(of: "[^0-9+\\-×÷*\\/]", with: "", options: .regularExpression)
+                    
+                    if cleanedInput.dropFirst().contains(where: { "+-×÷*/".contains($0) }) {
+                        // If it contains operators, treat it as a calculation
+                        deduction.amount = -(toDouble(newValue) ?? -deduction.amount)
+                    } else {
+                        // Check if input starts with a negative sign
+                        let isNegative = newValue.hasPrefix("-")
+                        // Remove any non-digits
+                        let digitsOnly = cleanedInput.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+                        // Convert to cents then back to dollars
+                        let cents = Int(digitsOnly) ?? 0
+                        var dollars = Double(cents) / 100.0
+                        // Apply negative sign if needed
+                        if isNegative {
+                            dollars = -dollars
+                        }
+                        deduction.amount = -dollars
+                        inputAmount = String(format: "%.2f", abs(dollars))
+                        if isNegative {
+                            inputAmount = "-" + inputAmount
+                        }
+                    }
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
@@ -174,7 +196,6 @@ struct SpendView: View {
                 Text("Windfall")
             }
         }
-        .padding(.bottom, 25)
         .transition(.move(edge: .top).combined(with: .opacity))
     }
     
@@ -198,32 +219,6 @@ struct SpendView: View {
                             }
                             .buttonStyle(.plain)
                             .padding()
-                            
-                            Spacer()
-                            
-                            Button("+") {
-                                inputAmount += "+"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
-                            
-                            Button("-") {
-                                inputAmount += "-"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
-                            
-                            Button("×") {
-                                inputAmount += "×"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
-                            
-                            Button("÷") {
-                                inputAmount += "÷"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
                             
                             Spacer()
                             
@@ -267,6 +262,9 @@ struct SpendView: View {
                 }
             }
             .animation(.default, value: focusedField)
+            .padding(focusedField != nil ? 12 : 5)
+            .background(focusedField != nil ? Color(.systemGray6) : Color.clear)
+            .cornerRadius(focusedField != nil ? 12 : 0)
         }
         
     }
