@@ -174,7 +174,6 @@ struct SpendView: View {
                 Text("Windfall")
             }
         }
-        .padding(.bottom, 25)
         .transition(.move(edge: .top).combined(with: .opacity))
     }
     
@@ -267,6 +266,9 @@ struct SpendView: View {
                 }
             }
             .animation(.default, value: focusedField)
+            .padding(focusedField != nil ? 12 : 5)
+            .background(focusedField != nil ? Color(.systemGray6) : Color.clear)
+            .cornerRadius(focusedField != nil ? 12 : 0)
         }
         
     }
