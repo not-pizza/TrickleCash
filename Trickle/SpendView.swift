@@ -262,7 +262,7 @@ struct SpendView: View {
                 }
             }
             .animation(.default, value: focusedField)
-            .padding(focusedField != nil ? 12 : 5)
+            .padding(focusedField != nil ? 12 : 0)
             .background(focusedField != nil ? Color(.systemGray6) : Color.clear)
             .cornerRadius(focusedField != nil ? 12 : 0)
         }

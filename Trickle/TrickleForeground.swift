@@ -75,8 +75,7 @@ struct ForegroundView: View {
     var body: some View {
         let spendEventsByDate = spendEventBindings()
         let spendList = ScrollView {
-            LazyVStack(alignment: .leading) {
-                // TODO: flatten these `ForEach`s so that moving spend across them doesn't recreate their view
+            LazyVStack(alignment: .leading, spacing: 10) {
                 ForEach(spendEventsByDate, id: \.date) { (date, spendEvents) in
                     Text(
                         dateFormatter.string(from: date)
@@ -98,6 +97,8 @@ struct ForegroundView: View {
                          .transition(.move(edge: .top))
                          .padding(.horizontal, 15)
                     }
+
+                    Spacer().frame(height: 10)
                 }
             }.onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
