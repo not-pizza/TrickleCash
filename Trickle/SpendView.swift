@@ -58,9 +58,20 @@ struct SpendView: View {
             .onChange(of: inputAmount) { newValue in
                 if newValue.trimmingCharacters(in: .whitespaces) == "" {
                     deduction.amount = 0
-                }
-                else {
-                    deduction.amount = -(toDouble(newValue) ?? -deduction.amount)
+                } else {
+                    // Handle numeric input in a currency-style way
+                    let cleanedInput = newValue.replacingOccurrences(of: "[^0-9+\\-×÷*\\/]", with: "", options: .regularExpression)
+                    
+                    if cleanedInput.contains(where: { "+-×÷*/".contains($0) }) {
+                        // If it contains operators, treat it as a calculation
+                        deduction.amount = -(toDouble(newValue) ?? -deduction.amount)
+                    } else {
+                        // Convert to cents then back to dollars
+                        let cents = Int(cleanedInput) ?? 0
+                        let dollars = Double(cents) / 100.0
+                        deduction.amount = -dollars
+                        inputAmount = String(format: "%.2f", dollars)
+                    }
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
@@ -197,32 +208,6 @@ struct SpendView: View {
                             }
                             .buttonStyle(.plain)
                             .padding()
-                            
-                            Spacer()
-                            
-                            Button("+") {
-                                inputAmount += "+"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
-                            
-                            Button("-") {
-                                inputAmount += "-"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
-                            
-                            Button("×") {
-                                inputAmount += "×"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
-                            
-                            Button("÷") {
-                                inputAmount += "÷"
-                            }
-                            .buttonStyle(.plain)
-                            .padding(3)
                             
                             Spacer()
                             
