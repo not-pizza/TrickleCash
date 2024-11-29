@@ -8,23 +8,7 @@ If you choose to use our Service, then you agree to the collection and use of in
 
 ## Information Collection and Use
 
-For a better experience while using our Service, we may require you to provide us with certain personally identifiable information, including but not limited to your name, phone number, and postal address. The information that we collect will be used to contact or identify you.
-
-## Log Data
-
-We want to inform you that whenever you visit our Service, we collect information that your browser sends to us that is called Log Data. This Log Data may include information such as your computer's Internet Protocol ("IP") address, browser version, pages of our Service that you visit, the time and date of your visit, the time spent on those pages, and other statistics.
-
-## Service Providers
-
-We may employ third-party companies and individuals due to the following reasons:
-
-- To facilitate our Service;
-- To provide the Service on our behalf;
-- To perform Service-related services; or
-- To assist us in analyzing how our Service is used.
-
-
-We want to inform our Service users that these third parties have access to your Personal Information. The reason is to perform the tasks assigned to them on our behalf. However, they are obligated not to disclose or use the information for any other purpose.
+The app stores information, but it is not transmitted to our servers. 
 
 ## Security
 
