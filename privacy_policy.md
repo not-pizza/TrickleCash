@@ -8,7 +8,7 @@ If you choose to use our Service, then you agree to the collection and use of in
 
 ## Information Collection and Use
 
-The app stores information, but it is not transmitted to our servers. 
+The app stores personal information, but it is not transmitted to our servers. 
 
 ## Security
 
