@@ -1,10 +1,11 @@
 .image-strip {
     display: flex;
     align-items: center;
-    gap: 0;
+    gap: 30px;
 }
 
 .image-strip img {
     display: block;
-    height: auto;
+    height: 600px;
+    border-radius: 10px;
 }
