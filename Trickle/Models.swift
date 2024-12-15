@@ -260,7 +260,7 @@ struct AppData: Codable, Equatable {
         var mainBalance = 0.0
         
         // Sort events by date
-        let sortedEvents = events.filter { $0.date <= date }.sorted { $0.date < $1.date }
+        let sortedEvents = events.filter { $0.date <= date && $0.date >= startDate }.sorted { $0.date < $1.date }
         let filteredEvents = Event.removeDeleted(sortedEvents)
         
         for event in filteredEvents {
