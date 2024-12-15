@@ -1,0 +1,10 @@
+.image-strip {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.image-strip img {
+    display: block;
+    height: auto;
+}
