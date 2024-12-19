@@ -211,7 +211,7 @@ struct ForegroundView: View {
                             .animation(animate ? .easeOut(duration: 0.6) : .none, value: animate)
                         
                         // Icon
-                        Image(systemName: isIncome ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
+                        Image(systemName: isIncome ? "arrow.up.circle.fill" : "plus.circle.fill")
                             .font(.system(size: 27))
                             .foregroundColor(isIncome ? .green : .red)
                             .rotationEffect(animate ? Angle(degrees: 360) : Angle(degrees: 0))
